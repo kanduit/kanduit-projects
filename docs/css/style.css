@@ -274,6 +274,8 @@ body {
 .stat-value.negative { color: var(--danger); }
 .detail-chart-wrap, .detail-comparison {
   margin-bottom: 1.25rem;
+  position: relative;
+  height: 200px;
 }
 .detail-chart-wrap h3, .detail-comparison h3 {
   font-size: 0.8rem;
