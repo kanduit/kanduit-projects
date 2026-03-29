@@ -1,0 +1,113 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "station_id": "AHR_MUESCH",
+        "name": "Müsch",
+        "river": "Ahr",
+        "normal_level_cm": 35,
+        "warning_level_cm": 150,
+        "critical_level_cm": 300
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.825,
+          50.383
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station_id": "AHR_SCHULD",
+        "name": "Schuld",
+        "river": "Ahr",
+        "normal_level_cm": 45,
+        "warning_level_cm": 180,
+        "critical_level_cm": 350
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.87,
+          50.369
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station_id": "AHR_ALTENAHR",
+        "name": "Altenahr",
+        "river": "Ahr",
+        "normal_level_cm": 55,
+        "warning_level_cm": 200,
+        "critical_level_cm": 400
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.985,
+          50.517
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station_id": "AHR_DERNAU",
+        "name": "Dernau",
+        "river": "Ahr",
+        "normal_level_cm": 50,
+        "warning_level_cm": 190,
+        "critical_level_cm": 380
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.044,
+          50.543
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station_id": "AHR_BODENDORF",
+        "name": "Bad Bodendorf",
+        "river": "Ahr",
+        "normal_level_cm": 60,
+        "warning_level_cm": 200,
+        "critical_level_cm": 400
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.155,
+          50.555
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station_id": "ERFT_BLIESHEIM",
+        "name": "Bliesheim",
+        "river": "Erft",
+        "normal_level_cm": 40,
+        "warning_level_cm": 120,
+        "critical_level_cm": 250
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.818,
+          50.796
+        ]
+      }
+    }
+  ]
+}

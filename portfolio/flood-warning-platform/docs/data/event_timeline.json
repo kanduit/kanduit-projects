@@ -1,0 +1,193 @@
+[
+  {
+    "timestamp": "2021-07-09T18:00Z",
+    "source": "EFAS",
+    "type": "warning",
+    "severity": "low",
+    "title": "EFAS Flash Flood Warning Issued",
+    "description": "EFAS issues first probabilistic flood alert for Rhine tributaries. Probability of exceeding 5-year return period: 65%. Sent to German federal authorities via EFFIS portal.",
+    "municipalities_affected": [
+      "Blankenheim",
+      "Euskirchen"
+    ]
+  },
+  {
+    "timestamp": "2021-07-10T12:00Z",
+    "source": "EFAS",
+    "type": "warning",
+    "severity": "medium",
+    "title": "EFAS Upgrades to Formal Flood Warning",
+    "description": "EFAS formal notification sent to German Federal Institute of Hydrology (BfG). Warning covers Ahr, Erft, and Rur catchments. Probability exceeding 20-year return period: >50%.",
+    "municipalities_affected": [
+      "Schuld",
+      "Altenahr",
+      "Euskirchen",
+      "Erftstadt"
+    ]
+  },
+  {
+    "timestamp": "2021-07-12T06:00Z",
+    "source": "DWD",
+    "type": "warning",
+    "severity": "medium",
+    "title": "DWD Severe Weather Watch (Vorabinformation)",
+    "description": "DWD issues advance warning for extreme precipitation in Eifel region. Expected: 100-150mm in 48 hours. Landkreise receive PDF via email.",
+    "municipalities_affected": [
+      "Schuld",
+      "Insul",
+      "Altenahr",
+      "Blankenheim"
+    ]
+  },
+  {
+    "timestamp": "2021-07-13T06:00Z",
+    "source": "DWD",
+    "type": "warning",
+    "severity": "high",
+    "title": "DWD Extreme Weather Warning Level 4 (Unwetterwarnung)",
+    "description": "Highest DWD warning level issued: >200mm rainfall expected in Eifel/Ahr within 24h. Warning distributed to Landkreise Ahrweiler, Euskirchen, and Rhein-Sieg-Kreis.",
+    "municipalities_affected": [
+      "Schuld",
+      "Insul",
+      "Altenahr",
+      "Mayschoß",
+      "Dernau",
+      "Bad Neuenahr-Ahrweiler",
+      "Euskirchen"
+    ]
+  },
+  {
+    "timestamp": "2021-07-13T15:00Z",
+    "source": "Gauge",
+    "type": "threshold",
+    "severity": "medium",
+    "title": "Müsch Gauge Exceeds Warning Level",
+    "description": "First Ahr gauge to cross warning threshold (150cm). Water level rising at 15cm/hour. No automated alert system connected to this gauge.",
+    "municipalities_affected": [
+      "Schuld",
+      "Insul"
+    ]
+  },
+  {
+    "timestamp": "2021-07-13T18:00Z",
+    "source": "Gauge",
+    "type": "threshold",
+    "severity": "high",
+    "title": "Multiple Gauges Exceed Warning Levels",
+    "description": "Schuld (180cm) and Altenahr (200cm) gauges cross warning thresholds. Rate of rise accelerating. Landkreis Ahrweiler activates crisis staff.",
+    "municipalities_affected": [
+      "Schuld",
+      "Altenahr",
+      "Mayschoß"
+    ]
+  },
+  {
+    "timestamp": "2021-07-13T23:00Z",
+    "source": "Gauge",
+    "type": "threshold",
+    "severity": "critical",
+    "title": "Schuld Gauge Exceeds Critical Level",
+    "description": "Schuld gauge at 380cm and rising — exceeds all-time record (320cm from 2016). Exponential rise indicates flash flood. No automated evacuation trigger exists.",
+    "municipalities_affected": [
+      "Schuld",
+      "Insul"
+    ]
+  },
+  {
+    "timestamp": "2021-07-14T00:30Z",
+    "source": "Gauge",
+    "type": "threshold",
+    "severity": "critical",
+    "title": "Altenahr Gauge Exceeds Critical Level",
+    "description": "Altenahr reads 420cm — well above critical (400cm). Rising 50cm/hour. Gauge will be destroyed at ~03:00 when peak exceeds 700cm.",
+    "municipalities_affected": [
+      "Altenahr",
+      "Mayschoß",
+      "Dernau"
+    ]
+  },
+  {
+    "timestamp": "2021-07-14T01:09Z",
+    "source": "Authority",
+    "type": "action",
+    "severity": "critical",
+    "title": "Landkreis Ahrweiler Issues First Warning via Katwarn",
+    "description": "First official public warning sent via Katwarn app: 'Extreme flooding Ahr. Seek higher ground immediately.' Many residents asleep, not registered for app.",
+    "municipalities_affected": [
+      "Schuld",
+      "Altenahr",
+      "Mayschoß",
+      "Dernau",
+      "Bad Neuenahr-Ahrweiler"
+    ]
+  },
+  {
+    "timestamp": "2021-07-14T02:00Z",
+    "source": "Authority",
+    "type": "action",
+    "severity": "critical",
+    "title": "Cell Broadcast Evacuation Would Have Been Possible",
+    "description": "Cell broadcast (DE-Alert) was not yet deployed in Germany. Would have reached all mobile phones in affected area without app registration.",
+    "municipalities_affected": [
+      "Schuld",
+      "Insul",
+      "Altenahr",
+      "Mayschoß",
+      "Dernau",
+      "Bad Neuenahr-Ahrweiler"
+    ]
+  },
+  {
+    "timestamp": "2021-07-14T03:00Z",
+    "source": "Event",
+    "type": "impact",
+    "severity": "critical",
+    "title": "Catastrophic Peak — Ahr Valley",
+    "description": "Ahr river reaches estimated 7m+ at Altenahr. Entire valley floor inundated. Houses swept from foundations. Bridges destroyed. Gauge infrastructure lost.",
+    "municipalities_affected": [
+      "Schuld",
+      "Insul",
+      "Altenahr",
+      "Mayschoß",
+      "Dernau"
+    ]
+  },
+  {
+    "timestamp": "2021-07-14T06:00Z",
+    "source": "Event",
+    "type": "impact",
+    "severity": "critical",
+    "title": "Erftstadt-Blessem Gravel Pit Collapse",
+    "description": "Floodwaters erode into active gravel quarry at Erftstadt-Blessem, creating massive sinkhole that swallows houses and roads.",
+    "municipalities_affected": [
+      "Erftstadt"
+    ]
+  },
+  {
+    "timestamp": "2021-07-14T14:00Z",
+    "source": "Authority",
+    "type": "action",
+    "severity": "high",
+    "title": "Federal THW Deploys to Ahr Valley",
+    "description": "Technisches Hilfswerk (THW) deploys major assets. Road infrastructure destroyed — many villages unreachable. Helicopter evacuations begin.",
+    "municipalities_affected": [
+      "Schuld",
+      "Altenahr",
+      "Dernau",
+      "Bad Neuenahr-Ahrweiler",
+      "Sinzig"
+    ]
+  },
+  {
+    "timestamp": "2021-07-14T21:00Z",
+    "source": "Authority",
+    "type": "action",
+    "severity": "critical",
+    "title": "Steinbachtalsperre Dam Failure Feared",
+    "description": "Authorities order precautionary evacuation of Swisttal-Odendorf due to risk of Steinbachtalsperre dam breach. Dam holds, but illustrates cascading risks.",
+    "municipalities_affected": [
+      "Swisttal",
+      "Rheinbach"
+    ]
+  }
+]

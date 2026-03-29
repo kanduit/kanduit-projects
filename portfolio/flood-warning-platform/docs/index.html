@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crisis Data Mesh — Flood Early Warning Platform</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header id="header">
+    <div class="header-left">
+        <div class="header-brand">
+            <div class="brand-sigil"></div>
+            <div>
+                <h1>CRISIS DATA MESH</h1>
+                <span class="header-subtitle">Flood Early Warning — Ahr Valley July 2021</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-center">
+        <div class="replay-controls">
+            <button id="btn-restart" class="ctrl-btn" title="Restart">&#9198;</button>
+            <button id="btn-play" class="ctrl-btn ctrl-play" title="Play / Pause">&#9654;</button>
+            <button id="btn-step" class="ctrl-btn" title="Step +1 h">&#9197;</button>
+            <select id="replay-speed" title="Playback speed">
+                <option value="0.5">0.5&times;</option>
+                <option value="1" selected>1&times;</option>
+                <option value="2">2&times;</option>
+                <option value="4">4&times;</option>
+                <option value="8">8&times;</option>
+            </select>
+        </div>
+        <div id="current-time" class="time-display">
+            <span class="time-label">EVENT TIME</span>
+            <span class="time-value" id="time-value">2021-07-09 00:00 UTC</span>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <select id="municipality-select">
+            <option value="">All Municipalities</option>
+        </select>
+        <div id="status-indicator" class="status-badge status-normal">NORMAL</div>
+    </div>
+</header>
+
+<main id="main">
+    <section class="panel panel-map">
+        <div class="panel-header">
+            <span class="panel-title">Operational Map</span>
+            <div class="layer-controls">
+                <label class="layer-toggle"><input type="checkbox" id="layer-risk" checked><span>Risk</span></label>
+                <label class="layer-toggle"><input type="checkbox" id="layer-gauges" checked><span>Gauges</span></label>
+                <label class="layer-toggle"><input type="checkbox" id="layer-pop" checked><span>Population</span></label>
+            </div>
+        </div>
+        <div id="map"></div>
+    </section>
+
+    <section class="panel-stack">
+        <div class="panel panel-timeline">
+            <div class="panel-header">
+                <span class="panel-title">Signal Timeline</span>
+                <span id="timeline-label" class="panel-badge">Gauge + Precipitation</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="timeline-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="panel panel-events">
+            <div class="panel-header">
+                <span class="panel-title">Event Log</span>
+                <span id="event-counter" class="panel-badge">0 events</span>
+            </div>
+            <div id="event-log" class="event-log"></div>
+        </div>
+
+        <div class="panel panel-scenario">
+            <div class="panel-header">
+                <span class="panel-title">What-If Analysis</span>
+            </div>
+            <div class="scenario-body">
+                <div class="slider-row">
+                    <label>Auto-Alert Level <span id="val-alert" class="slider-val">200 cm</span></label>
+                    <input type="range" id="thresh-alert" min="80" max="400" value="200" step="10">
+                </div>
+                <div class="slider-row">
+                    <label>Auto-Evacuate Level <span id="val-evac" class="slider-val">400 cm</span></label>
+                    <input type="range" id="thresh-evac" min="150" max="600" value="400" step="10">
+                </div>
+                <div id="scenario-results" class="scenario-results">
+                    <p class="muted">Adjust thresholds above to explore scenarios.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer id="footer">
+    <span class="footer-quote">&ldquo;The data existed. The technology existed. What was missing was integration.&rdquo;</span>
+    <span class="footer-meta">Demo built with open data: EFAS &middot; DWD &middot; Pegel Online &middot; Zensus 2022</span>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+<script src="js/map.js"></script>
+<script src="js/timeline.js"></script>
+<script src="js/scenario.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brückenmonitor NRW</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <header id="app-header">
+        <div class="header-left">
+            <img src="assets/kanduit-logo.png" alt="Kanduit" class="header-logo" />
+            <div class="header-title">
+                <h1>Brückenmonitor NRW</h1>
+                <span class="header-subtitle">Infrastruktur-Risikobewertung &amp; Priorisierung</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="header-stats">
+                <div class="stat">
+                    <span class="stat-value" id="stat-total">—</span>
+                    <span class="stat-label">Brücken gesamt</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value stat-danger" id="stat-critical">—</span>
+                    <span class="stat-label">Kritisch (≥0.6)</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value stat-warning" id="stat-warning">—</span>
+                    <span class="stat-label">Auffällig (≥0.4)</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="app-main">
+        <section id="map-panel">
+            <div id="map-container">
+                <div id="map"></div>
+                <div id="legend">
+                    <h4>Risiko-Score</h4>
+                    <div class="legend-item"><span class="legend-dot" style="background:#1a9641"></span> 0.0 – 0.3 Gering</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#a6d96a"></span> 0.3 – 0.4 Mäßig</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#fee08b"></span> 0.4 – 0.5 Erhöht</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#f46d43"></span> 0.5 – 0.6 Hoch</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#d73027"></span> 0.6 – 1.0 Kritisch</div>
+                </div>
+            </div>
+
+            <div id="filter-bar">
+                <div class="filter-group">
+                    <label for="filter-road-class">Straßenklasse</label>
+                    <select id="filter-road-class">
+                        <option value="">Alle</option>
+                        <option value="Autobahn">Autobahn</option>
+                        <option value="Bundesstraße">Bundesstraße</option>
+                        <option value="Landesstraße">Landesstraße</option>
+                        <option value="Kreisstraße">Kreisstraße</option>
+                        <option value="Gemeindestraße">Gemeindestraße</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-condition-min">Zustandsnote ≥</label>
+                    <select id="filter-condition-min">
+                        <option value="0">Alle</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2.0">2.0</option>
+                        <option value="2.5">2.5</option>
+                        <option value="3.0">3.0</option>
+                        <option value="3.5">3.5</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-decade">Baujahrzehnt</label>
+                    <select id="filter-decade">
+                        <option value="">Alle</option>
+                        <option value="1920">vor 1950</option>
+                        <option value="1950">1950er</option>
+                        <option value="1960">1960er</option>
+                        <option value="1970">1970er</option>
+                        <option value="1980">1980er</option>
+                        <option value="1990">1990er</option>
+                        <option value="2000">2000er</option>
+                        <option value="2010">2010er</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-risk-min">Risiko ≥</label>
+                    <input type="range" id="filter-risk-min" min="0" max="1" step="0.05" value="0" />
+                    <span id="filter-risk-min-value">0.00</span>
+                </div>
+                <button id="filter-reset" class="btn-secondary">Zurücksetzen</button>
+                <span id="filter-count"></span>
+            </div>
+        </section>
+
+        <aside id="sidebar">
+            <div id="sidebar-tabs">
+                <button class="tab-btn active" data-tab="top50">Top 50 Kritische Brücken</button>
+                <button class="tab-btn" data-tab="details">Brückendetails</button>
+            </div>
+
+            <div id="tab-top50" class="tab-content active">
+                <div id="top50-list"></div>
+            </div>
+
+            <div id="tab-details" class="tab-content">
+                <div id="detail-empty">
+                    <p>Klicken Sie auf eine Brücke in der Karte oder der Liste, um Details anzuzeigen.</p>
+                </div>
+                <div id="detail-content" style="display:none">
+                    <div id="detail-header">
+                        <h3 id="detail-name"></h3>
+                        <div id="detail-risk-badge"></div>
+                    </div>
+                    <div id="detail-facts">
+                        <div class="fact-grid">
+                            <div class="fact"><span class="fact-label">Straße</span><span class="fact-value" id="detail-road"></span></div>
+                            <div class="fact"><span class="fact-label">Klasse</span><span class="fact-value" id="detail-class"></span></div>
+                            <div class="fact"><span class="fact-label">Bauwerk</span><span class="fact-value" id="detail-type"></span></div>
+                            <div class="fact"><span class="fact-label">Baujahr</span><span class="fact-value" id="detail-year"></span></div>
+                            <div class="fact"><span class="fact-label">Zustandsnote</span><span class="fact-value" id="detail-grade"></span></div>
+                            <div class="fact"><span class="fact-label">Verkehr (DTV)</span><span class="fact-value" id="detail-traffic"></span></div>
+                            <div class="fact"><span class="fact-label">Tragfähigkeit</span><span class="fact-value" id="detail-capacity"></span></div>
+                            <div class="fact"><span class="fact-label">Felder</span><span class="fact-value" id="detail-spans"></span></div>
+                            <div class="fact"><span class="fact-label">Umweg bei Sperrung</span><span class="fact-value" id="detail-detour"></span></div>
+                            <div class="fact"><span class="fact-label">Letzte Prüfung</span><span class="fact-value" id="detail-inspection"></span></div>
+                        </div>
+                    </div>
+                    <div id="detail-charts">
+                        <div class="chart-container">
+                            <h4>Prüfungshistorie (Zustandsnoten)</h4>
+                            <div id="chart-inspection"></div>
+                        </div>
+                        <div class="chart-container">
+                            <h4>InSAR Bodenbewegung (12 Monate)</h4>
+                            <div id="chart-insar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Brückendaten werden geladen…</p>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
