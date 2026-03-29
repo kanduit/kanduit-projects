@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kommunalatlas NRW — Kanduit</title>
+  <meta name="description" content="Interaktive Datenlandkarte für kommunale Entscheidungen in Nordrhein-Westfalen. Open-Data-Dashboard von Kanduit.">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="https://kanduit.de" target="_blank" rel="noopener">
+        <img class="brand-logo" src="assets/kanduit-logo.png" alt="Kanduit Logo" width="36" height="36">
+        <span class="brand-name">Kanduit</span>
+      </a>
+      <h1 class="header-title">Kommunalatlas NRW</h1>
+      <p class="header-sub">Interaktive Datenlandkarte für kommunale Entscheidungen</p>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="controls">
+      <div class="metric-selector">
+        <label for="metric-select">Kennzahl</label>
+        <select id="metric-select">
+          <option value="population">Bevölkerung</option>
+          <option value="pop_change_pct">Bevölkerungsentwicklung (%)</option>
+          <option value="unemployment_rate" selected>Arbeitslosenquote (%)</option>
+          <option value="age_over_65_pct">Anteil Ü65 (%)</option>
+          <option value="gdp_per_capita">BIP pro Kopf (€)</option>
+        </select>
+      </div>
+      <div class="nrw-summary" id="nrw-summary"></div>
+    </section>
+
+    <div class="main-grid">
+      <div class="map-container">
+        <div id="map"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <aside class="detail-panel" id="detail-panel">
+        <div class="detail-placeholder" id="detail-placeholder">
+          <div class="placeholder-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
+            </svg>
+          </div>
+          <p>Klicken Sie auf einen Kreis, um Details anzuzeigen</p>
+        </div>
+        <div class="detail-content" id="detail-content" style="display:none">
+          <button class="detail-close" id="detail-close" aria-label="Schließen">&times;</button>
+          <h2 id="detail-name"></h2>
+          <p class="detail-bez" id="detail-bez"></p>
+          <div class="detail-stats" id="detail-stats"></div>
+          <div class="detail-chart-wrap">
+            <h3>Bevölkerungsentwicklung</h3>
+            <canvas id="detail-chart"></canvas>
+          </div>
+          <div class="detail-comparison">
+            <h3>Vergleich mit NRW-Durchschnitt</h3>
+            <canvas id="comparison-chart"></canvas>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="ranking-section">
+      <h2>Ranking aller Kreise &amp; kreisfreien Städte</h2>
+      <div class="ranking-table-wrap">
+        <table class="ranking-table" id="ranking-table">
+          <thead>
+            <tr>
+              <th data-sort="rank">#</th>
+              <th data-sort="name">Name</th>
+              <th data-sort="value" id="ranking-metric-header">Wert</th>
+              <th data-sort="population">Bevölkerung</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/kanduit-logo.png" alt="Kanduit" width="24" height="24" class="footer-logo">
+        <span>Ein Projekt von <a href="https://kanduit.de" target="_blank" rel="noopener">Kanduit</a> — Digitalisierung, Daten &amp; Software für NRW</span>
+      </div>
+      <p class="footer-sources">Datenquellen: IT.NRW Kommunalprofile &middot; Landesdatenbank NRW &middot; Bundesagentur für Arbeit &middot; VGR der Länder</p>
+      <p class="footer-license">Geodaten: Datenlizenz Deutschland – Zero 2.0 &middot; Statistik: Datenlizenz Deutschland – Namensnennung 2.0</p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+# Data — raw downloads are large and always gitignored
+data/raw/
+*.sqlite
+
+# Processed Parquet: intentionally NOT gitignored.
+# Commit the NRW-filtered Parquet files so Streamlit Cloud can start instantly.
+# If you want to ignore them locally, use: git update-index --skip-worktree data/processed/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+.pixi/
+.conda/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
+
+# open-mastr local DB
+$HOME/.open-MaStR/

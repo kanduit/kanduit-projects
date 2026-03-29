@@ -1,0 +1,37 @@
+{
+  "_meta": {
+    "description": "Official NRW energy transition targets for 2030",
+    "sources": [
+      "Eckpunktevereinbarung Kohleausstieg 2030 (Oct 2022)",
+      "Energie- und Wärmestrategie NRW (2024)",
+      "Klimaschutzgesetz NRW"
+    ],
+    "last_updated": "2026-03-26"
+  },
+  "coal_exit": {
+    "target_year": 2030,
+    "description": "Vollständiger Braunkohleausstieg im Rheinischen Revier",
+    "co2_avoided_mt": 280,
+    "coal_kept_underground_mt": 280
+  },
+  "wind_onshore": {
+    "target_gw": 12.0,
+    "target_year": 2030,
+    "baseline_gw_2022": 6.4,
+    "description": "Installierte Windkraft-Onshore-Leistung in NRW"
+  },
+  "solar_pv": {
+    "target_gw_low": 18.0,
+    "target_gw_high": 24.0,
+    "target_gw": 18.0,
+    "target_year": 2030,
+    "baseline_gw_2022": 7.5,
+    "description": "Installierte Photovoltaik-Leistung in NRW"
+  },
+  "climate": {
+    "climate_neutral_electricity_year": 2035,
+    "climate_neutral_overall_year": 2045,
+    "co2_reduction_vs_1990_pct_2030": 65,
+    "description": "Klimaneutralität der Stromerzeugung bis 2035, Gesamtwirtschaft bis 2045"
+  }
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "name": "Schuld",
+    "lat": 50.369,
+    "lon": 6.87,
+    "population": 700,
+    "density_per_km2": 35.7,
+    "households_estimated": 350
+  },
+  {
+    "name": "Insul",
+    "lat": 50.37,
+    "lon": 6.895,
+    "population": 500,
+    "density_per_km2": 25.5,
+    "households_estimated": 250
+  },
+  {
+    "name": "Altenahr",
+    "lat": 50.517,
+    "lon": 6.985,
+    "population": 1800,
+    "density_per_km2": 91.7,
+    "households_estimated": 900
+  },
+  {
+    "name": "Mayschoß",
+    "lat": 50.53,
+    "lon": 7.014,
+    "population": 1000,
+    "density_per_km2": 50.9,
+    "households_estimated": 500
+  },
+  {
+    "name": "Dernau",
+    "lat": 50.543,
+    "lon": 7.044,
+    "population": 1700,
+    "density_per_km2": 86.6,
+    "households_estimated": 850
+  },
+  {
+    "name": "Bad Neuenahr-Ahrweiler",
+    "lat": 50.548,
+    "lon": 7.118,
+    "population": 28000,
+    "density_per_km2": 1426.0,
+    "households_estimated": 14000
+  },
+  {
+    "name": "Sinzig",
+    "lat": 50.547,
+    "lon": 7.177,
+    "population": 17500,
+    "density_per_km2": 891.3,
+    "households_estimated": 8750
+  },
+  {
+    "name": "Blankenheim",
+    "lat": 50.435,
+    "lon": 6.648,
+    "population": 8000,
+    "density_per_km2": 407.4,
+    "households_estimated": 4000
+  },
+  {
+    "name": "Euskirchen",
+    "lat": 50.66,
+    "lon": 6.79,
+    "population": 59000,
+    "density_per_km2": 3004.8,
+    "households_estimated": 29500
+  },
+  {
+    "name": "Swisttal",
+    "lat": 50.68,
+    "lon": 6.97,
+    "population": 18500,
+    "density_per_km2": 942.2,
+    "households_estimated": 9250
+  },
+  {
+    "name": "Erftstadt",
+    "lat": 50.81,
+    "lon": 6.77,
+    "population": 50000,
+    "density_per_km2": 2546.5,
+    "households_estimated": 25000
+  },
+  {
+    "name": "Weilerswist",
+    "lat": 50.76,
+    "lon": 6.84,
+    "population": 17000,
+    "density_per_km2": 865.8,
+    "households_estimated": 8500
+  },
+  {
+    "name": "Rheinbach",
+    "lat": 50.63,
+    "lon": 6.95,
+    "population": 27000,
+    "density_per_km2": 1375.1,
+    "households_estimated": 13500
+  },
+  {
+    "name": "Stolberg",
+    "lat": 50.77,
+    "lon": 6.23,
+    "population": 56000,
+    "density_per_km2": 2852.1,
+    "households_estimated": 28000
+  }
+]

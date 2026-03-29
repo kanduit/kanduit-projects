@@ -3,104 +3,151 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kommunalatlas NRW — Kanduit</title>
-  <meta name="description" content="Interaktive Datenlandkarte für kommunale Entscheidungen in Nordrhein-Westfalen. Open-Data-Dashboard von Kanduit.">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <title>Kanduit Projektportfolio</title>
+  <meta name="description" content="Projektportfolio von Kanduit mit statischen Dashboards und Streamlit-Projekten.">
+  <style>
+    :root {
+      --bg: #0b1220;
+      --surface: #111a2e;
+      --text: #e7ecf5;
+      --muted: #9fb0cf;
+      --accent: #4f8cff;
+      --border: #243352;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(180deg, #0b1220 0%, #0f1730 100%);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 48px 20px 72px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+    .sub {
+      margin: 0 0 28px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      min-height: 220px;
+    }
+    .type {
+      font-size: 0.8rem;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .card h2 {
+      font-size: 1.15rem;
+      margin: 0 0 10px;
+    }
+    .card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+    }
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    code {
+      color: #c4d7ff;
+      background: rgba(79, 140, 255, 0.15);
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+  </style>
 </head>
 <body>
+  <main class="wrap">
+    <h1>Kanduit Projektportfolio</h1>
+    <p class="sub">
+      Diese Seite ist der Einstiegspunkt fuer alle Portfolio-Projekte.
+      Statische Projekte werden ueber GitHub Pages gehostet, Streamlit-Projekte ueber Streamlit Community Cloud.
+    </p>
 
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="https://kanduit.de" target="_blank" rel="noopener">
-        <img class="brand-logo" src="assets/kanduit-logo.png" alt="Kanduit Logo" width="36" height="36">
-        <span class="brand-name">Kanduit</span>
-      </a>
-      <h1 class="header-title">Kommunalatlas NRW</h1>
-      <p class="header-sub">Interaktive Datenlandkarte für kommunale Entscheidungen</p>
-    </div>
-  </header>
+    <section class="grid">
+      <article class="card">
+        <div class="type">GitHub Pages</div>
+        <h2>Kommunalatlas NRW</h2>
+        <p>Interaktive Datenlandkarte mit Kennzahlen fuer alle Kreise und kreisfreien Staedte in Nordrhein-Westfalen.</p>
+        <div class="actions">
+          <a class="btn primary" href="./kommunalatlas-nrw/">Projekt oeffnen</a>
+        </div>
+      </article>
 
-  <main class="dashboard">
-    <section class="controls">
-      <div class="metric-selector">
-        <label for="metric-select">Kennzahl</label>
-        <select id="metric-select">
-          <option value="population">Bevölkerung</option>
-          <option value="pop_change_pct">Bevölkerungsentwicklung (%)</option>
-          <option value="unemployment_rate" selected>Arbeitslosenquote (%)</option>
-          <option value="age_over_65_pct">Anteil Ü65 (%)</option>
-          <option value="gdp_per_capita">BIP pro Kopf (€)</option>
-        </select>
-      </div>
-      <div class="nrw-summary" id="nrw-summary"></div>
+      <article class="card">
+        <div class="type">GitHub Pages</div>
+        <h2>NRW Bridge Dashboard</h2>
+        <p>Risikobasierter Brueckenmonitor mit Priorisierung kritischer Infrastruktur in Nordrhein-Westfalen.</p>
+        <div class="actions">
+          <a class="btn primary" href="./nrw-bridge-dashboard/">Projekt oeffnen</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="type">GitHub Pages</div>
+        <h2>Flood Warning Platform</h2>
+        <p>Fruehwarn- und Koordinationsplattform fuer Starkregen und Hochwasser mit interaktivem Krisen-Dashboard.</p>
+        <div class="actions">
+          <a class="btn primary" href="./flood-warning-platform/">Projekt oeffnen</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="type">Streamlit</div>
+        <h2>Energiewende NRW</h2>
+        <p>Streamlit-Projekt fuer datengetriebene Einblicke in Energiewende, Strommix und Emissionsindikatoren in NRW.</p>
+        <div class="actions">
+          <span class="btn">Deployment ueber Streamlit Cloud (URL eintragen)</span>
+        </div>
+      </article>
     </section>
 
-    <div class="main-grid">
-      <div class="map-container">
-        <div id="map"></div>
-        <div class="legend" id="legend"></div>
-      </div>
-
-      <aside class="detail-panel" id="detail-panel">
-        <div class="detail-placeholder" id="detail-placeholder">
-          <div class="placeholder-icon">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
-            </svg>
-          </div>
-          <p>Klicken Sie auf einen Kreis, um Details anzuzeigen</p>
-        </div>
-        <div class="detail-content" id="detail-content" style="display:none">
-          <button class="detail-close" id="detail-close" aria-label="Schließen">&times;</button>
-          <h2 id="detail-name"></h2>
-          <p class="detail-bez" id="detail-bez"></p>
-          <div class="detail-stats" id="detail-stats"></div>
-          <div class="detail-chart-wrap">
-            <h3>Bevölkerungsentwicklung</h3>
-            <canvas id="detail-chart"></canvas>
-          </div>
-          <div class="detail-comparison">
-            <h3>Vergleich mit NRW-Durchschnitt</h3>
-            <canvas id="comparison-chart"></canvas>
-          </div>
-        </div>
-      </aside>
-    </div>
-
-    <section class="ranking-section">
-      <h2>Ranking aller Kreise &amp; kreisfreien Städte</h2>
-      <div class="ranking-table-wrap">
-        <table class="ranking-table" id="ranking-table">
-          <thead>
-            <tr>
-              <th data-sort="rank">#</th>
-              <th data-sort="name">Name</th>
-              <th data-sort="value" id="ranking-metric-header">Wert</th>
-              <th data-sort="population">Bevölkerung</th>
-            </tr>
-          </thead>
-          <tbody id="ranking-body"></tbody>
-        </table>
-      </div>
-    </section>
+    <footer>
+      Projektquellen liegen im Repository unter <code>portfolio/</code>.
+      Veroeffentlichte statische Artefakte liegen unter <code>docs/</code>.
+    </footer>
   </main>
-
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <img src="assets/kanduit-logo.png" alt="Kanduit" width="24" height="24" class="footer-logo">
-        <span>Ein Projekt von <a href="https://kanduit.de" target="_blank" rel="noopener">Kanduit</a> — Digitalisierung, Daten &amp; Software für NRW</span>
-      </div>
-      <p class="footer-sources">Datenquellen: IT.NRW Kommunalprofile &middot; Landesdatenbank NRW &middot; Bundesagentur für Arbeit &middot; VGR der Länder</p>
-      <p class="footer-license">Geodaten: Datenlizenz Deutschland – Zero 2.0 &middot; Statistik: Datenlizenz Deutschland – Namensnennung 2.0</p>
-    </div>
-  </footer>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-  <script src="js/app.js"></script>
 </body>
 </html>

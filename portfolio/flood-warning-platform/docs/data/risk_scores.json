@@ -1,0 +1,170 @@
+[
+  {
+    "name": "Bad Neuenahr-Ahrweiler",
+    "lat": 50.548,
+    "lon": 7.118,
+    "risk_score": 78,
+    "components": {
+      "elevation_risk": 24.0,
+      "river_proximity": 25,
+      "population_exposure": 9.5,
+      "historical_severity": 15.0
+    }
+  },
+  {
+    "name": "Erftstadt",
+    "lat": 50.81,
+    "lon": 6.77,
+    "risk_score": 68,
+    "components": {
+      "elevation_risk": 24.0,
+      "river_proximity": 12,
+      "population_exposure": 16.9,
+      "historical_severity": 15.0
+    }
+  },
+  {
+    "name": "Stolberg",
+    "lat": 50.77,
+    "lon": 6.23,
+    "risk_score": 67,
+    "components": {
+      "elevation_risk": 18.0,
+      "river_proximity": 12,
+      "population_exposure": 19.0,
+      "historical_severity": 15.0
+    }
+  },
+  {
+    "name": "Altenahr",
+    "lat": 50.517,
+    "lon": 6.985,
+    "risk_score": 66,
+    "components": {
+      "elevation_risk": 19.5,
+      "river_proximity": 25,
+      "population_exposure": 0.6,
+      "historical_severity": 20.0
+    }
+  },
+  {
+    "name": "Euskirchen",
+    "lat": 50.66,
+    "lon": 6.79,
+    "risk_score": 66,
+    "components": {
+      "elevation_risk": 20.1,
+      "river_proximity": 12,
+      "population_exposure": 20.0,
+      "historical_severity": 8.0
+    }
+  },
+  {
+    "name": "Insul",
+    "lat": 50.37,
+    "lon": 6.895,
+    "risk_score": 65,
+    "components": {
+      "elevation_risk": 16.8,
+      "river_proximity": 25,
+      "population_exposure": 0.2,
+      "historical_severity": 20.0
+    }
+  },
+  {
+    "name": "Dernau",
+    "lat": 50.543,
+    "lon": 7.044,
+    "risk_score": 63,
+    "components": {
+      "elevation_risk": 21.6,
+      "river_proximity": 25,
+      "population_exposure": 0.6,
+      "historical_severity": 15.0
+    }
+  },
+  {
+    "name": "Sinzig",
+    "lat": 50.547,
+    "lon": 7.177,
+    "risk_score": 63,
+    "components": {
+      "elevation_risk": 25.8,
+      "river_proximity": 25,
+      "population_exposure": 5.9,
+      "historical_severity": 8.0
+    }
+  },
+  {
+    "name": "Mayschoß",
+    "lat": 50.53,
+    "lon": 7.014,
+    "risk_score": 62,
+    "components": {
+      "elevation_risk": 20.4,
+      "river_proximity": 25,
+      "population_exposure": 0.3,
+      "historical_severity": 15.0
+    }
+  },
+  {
+    "name": "Schuld",
+    "lat": 50.369,
+    "lon": 6.87,
+    "risk_score": 57,
+    "components": {
+      "elevation_risk": 17.1,
+      "river_proximity": 25,
+      "population_exposure": 0.2,
+      "historical_severity": 20.0
+    }
+  },
+  {
+    "name": "Swisttal",
+    "lat": 50.68,
+    "lon": 6.97,
+    "risk_score": 47,
+    "components": {
+      "elevation_risk": 21.0,
+      "river_proximity": 12,
+      "population_exposure": 6.3,
+      "historical_severity": 8.0
+    }
+  },
+  {
+    "name": "Rheinbach",
+    "lat": 50.63,
+    "lon": 6.95,
+    "risk_score": 47,
+    "components": {
+      "elevation_risk": 19.2,
+      "river_proximity": 12,
+      "population_exposure": 9.2,
+      "historical_severity": 3.0
+    }
+  },
+  {
+    "name": "Weilerswist",
+    "lat": 50.76,
+    "lon": 6.84,
+    "risk_score": 46,
+    "components": {
+      "elevation_risk": 22.2,
+      "river_proximity": 12,
+      "population_exposure": 5.8,
+      "historical_severity": 8.0
+    }
+  },
+  {
+    "name": "Blankenheim",
+    "lat": 50.435,
+    "lon": 6.648,
+    "risk_score": 29,
+    "components": {
+      "elevation_risk": 0.0,
+      "river_proximity": 25,
+      "population_exposure": 2.7,
+      "historical_severity": 8.0
+    }
+  }
+]
