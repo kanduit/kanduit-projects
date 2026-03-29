@@ -70,6 +70,13 @@ html, body {
     gap: 10px;
 }
 
+.kanduit-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
 .brand-sigil {
     width: 28px;
     height: 28px;
