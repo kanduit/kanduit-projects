@@ -1,18 +1,20 @@
 [project]
 name = "energiewende-nrw"
-version = "0.1.0"
+version = "0.2.0"
 description = "Energy Transition Monitor — Tracking the Coal Phase-Out in NRW"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 
 dependencies = [
     "streamlit>=1.30",
-    "streamlit-keplergl>=0.3.0",
-    "keplergl>=0.3.2",
-    "open-mastr>=0.16",
     "pandas>=2.2",
     "pyarrow>=14",
     "plotly>=5.18",
+]
+
+[project.optional-dependencies]
+ingest = [
+    "open-mastr>=0.16",
     "requests>=2.31",
     "geopandas>=0.14",
     "shapely>=2.0",

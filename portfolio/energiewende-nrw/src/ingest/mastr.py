@@ -13,9 +13,9 @@ import pandas as pd
 from open_mastr import Mastr
 
 from src.config import (
-    MASTR_NRW_COMBUSTION_PATH,
-    MASTR_NRW_SOLAR_PATH,
-    MASTR_NRW_WIND_PATH,
+    MASTR_PROCESSED_COMBUSTION_PATH,
+    MASTR_PROCESSED_SOLAR_PATH,
+    MASTR_PROCESSED_WIND_PATH,
     MASTR_TECHNOLOGIES,
     NRW_BUNDESLAND,
     PROCESSED_DIR,
@@ -23,8 +23,6 @@ from src.config import (
 
 log = logging.getLogger(__name__)
 
-# Columns we keep from each technology table.  Column names follow
-# open-mastr's *translated* schema (bulk_cleansing=True).
 _COMMON_COLS = [
     "EinheitMastrNummer",
     "Bruttoleistung",
@@ -60,9 +58,9 @@ _COMBUSTION_EXTRA = [
 ]
 
 _OUTPUT_MAP: dict[str, tuple[list[str], Path]] = {
-    "solar": (_COMMON_COLS + _SOLAR_EXTRA, MASTR_NRW_SOLAR_PATH),
-    "wind": (_COMMON_COLS + _WIND_EXTRA, MASTR_NRW_WIND_PATH),
-    "combustion": (_COMMON_COLS + _COMBUSTION_EXTRA, MASTR_NRW_COMBUSTION_PATH),
+    "solar": (_COMMON_COLS + _SOLAR_EXTRA, MASTR_PROCESSED_SOLAR_PATH),
+    "wind": (_COMMON_COLS + _WIND_EXTRA, MASTR_PROCESSED_WIND_PATH),
+    "combustion": (_COMMON_COLS + _COMBUSTION_EXTRA, MASTR_PROCESSED_COMBUSTION_PATH),
 }
 
 
@@ -129,14 +127,14 @@ def extract_nrw(technologies: list[str] | None = None) -> dict[str, pd.DataFrame
 
 def load_nrw_solar() -> pd.DataFrame:
     """Load cached NRW solar Parquet (run extract_nrw first)."""
-    return pd.read_parquet(MASTR_NRW_SOLAR_PATH)
+    return pd.read_parquet(MASTR_PROCESSED_SOLAR_PATH)
 
 
 def load_nrw_wind() -> pd.DataFrame:
     """Load cached NRW wind Parquet."""
-    return pd.read_parquet(MASTR_NRW_WIND_PATH)
+    return pd.read_parquet(MASTR_PROCESSED_WIND_PATH)
 
 
 def load_nrw_combustion() -> pd.DataFrame:
     """Load cached NRW combustion Parquet."""
-    return pd.read_parquet(MASTR_NRW_COMBUSTION_PATH)
+    return pd.read_parquet(MASTR_PROCESSED_COMBUSTION_PATH)

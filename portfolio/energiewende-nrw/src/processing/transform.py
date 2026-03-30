@@ -1,4 +1,4 @@
-"""Clean and aggregate MaStR + SMARD data into dashboard-ready DataFrames."""
+"""Clean and aggregate MaStR data into dashboard-ready DataFrames."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import logging
 
 import pandas as pd
 
-from src.config import MASTR_NRW_SOLAR_PATH, MASTR_NRW_WIND_PATH, PROCESSED_DIR
+from src.config import MASTR_NRW_SOLAR_PATH, MASTR_NRW_WIND_PATH
 
 log = logging.getLogger(__name__)
 
@@ -27,14 +27,14 @@ def _add_capacity_mw(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_combined_installations() -> pd.DataFrame:
-    """Load solar + wind, tag with *technology*, return unified DataFrame."""
+    """Load solar + wind from deploy dir, tag with *technology*, return unified DataFrame."""
     frames = []
     for path, tech in [
         (MASTR_NRW_SOLAR_PATH, "Solar"),
         (MASTR_NRW_WIND_PATH, "Wind"),
     ]:
         if not path.exists():
-            log.warning("Missing %s — run ingest first.", path)
+            log.warning("Missing %s — run prepare_deploy or ensure bootstrap.", path)
             continue
         df = pd.read_parquet(path)
         df["technology"] = tech
@@ -86,17 +86,3 @@ def monthly_additions(df: pd.DataFrame) -> pd.DataFrame:
     )
     monthly["month"] = monthly["month"].dt.to_timestamp()
     return monthly.sort_values("month")
-
-
-def aggregate_smard_monthly(df: pd.DataFrame) -> pd.DataFrame:
-    """Aggregate hourly SMARD generation to monthly totals (GWh)."""
-    if df.empty or "timestamp" not in df.columns:
-        return df
-    df = df.copy()
-    df["month"] = pd.to_datetime(df["timestamp"]).dt.to_period("M")
-
-    energy_cols = [c for c in df.columns if c not in ("timestamp_ms", "timestamp", "month")]
-    monthly = df.groupby("month")[energy_cols].sum() / 1_000  # MW·h → GWh
-    monthly.index = monthly.index.to_timestamp()
-    monthly.index.name = "month"
-    return monthly.reset_index()

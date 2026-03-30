@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Transform raw cached data into dashboard-ready Parquet files.
+"""Validate cached data and print summary stats.
 
 This script is a lightweight post-processing step.  The heavy lifting
-(download + NRW filtering) happens in `scripts/ingest.py`.  This script
-validates the cached data and prints summary stats.
+(download + NRW filtering) happens in `scripts/ingest.py`.
 
 Usage:
     python scripts/process.py
@@ -17,10 +16,16 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.config import MASTR_NRW_SOLAR_PATH, MASTR_NRW_WIND_PATH, SMARD_GENERATION_PATH
+from src.config import (
+    DEPLOY_DIR,
+    MASTR_NRW_SOLAR_PATH,
+    MASTR_NRW_WIND_PATH,
+    MASTR_PROCESSED_SOLAR_PATH,
+    MASTR_PROCESSED_WIND_PATH,
+    SMARD_GENERATION_PATH,
+)
 from src.processing.targets import compute_gap
 from src.processing.transform import (
-    aggregate_smard_monthly,
     cumulative_capacity,
     load_combined_installations,
     monthly_additions,
@@ -37,9 +42,10 @@ log = logging.getLogger(__name__)
 def main() -> None:
     log.info("═══ Datenverarbeitung starten ═══")
 
+    log.info("── Processed (full) files ──")
     for path, label in [
-        (MASTR_NRW_SOLAR_PATH, "Solar NRW"),
-        (MASTR_NRW_WIND_PATH, "Wind NRW"),
+        (MASTR_PROCESSED_SOLAR_PATH, "Solar NRW (processed)"),
+        (MASTR_PROCESSED_WIND_PATH, "Wind NRW (processed)"),
         (SMARD_GENERATION_PATH, "SMARD Erzeugung"),
     ]:
         if path.exists():
@@ -47,10 +53,23 @@ def main() -> None:
         else:
             log.warning("  ✗ %s FEHLT: %s", label, path)
 
+    log.info("── Deploy (slim) files ──")
+    for path, label in [
+        (MASTR_NRW_SOLAR_PATH, "Solar NRW (deploy)"),
+        (MASTR_NRW_WIND_PATH, "Wind NRW (deploy)"),
+    ]:
+        if path.exists():
+            size_mb = path.stat().st_size / 1_048_576
+            log.info("  ✓ %s vorhanden: %s (%.1f MB)", label, path, size_mb)
+        else:
+            log.warning("  ✗ %s FEHLT: %s — run scripts/prepare_deploy.py", label, path)
+
     log.info("Installationsdaten laden …")
     df = load_combined_installations()
     if df.empty:
-        log.error("Keine Installationsdaten gefunden. Bitte 'scripts/ingest.py' ausführen.")
+        log.error("Keine Installationsdaten gefunden. Bitte Pipeline ausführen:")
+        log.error("  1. python scripts/ingest.py")
+        log.error("  2. python scripts/prepare_deploy.py")
         sys.exit(1)
 
     log.info("  Anlagen gesamt: %s", f"{len(df):,}")
@@ -75,12 +94,9 @@ def main() -> None:
             g.gap_years,
         )
 
-    if SMARD_GENERATION_PATH.exists():
-        import pandas as pd
-
-        smard = pd.read_parquet(SMARD_GENERATION_PATH)
-        smard_monthly = aggregate_smard_monthly(smard)
-        log.info("SMARD monatlich aggregiert: %d Monate.", len(smard_monthly))
+    total_deploy = sum(f.stat().st_size for f in DEPLOY_DIR.glob("*.parquet"))
+    if total_deploy:
+        log.info("Deploy-Daten gesamt: %.1f MB", total_deploy / 1_048_576)
 
     log.info("═══ Verarbeitung abgeschlossen ═══")
 

@@ -6,9 +6,8 @@ import sys
 from pathlib import Path
 
 import pandas as pd
+import pydeck as pdk
 import streamlit as st
-from keplergl import KeplerGl
-from streamlit_keplergl import keplergl_static
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
@@ -29,24 +28,28 @@ ensure_data()
 st.title("🗺️ Anlagenkarte NRW")
 st.caption("Jede registrierte Solar- und Windanlage in Nordrhein-Westfalen (Quelle: MaStR)")
 
+TECH_COLORS = {
+    "Solar": [241, 196, 15],
+    "Wind": [52, 152, 219],
+    "Konventionell": [231, 76, 60],
+}
+
 
 @st.cache_data(ttl=3600)
 def _load_map_data():
     frames = []
-    for path, tech, color in [
-        (MASTR_NRW_SOLAR_PATH, "Solar", [241, 196, 15]),
-        (MASTR_NRW_WIND_PATH, "Wind", [52, 152, 219]),
+    for path, tech in [
+        (MASTR_NRW_SOLAR_PATH, "Solar"),
+        (MASTR_NRW_WIND_PATH, "Wind"),
     ]:
         if path.exists():
             df = pd.read_parquet(path)
             df["technology"] = tech
-            df["_color_r"], df["_color_g"], df["_color_b"] = color
             frames.append(df)
 
     if MASTR_NRW_COMBUSTION_PATH.exists():
         df = pd.read_parquet(MASTR_NRW_COMBUSTION_PATH)
         df["technology"] = "Konventionell"
-        df["_color_r"], df["_color_g"], df["_color_b"] = [231, 76, 60]
         frames.append(df)
 
     if not frames:
@@ -54,6 +57,7 @@ def _load_map_data():
 
     combined = pd.concat(frames, ignore_index=True)
     combined = combined.dropna(subset=["Breitengrad", "Laengengrad"])
+    combined["color"] = combined["technology"].map(TECH_COLORS)
     return combined
 
 
@@ -88,90 +92,43 @@ if min_kw > 0 and "Bruttoleistung" in filtered.columns:
 
 st.sidebar.metric("Angezeigte Anlagen", f"{len(filtered):,}")
 
-# ── Kepler.gl Map ───────────────────────────────────────────────────────────
-KEPLER_CONFIG = {
-    "version": "v1",
-    "config": {
-        "visState": {
-            "filters": [],
-            "layers": [
-                {
-                    "id": "installations",
-                    "type": "point",
-                    "config": {
-                        "dataId": "nrw_anlagen",
-                        "label": "Anlagen",
-                        "columns": {
-                            "lat": "Breitengrad",
-                            "lng": "Laengengrad",
-                        },
-                        "isVisible": True,
-                        "colorField": {"name": "technology", "type": "string"},
-                        "colorScale": "ordinal",
-                        "visConfig": {
-                            "radius": 3,
-                            "opacity": 0.7,
-                            "filled": True,
-                            "colorRange": {
-                                "name": "Custom",
-                                "type": "custom",
-                                "category": "Custom",
-                                "colors": [
-                                    "#f1c40f",
-                                    "#3498db",
-                                    "#e74c3c",
-                                ],
-                            },
-                        },
-                    },
-                    "visualChannels": {
-                        "colorField": {"name": "technology", "type": "string"},
-                        "colorScale": "ordinal",
-                        "sizeField": {"name": "Bruttoleistung", "type": "real"},
-                        "sizeScale": "sqrt",
-                    },
-                }
-            ],
-            "interactionConfig": {
-                "tooltip": {
-                    "enabled": True,
-                    "fieldsToShow": {
-                        "nrw_anlagen": [
-                            {"name": "technology", "format": None},
-                            {"name": "Bruttoleistung", "format": None},
-                            {"name": "Inbetriebnahmedatum", "format": None},
-                            {"name": "GemeindeName", "format": None},
-                        ]
-                    },
-                }
-            },
-        },
-        "mapState": {
-            "latitude": MAP_CENTER_LAT,
-            "longitude": MAP_CENTER_LON,
-            "zoom": MAP_ZOOM,
-        },
-        "mapStyle": {"styleType": "dark"},
-    },
+# ── Pydeck Map ──────────────────────────────────────────────────────────────
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=filtered,
+    get_position=["Laengengrad", "Breitengrad"],
+    get_color="color",
+    get_radius="Bruttoleistung",
+    radius_scale=0.3,
+    radius_min_pixels=1,
+    radius_max_pixels=15,
+    pickable=True,
+    opacity=0.7,
+    auto_highlight=True,
+)
+
+view_state = pdk.ViewState(
+    latitude=MAP_CENTER_LAT,
+    longitude=MAP_CENTER_LON,
+    zoom=MAP_ZOOM,
+    pitch=0,
+)
+
+tooltip = {
+    "html": (
+        "<b>{technology}</b><br/>"
+        "Leistung: {Bruttoleistung} kW<br/>"
+        "Gemeinde: {GemeindeName}"
+    ),
+    "style": {"backgroundColor": "#1a1a2e", "color": "#fafafa"},
 }
 
-map_df = filtered[
-    [
-        c
-        for c in [
-            "Breitengrad",
-            "Laengengrad",
-            "technology",
-            "Bruttoleistung",
-            "Inbetriebnahmedatum",
-            "GemeindeName",
-        ]
-        if c in filtered.columns
-    ]
-].copy()
-
-if "Inbetriebnahmedatum" in map_df.columns:
-    map_df["Inbetriebnahmedatum"] = map_df["Inbetriebnahmedatum"].astype(str)
-
-kepler_map = KeplerGl(height=700, data={"nrw_anlagen": map_df}, config=KEPLER_CONFIG)
-keplergl_static(kepler_map, height=700)
+st.pydeck_chart(
+    pdk.Deck(
+        layers=[layer],
+        initial_view_state=view_state,
+        tooltip=tooltip,
+        map_style="mapbox://styles/mapbox/dark-v11",
+    ),
+    height=700,
+)

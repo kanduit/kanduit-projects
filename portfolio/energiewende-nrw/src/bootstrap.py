@@ -1,32 +1,34 @@
-"""Auto-download and cache data on first launch.
+"""Auto-download and cache MVP data on first launch.
 
-Primary path: read committed Parquet files from data/processed/.
-Fallback: download from Zenodo (MaStR) and SMARD REST API, filter to NRW,
-and cache as Parquet so subsequent starts are instant.
+MVP startup requires only two deploy artifacts:
+  - nrw_solar.parquet
+  - nrw_wind.parquet
 
-The solar Zenodo CSV is ~723 MB compressed.  We stream-download the zip,
-read the CSV in pandas chunks (100k rows), filter each chunk to NRW, and
-concatenate only the matching rows — never loading the full national dataset
-into memory.
+Optional datasets (combustion, SMARD) are not required for startup and can be
+loaded explicitly when needed.
+
+On Streamlit Cloud (or any fresh checkout without committed deploy data), this
+module downloads MaStR CSVs from Zenodo, filters to NRW, selects the slim
+column set used by the dashboard, and writes directly to data/deploy/.
 """
 
 from __future__ import annotations
 
-import io
 import logging
+import io
 import zipfile
-from pathlib import Path
 
 import pandas as pd
 import requests
 import streamlit as st
 
 from src.config import (
+    DEPLOY_DIR,
     MASTR_NRW_COMBUSTION_PATH,
     MASTR_NRW_SOLAR_PATH,
     MASTR_NRW_WIND_PATH,
+    MVP_REQUIRED_PATHS,
     NRW_BUNDESLAND,
-    PROCESSED_DIR,
     SMARD_GENERATION_PATH,
 )
 
@@ -41,13 +43,24 @@ _ZENODO_FILES = {
     "combustion": "bnetza_mastr_combustion_raw.csv.zip",
 }
 
-_OUTPUT_PATHS = {
+_MVP_OUTPUT_PATHS = {
     "solar": MASTR_NRW_SOLAR_PATH,
     "wind": MASTR_NRW_WIND_PATH,
-    "combustion": MASTR_NRW_COMBUSTION_PATH,
 }
+_OPTIONAL_OUTPUT_PATHS = {"combustion": MASTR_NRW_COMBUSTION_PATH}
+_MVP_TECHS = ["wind", "solar"]
 
 _STATE_COLUMN_CANDIDATES = ["Bundesland", "bundesland", "state", "State"]
+
+_DEPLOY_COLUMNS = [
+    "EinheitMastrNummer",
+    "Bruttoleistung",
+    "Inbetriebnahmedatum",
+    "GemeindeName",
+    "Gemeindeschluessel",
+    "Breitengrad",
+    "Laengengrad",
+]
 
 CHUNK_SIZE = 100_000
 
@@ -108,15 +121,21 @@ def _download_zenodo_csv_nrw(
     if not nrw_chunks:
         return pd.DataFrame()
 
-    return pd.concat(nrw_chunks, ignore_index=True)
+    df = pd.concat(nrw_chunks, ignore_index=True)
+    keep_cols = [c for c in _DEPLOY_COLUMNS if c in df.columns]
+    if keep_cols:
+        df = df[keep_cols]
+    return df
 
 
 def _ensure_mastr_tech(tech: str) -> None:
-    out_path = _OUTPUT_PATHS[tech]
+    out_path = _MVP_OUTPUT_PATHS.get(tech) or _OPTIONAL_OUTPUT_PATHS.get(tech)
+    if out_path is None:
+        raise KeyError(f"Unknown technology '{tech}'")
     if out_path.exists():
         return
 
-    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+    DEPLOY_DIR.mkdir(parents=True, exist_ok=True)
     df = _download_zenodo_csv_nrw(tech, progress_text=f"MaStR {tech}")
     log.info("  NRW %s: %s Anlagen", tech, f"{len(df):,}")
     df.to_parquet(out_path, index=False)
@@ -133,33 +152,35 @@ def _ensure_smard() -> None:
     download_generation()
 
 
-def ensure_data() -> None:
-    """Ensure all required data files exist — download if missing.
+def ensure_optional_data() -> None:
+    """Download optional datasets that are not required for MVP startup."""
+    if not _OPTIONAL_OUTPUT_PATHS["combustion"].exists():
+        _ensure_mastr_tech("combustion")
+    if not SMARD_GENERATION_PATH.exists():
+        _ensure_smard()
+
+
+def ensure_data(include_optional: bool = False) -> None:
+    """Ensure MVP-required files exist — download if missing.
 
     Call this at the top of every Streamlit page.  If data is already
     cached (committed to repo or from a previous run), this is a no-op.
     """
-    all_present = all(p.exists() for p in _OUTPUT_PATHS.values()) and SMARD_GENERATION_PATH.exists()
-    if all_present:
-        return
-
-    mastr_present = all(p.exists() for p in [MASTR_NRW_SOLAR_PATH, MASTR_NRW_WIND_PATH])
-    if mastr_present:
-        if not SMARD_GENERATION_PATH.exists():
-            with st.spinner("SMARD-Erzeugungsdaten werden heruntergeladen …"):
-                _ensure_smard()
+    if all(p.exists() for p in MVP_REQUIRED_PATHS):
+        if include_optional:
+            ensure_optional_data()
         return
 
     with st.status("Daten werden erstmalig heruntergeladen …", expanded=True) as status:
-        for tech in ["wind", "combustion", "solar"]:
-            if not _OUTPUT_PATHS[tech].exists():
+        for tech in _MVP_TECHS:
+            if not _MVP_OUTPUT_PATHS[tech].exists():
                 st.write(f"📥 MaStR {tech.title()} wird von Zenodo geladen …")
                 _ensure_mastr_tech(tech)
                 st.write(f"✅ {tech.title()} — fertig")
 
-        if not SMARD_GENERATION_PATH.exists():
-            st.write("📥 SMARD-Erzeugungsdaten werden geladen …")
-            _ensure_smard()
-            st.write("✅ SMARD — fertig")
+        if include_optional:
+            st.write("📥 Optionale Daten werden geladen …")
+            ensure_optional_data()
+            st.write("✅ Optionale Daten — fertig")
 
-        status.update(label="Alle Daten geladen!", state="complete")
+        status.update(label="MVP-Daten geladen!", state="complete")

@@ -45,7 +45,7 @@ Es gibt keine einheitliche Sicht, die beantwortet: **Wie viel haben wir gebaut? 
 
 Der **Energiewende-Monitor NRW** ist ein interaktives Dashboard, das echte Behördendaten in vier Ansichten bündelt:
 
-- **Interaktive Karte** — jede registrierte Solaranlage und Windturbine in NRW, auf einer Kepler.gl-Karte (~500.000 Anlagen)
+- **Interaktive Karte** — jede registrierte Solaranlage und Windturbine in NRW, auf einer pydeck/deck.gl-Karte (~500.000 Anlagen)
 - **Ausbautracker** — kumulierte installierte Leistung vs. erforderlicher linearer Zielpfad 2030, getrennt für Solar und Wind
 - **Gemeinderanking** — welche der 396 NRW-Gemeinden treiben die Energiewende voran, und welche fallen zurück?
 - **Lückenanalyse** — „Beim aktuellen Ausbautempo verfehlt NRW das Ziel 2030 um X Jahre" — mit Szenarienmodellierung für Beschleunigung
@@ -80,45 +80,32 @@ Alle Daten sind **öffentlich zugänglich** unter offenen Lizenzen:
 ## Technische Architektur
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                    Daten-Ingestion                         │
-│                                                          │
-│  MaStR (open-mastr)        SMARD (REST-API)              │
-│  ~3 Mio. Einheiten nat.   Stündl. Erzeugung je Träger   │
-│  ↓ Bulk-XML-Download       ↓ GET-Requests je Filter      │
-│  ↓ Filter Bundesland=NRW   ↓ Aggregation auf Monatswerte │
-│  ↓ ~500.000 NRW-Anlagen                                 │
-└───────────────────────┬──────────────────────────────────┘
-                        │
-                   Parquet-Cache
-                   (data/processed/)
-                        │
-┌───────────────────────┴──────────────────────────────────┐
-│                    Verarbeitung                            │
-│                                                          │
-│  transform.py    targets.py       scorecard.py           │
-│  Bereinigung     Lückenberechnung Gemeinde-Scoring       │
-│  + Vereinheitl.  gg. 2030-Ziele   (Composite-Score)      │
-└───────────────────────┬──────────────────────────────────┘
-                        │
-┌───────────────────────┴──────────────────────────────────┐
-│                 Streamlit-Dashboard                        │
-│                                                          │
-│  Startseite     Karte        Ausbau-    Gemeinde-  Lücken-│
-│  (KPI-Karten)  (Kepler.gl)   tracker    ranking    analyse│
-└──────────────────────────────────────────────────────────┘
+ Offline (lokaler Rechner)                Deployed (Streamlit Cloud)
+┌────────────────────────────────┐       ┌─────────────────────────────┐
+│  scripts/ingest.py             │       │  Streamlit-Dashboard        │
+│  MaStR (open-mastr) + SMARD   │       │                             │
+│  ↓ Bulk-Download + NRW-Filter  │       │  Startseite  Karte   Ausbau│
+│  ↓ data/processed/ (~50 MB)    │       │  (KPIs)     (pydeck) tracker│
+│                                │       │                             │
+│  scripts/prepare_deploy.py     │       │  Gemeinde-   Lücken-       │
+│  ↓ Spaltenreduktion + Dtype-Opt│       │  ranking     analyse       │
+│  ↓ data/deploy/ (~10-15 MB)   ─┼──────→  liest schlanke Parquets   │
+└────────────────────────────────┘       └──────────────┬──────────────┘
+                                                        │
+                                          Falls Deploy-Daten fehlen:
+                                          bootstrap.py lädt von Zenodo
+                                          (Zero-Config-Fallback)
 ```
 
 ### Technologie-Stack
 
 | Komponente | Technologie |
 |---|---|
-| Daten-Ingestion | [`open-mastr`](https://pypi.org/project/open-MaStR/) + SMARD REST-API |
+| Daten-Ingestion (offline) | [`open-mastr`](https://pypi.org/project/open-MaStR/) + SMARD REST-API |
 | Verarbeitung | pandas, PyArrow (Parquet) |
 | Dashboard | Streamlit |
-| Kartenvisualisierung | Kepler.gl (WebGL, GPU-beschleunigt) |
+| Kartenvisualisierung | pydeck / deck.gl (WebGL, GPU-beschleunigt) |
 | Diagramme | Plotly |
-| Geodaten | GeoPandas, Shapely |
 
 ## Bereitstellung
 
@@ -126,10 +113,11 @@ Alle Daten sind **öffentlich zugänglich** unter offenen Lizenzen:
 
 Der schnellste Weg zu einer öffentlichen URL — kein Server nötig:
 
-1. Dieses Repo auf GitHub pushen
-2. Auf [share.streamlit.io](https://share.streamlit.io) gehen und GitHub-Konto verbinden
-3. Repo auswählen, Hauptdatei auf `app/Startseite.py` setzen
-4. Deployen — Sie erhalten eine URL wie `https://energiewende-nrw.streamlit.app`
+1. Daten-Pipeline lokal ausführen (siehe Option B), um `data/deploy/`-Parquets zu erzeugen
+2. Dieses Repo (inkl. `data/deploy/`) auf GitHub pushen
+3. Auf [share.streamlit.io](https://share.streamlit.io) gehen und GitHub-Konto verbinden
+4. Repo auswählen, Hauptdatei auf `app/Startseite.py` setzen
+5. Deployen — Sie erhalten eine URL wie `https://energiewende-nrw.streamlit.app`
 
 **Einbetten als iframe** (z.B. in Confluence, einer Behörden-Website oder Notion):
 
@@ -142,7 +130,9 @@ Der schnellste Weg zu einer öffentlichen URL — kein Server nötig:
 
 Der `?embed=true` Parameter entfernt die Streamlit-Oberfläche für eine saubere Einbettung.
 
-**Datenstrategie für Cloud:** Die aufbereiteten NRW-Parquet-Dateien (~30–50 MB) werden im Repo committed, damit Kaltstarts sofort funktionieren. Falls die Dateien fehlen (z.B. frischer Clone ohne Daten), lädt die App beim ersten Start automatisch von [Zenodo](https://zenodo.org/records/14843222) und der SMARD-API herunter.
+**Datenstrategie für Cloud:** Die schlanken, spaltenreduzierten NRW-Parquet-Dateien (~10–15 MB) in `data/deploy/` werden im Repo committed. Die App liest sie direkt beim Start — keine Laufzeit-Downloads, keine Netzwerkabhängigkeiten. Kaltstarts sind sofort.
+
+**Zero-Config-Fallback:** Falls die Deploy-Daten fehlen (z.B. frischer Klon ohne Pipeline-Durchlauf), lädt die App automatisch MaStR Solar+Wind-Daten von [Zenodo](https://zenodo.org/records/14843222), filtert auf NRW und schreibt die Deploy-Dateien. Dadurch funktioniert „Klonen und Starten" ohne jegliches Pipeline-Setup.
 
 ### Option B: Lokal ausführen
 
@@ -158,6 +148,11 @@ Der `?embed=true` Parameter entfernt die Streamlit-Oberfläche für eine saubere
 git clone <repo-url> energiewende-nrw
 cd energiewende-nrw
 python -m venv .venv && source .venv/bin/activate
+
+# Mit Ingest-Abhängigkeiten installieren (für Daten-Pipeline)
+pip install -e ".[ingest]"
+
+# Oder nur Laufzeit-Abhängigkeiten (für Dashboard)
 pip install -e .
 ```
 
@@ -174,6 +169,18 @@ python scripts/ingest.py --mastr     # Nur MaStR-Anlagen
 python scripts/ingest.py --smard     # Nur SMARD-Erzeugungsdaten
 python scripts/ingest.py --geodata   # Nur Gemeindegrenzen
 ```
+
+#### Deploy-Daten vorbereiten
+
+Nach der Ingestion die schlanken Parquet-Dateien für das Dashboard erzeugen:
+
+```bash
+python scripts/prepare_deploy.py
+```
+
+Dieses Skript liest die vollständigen Parquets aus `data/processed/`, reduziert auf
+die vom Dashboard benötigten Spalten, optimiert Datentypen und schreibt komprimierte
+Dateien nach `data/deploy/`.
 
 #### Daten prüfen
 
@@ -195,16 +202,20 @@ Das Dashboard öffnet sich unter `http://localhost:8501`.
 energiewende-nrw/
 ├── README.md                        # Englische Version
 ├── README.de.md                     # Diese Datei (Deutsch)
-├── pyproject.toml                   # Projektabhängigkeiten
+├── pyproject.toml                   # Projektabhängigkeiten (Laufzeit + optionale Ingest-Deps)
+├── requirements.txt                 # Minimale Deploy-Deps (Streamlit Cloud liest diese)
 ├── data/
 │   ├── raw/                         # MaStR Bulk-Downloads (gitignored)
-│   ├── processed/                   # Bereinigte Parquet-Dateien (gitignored)
+│   ├── processed/                   # Vollständige Parquet-Dateien (gitignored)
+│   ├── deploy/                      # Schlanke Parquets fürs Dashboard (committed)
+│   │   ├── nrw_solar.parquet
+│   │   ├── nrw_wind.parquet
+│   │   └── nrw_combustion.parquet
 │   └── reference/
-│       ├── nrw_gemeinden.geojson    # NRW-Gemeindegrenzen
 │       └── targets.json             # Offizielle 2030-Ziele
 ├── src/
-│   ├── config.py                    # Pfade, API-Endpunkte, Zielwerte
-│   ├── bootstrap.py                 # Auto-Download beim ersten Start
+│   ├── config.py                    # Pfade, Zielwerte, Dashboard-Konstanten
+│   ├── bootstrap.py                 # Auto-Download beim ersten Start (Zenodo)
 │   ├── ingest/
 │   │   ├── mastr.py                 # MaStR Bulk-Download + NRW-Filter
 │   │   └── smard.py                 # SMARD REST-API Client
@@ -215,12 +226,13 @@ energiewende-nrw/
 ├── app/
 │   ├── Startseite.py                # Dashboard-Startseite (KPI-Übersicht)
 │   └── pages/
-│       ├── 1_Karte.py               # Interaktive Anlagenkarte
+│       ├── 1_Karte.py               # Interaktive Anlagenkarte (pydeck)
 │       ├── 2_Ausbautracker.py       # Ausbautracker vs. Zielpfade
 │       ├── 3_Gemeinderanking.py     # Gemeinde-Scorecard
 │       └── 4_Lueckenanalyse.py      # Lückenanalyse + Szenarien
 └── scripts/
-    ├── ingest.py                    # CLI: Datendownload
+    ├── ingest.py                    # CLI: Datendownload (benötigt [ingest]-Deps)
+    ├── prepare_deploy.py            # CLI: Spaltenreduktion → data/deploy/
     ├── process.py                   # CLI: Datenvalidierung
     └── download_geodata.py          # Gemeinde-GeoJSON-Download
 ```

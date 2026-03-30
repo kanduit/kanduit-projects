@@ -1,10 +1,10 @@
-# Data — raw downloads are large and always gitignored
+# Data — raw downloads and full processed files are large
 data/raw/
+data/processed/
 *.sqlite
 
-# Processed Parquet: intentionally NOT gitignored.
-# Commit the NRW-filtered Parquet files so Streamlit Cloud can start instantly.
-# If you want to ignore them locally, use: git update-index --skip-worktree data/processed/
+# Deploy parquets — slim, column-pruned files that ARE committed
+!data/deploy/
 
 # Python
 __pycache__/
