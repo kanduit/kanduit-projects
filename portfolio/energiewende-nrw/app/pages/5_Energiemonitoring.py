@@ -20,6 +20,7 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from src.bootstrap import ensure_data, ensure_smard_data
+from src.branding import render_header
 from src.config import DASHBOARD_ICON, DASHBOARD_TITLE, SMARD_DEPLOY_PATH, SMARD_GENERATION_PATH
 
 st.set_page_config(
@@ -29,6 +30,7 @@ st.set_page_config(
 )
 ensure_data()
 ensure_smard_data()
+render_header()
 
 st.title("⚡ Energiemonitoring Deutschland")
 st.caption(

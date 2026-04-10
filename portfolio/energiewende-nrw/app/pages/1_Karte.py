@@ -13,6 +13,7 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from src.bootstrap import ensure_data
+from src.branding import render_header
 from src.processing.transform import load_gemeinde_lookup
 from src.config import (
     DASHBOARD_ICON,
@@ -28,6 +29,7 @@ from src.config import (
 
 st.set_page_config(page_title=f"Karte — {DASHBOARD_TITLE}", page_icon=DASHBOARD_ICON, layout="wide")
 ensure_data()
+render_header()
 st.title("🗺️ Anlagenkarte NRW")
 st.caption("Jede registrierte Solar- und Windanlage in Nordrhein-Westfalen (Quelle: MaStR)")
 

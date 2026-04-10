@@ -11,12 +11,13 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from src.bootstrap import ensure_data
+from src.branding import render_header
 from src.config import (
     DASHBOARD_ICON,
     DASHBOARD_TITLE,
     TARGETS_2030,
 )
-from src.bootstrap import ensure_data
 from src.processing.targets import compute_gap
 from src.processing.transform import (
     cumulative_capacity,
@@ -31,6 +32,7 @@ st.set_page_config(
 )
 
 ensure_data()
+render_header()
 
 # ── Custom CSS ──────────────────────────────────────────────────────────────
 st.markdown(
