@@ -1,0 +1,32 @@
+[project]
+name = "energiewende-nrw"
+version = "0.2.0"
+description = "Energy Transition Monitor — Tracking the Coal Phase-Out in NRW"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+dependencies = [
+    "streamlit>=1.30",
+    "pandas>=2.2",
+    "pyarrow>=14",
+    "plotly>=5.18",
+    "pydeck>=0.8",
+    "numpy>=1.26",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+ingest = [
+    "open-mastr>=0.16",
+    "requests>=2.31",
+    "geopandas>=0.14",
+    "shapely>=2.0",
+]
+
+[project.scripts]
+ew-ingest = "scripts.ingest:main"
+ew-process = "scripts.process:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

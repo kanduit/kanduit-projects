@@ -1,0 +1,36 @@
+# Data — raw downloads and full processed files are large
+data/raw/
+data/processed/
+*.sqlite
+
+# Deploy parquets — slim, column-pruned files that ARE committed
+!data/deploy/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+.pixi/
+.conda/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
+
+# open-mastr local DB
+$HOME/.open-MaStR/

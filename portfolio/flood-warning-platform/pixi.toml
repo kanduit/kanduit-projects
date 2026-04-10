@@ -1,0 +1,14 @@
+[project]
+name = "flood-warning-platform"
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "osx-64", "linux-64"]
+
+[dependencies]
+python = ">=3.13"
+
+[pypi-dependencies]
+requests = "*"
+
+[tasks]
+generate-data = "python scripts/generate_sample_data.py"
+serve = "python -m http.server 8080 --directory docs"
