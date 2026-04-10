@@ -1,3 +1,9 @@
 .DS_Store
 **/.DS_Store
 
+# Cursor IDE (plans, logs) — not part of the repo
+.cursor/
+**/.cursor/
+
+# Local Python cache scratch directory
+.pycache_tmp/
