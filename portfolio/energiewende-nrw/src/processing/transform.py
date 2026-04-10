@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import json
 import logging
 
 import pandas as pd
 
-from src.config import MASTR_NRW_SOLAR_PATH, MASTR_NRW_WIND_PATH
+from src.config import GEMEINDEN_GEOJSON_PATH, MASTR_NRW_SOLAR_PATH, MASTR_NRW_WIND_PATH
 
 log = logging.getLogger(__name__)
 
@@ -24,6 +25,30 @@ def _add_capacity_mw(df: pd.DataFrame) -> pd.DataFrame:
             df["capacity_mw"] = df[src] / 1_000
             break
     return df
+
+
+def load_gemeinde_lookup() -> pd.DataFrame:
+    """Build AGS → GemeindeName lookup from the NRW GeoJSON reference file.
+
+    The GeoJSON uses 12-digit Regionalschlüssel (RS) in ``gem_code``, while
+    MaStR deploy parquets use the 8-digit Amtlicher Gemeindeschlüssel (AGS).
+    Conversion: AGS = RS[:5] + RS[9:]
+    """
+    if not GEMEINDEN_GEOJSON_PATH.exists():
+        return pd.DataFrame(columns=["Gemeindeschluessel", "GemeindeName"])
+
+    with open(GEMEINDEN_GEOJSON_PATH) as f:
+        gj = json.load(f)
+
+    rows = []
+    for feat in gj["features"]:
+        props = feat["properties"]
+        rs = props["gem_code"][0]
+        ags = rs[:5] + rs[9:]
+        name = props["gem_name_short"][0]
+        rows.append({"Gemeindeschluessel": ags, "GemeindeName": name})
+
+    return pd.DataFrame(rows).drop_duplicates(subset=["Gemeindeschluessel"])
 
 
 def load_combined_installations() -> pd.DataFrame:
@@ -46,6 +71,13 @@ def load_combined_installations() -> pd.DataFrame:
     combined = pd.concat(frames, ignore_index=True)
     combined = _parse_dates(combined)
     combined = _add_capacity_mw(combined)
+
+    if "GemeindeName" not in combined.columns and "Gemeindeschluessel" in combined.columns:
+        lookup = load_gemeinde_lookup()
+        if not lookup.empty:
+            combined["Gemeindeschluessel"] = combined["Gemeindeschluessel"].astype(str)
+            combined = combined.merge(lookup, on="Gemeindeschluessel", how="left")
+
     return combined
 
 

@@ -1,7 +1,9 @@
 """SMARD (Bundesnetzagentur) REST API client.
 
-Downloads hourly electricity generation data by energy source.
+Downloads electricity generation data by energy source.
 See https://smard.api.bund.dev/ for the OpenAPI spec.
+
+Supported resolutions: quarterhour, hour, day, week, month, year.
 
 Limitation: SMARD provides data at national (DE) or transmission-zone level
 (50Hertz, Amprion, TenneT, TransnetBW).  NRW falls mostly within the Amprion
@@ -32,21 +34,21 @@ _SESSION = requests.Session()
 _SESSION.headers.update({"Accept": "application/json"})
 
 
-def _get_timestamps(filter_id: int, region: str) -> list[int]:
+def _get_timestamps(filter_id: int, region: str, resolution: str) -> list[int]:
     """Fetch available timestamp indices for a given filter/region."""
-    url = f"{SMARD_BASE_URL}/{filter_id}/{region}/index_{SMARD_RESOLUTION}.json"
+    url = f"{SMARD_BASE_URL}/{filter_id}/{region}/index_{resolution}.json"
     resp = _SESSION.get(url, timeout=30)
     resp.raise_for_status()
     return resp.json().get("timestamps", [])
 
 
 def _get_timeseries(
-    filter_id: int, region: str, timestamp: int
+    filter_id: int, region: str, timestamp: int, resolution: str
 ) -> list[list[int | float | None]]:
     """Fetch one chunk of time-series data."""
     url = (
         f"{SMARD_BASE_URL}/{filter_id}/{region}/"
-        f"{filter_id}_{region}_{SMARD_RESOLUTION}_{timestamp}.json"
+        f"{filter_id}_{region}_{resolution}_{timestamp}.json"
     )
     resp = _SESSION.get(url, timeout=30)
     resp.raise_for_status()
@@ -57,27 +59,42 @@ def download_generation(
     region: str = SMARD_REGION_DE,
     start_year: int = 2018,
     filters: dict[str, int] | None = None,
+    resolution: str | None = None,
 ) -> pd.DataFrame:
-    """Download hourly generation data for all configured energy sources.
+    """Download generation data for all configured energy sources.
+
+    Parameters
+    ----------
+    resolution : str, optional
+        One of: quarterhour, hour, day, week, month, year.
+        Defaults to the value in config (SMARD_RESOLUTION).
 
     Returns a DataFrame with columns: timestamp, <source_1>, <source_2>, …
-    Values are in MW.
+    Values are in MWh (energy per period).
     """
     filters = filters or SMARD_FILTERS
+    resolution = resolution or SMARD_RESOLUTION
     cutoff = int(datetime(start_year, 1, 1, tzinfo=timezone.utc).timestamp()) * 1000
 
     all_series: dict[str, pd.Series] = {}
 
     for name, fid in filters.items():
-        log.info("SMARD: fetching '%s' (filter %d) …", name, fid)
-        timestamps = _get_timestamps(fid, region)
+        log.info("SMARD: fetching '%s' (filter %d, %s) …", name, fid, resolution)
+        try:
+            timestamps = _get_timestamps(fid, region, resolution)
+        except requests.HTTPError as exc:
+            log.warning("  ⚠ Skipping '%s': %s", name, exc)
+            continue
         relevant = [t for t in timestamps if t >= cutoff]
 
         records: list[tuple[int, float | None]] = []
         for ts in relevant:
-            chunk = _get_timeseries(fid, region, ts)
-            records.extend(chunk)
-            time.sleep(0.15)  # polite rate-limit
+            try:
+                chunk = _get_timeseries(fid, region, ts, resolution)
+                records.extend(chunk)
+            except requests.HTTPError:
+                pass
+            time.sleep(0.1)
 
         sdf = pd.DataFrame(records, columns=["timestamp_ms", name])
         sdf = sdf.dropna(subset=[name])

@@ -77,8 +77,9 @@ SMARD_FILTERS = {
 
 SMARD_REGION_DE = "DE"
 SMARD_REGION_AMPRION = "Amprion"
-SMARD_RESOLUTION = "hour"
+SMARD_RESOLUTION = "week"
 SMARD_GENERATION_PATH = PROCESSED_DIR / "smard_generation.parquet"
+SMARD_DEPLOY_PATH = DEPLOY_DIR / "smard_generation.parquet"
 
 # Full-column processed paths used only by scripts/ingest.py and
 # scripts/prepare_deploy.py — not by the dashboard at runtime.

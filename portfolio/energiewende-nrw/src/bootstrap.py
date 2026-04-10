@@ -29,6 +29,7 @@ from src.config import (
     MASTR_NRW_WIND_PATH,
     MVP_REQUIRED_PATHS,
     NRW_BUNDESLAND,
+    SMARD_DEPLOY_PATH,
     SMARD_GENERATION_PATH,
 )
 
@@ -142,22 +143,44 @@ def _ensure_mastr_tech(tech: str) -> None:
     log.info("  Saved → %s", out_path)
 
 
+def _smard_available() -> bool:
+    return SMARD_DEPLOY_PATH.exists() or SMARD_GENERATION_PATH.exists()
+
+
 def _ensure_smard() -> None:
-    if SMARD_GENERATION_PATH.exists():
+    """Download SMARD data and save to both processed and deploy dirs."""
+    if _smard_available():
         return
 
     from src.ingest.smard import download_generation
 
     log.info("Downloading SMARD generation data …")
-    download_generation()
+    df = download_generation()
+
+    if not SMARD_DEPLOY_PATH.exists() and not df.empty:
+        DEPLOY_DIR.mkdir(parents=True, exist_ok=True)
+        df.to_parquet(SMARD_DEPLOY_PATH, index=False, compression="zstd")
+        log.info("Saved SMARD deploy copy → %s", SMARD_DEPLOY_PATH)
 
 
 def ensure_optional_data() -> None:
     """Download optional datasets that are not required for MVP startup."""
     if not _OPTIONAL_OUTPUT_PATHS["combustion"].exists():
         _ensure_mastr_tech("combustion")
-    if not SMARD_GENERATION_PATH.exists():
+    if not _smard_available():
         _ensure_smard()
+
+
+def ensure_smard_data() -> None:
+    """Ensure SMARD generation data exists in deploy dir — download if missing."""
+    if _smard_available():
+        return
+
+    with st.status("SMARD-Erzeugungsdaten werden heruntergeladen …", expanded=True) as status:
+        st.write("📥 SMARD-Daten werden von smard.de geladen …")
+        _ensure_smard()
+        st.write("✅ SMARD-Daten — fertig")
+        status.update(label="SMARD-Daten geladen!", state="complete")
 
 
 def ensure_data(include_optional: bool = False) -> None:

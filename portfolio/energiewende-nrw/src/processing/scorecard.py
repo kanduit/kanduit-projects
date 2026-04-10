@@ -29,6 +29,12 @@ def compute_scorecard(
     if installations.empty:
         return pd.DataFrame()
 
+    required = ["GemeindeName", "Gemeindeschluessel"]
+    missing = [c for c in required if c not in installations.columns]
+    if missing:
+        log.warning("Missing columns for scorecard: %s", missing)
+        return pd.DataFrame()
+
     df = installations.dropna(subset=["GemeindeName"]).copy()
 
     gem_group = df.groupby(["GemeindeName", "Gemeindeschluessel"])
