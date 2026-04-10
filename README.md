@@ -14,4 +14,4 @@ Monorepo fuer Kanduit-Portfolio-Projekte mit klarer Trennung zwischen Quelle und
 - `portfolio/kommunalatlas-nrw` -> statisch, publiziert unter `docs/kommunalatlas-nrw/`
 - `portfolio/nrw-bridge-dashboard` -> statisch, publiziert unter `docs/nrw-bridge-dashboard/`
 - `portfolio/flood-warning-platform` -> statisch, publiziert unter `docs/flood-warning-platform/`
-- `portfolio/energiewende-nrw` -> Streamlit (Deployment ueber Streamlit Community Cloud)
+- `portfolio/energiewende-nrw` -> Streamlit: [Energiewende NRW — Energiemonitoring](https://kanduit-projects-energiewende-nrw.streamlit.app/Energiemonitoring)
