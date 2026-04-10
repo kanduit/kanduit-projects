@@ -11,6 +11,7 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from src.bootstrap import ensure_data
+from src.branding import render_header
 from src.config import DASHBOARD_ICON, DASHBOARD_TITLE, TARGETS_2030
 from src.processing.targets import build_trajectory
 from src.processing.transform import cumulative_capacity, load_combined_installations
@@ -21,6 +22,7 @@ st.set_page_config(
     layout="wide",
 )
 ensure_data()
+render_header()
 st.title("📈 Ausbautracker")
 st.caption("Kumulierte installierte Leistung vs. linearer Zielpfad 2030")
 

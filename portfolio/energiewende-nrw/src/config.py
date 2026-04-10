@@ -51,6 +51,8 @@ EXPANSION_BASELINE_YEAR = 2018
 # ---------------------------------------------------------------------------
 DASHBOARD_TITLE = "Energiewende-Monitor NRW"
 DASHBOARD_ICON = "⚡"
+LOGO_PATH = ASSETS_DIR / "kanduit-logo.png"
+COMPANY_NAME = "Kanduit"
 MAP_CENTER_LAT = 51.45
 MAP_CENTER_LON = 7.01
 MAP_ZOOM = 8
