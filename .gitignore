@@ -7,3 +7,7 @@
 
 # Local Python cache scratch directory
 .pycache_tmp/
+
+# Internal / commercial notes — never publish to the public repo
+*.internal.md
+**/*.internal.md
