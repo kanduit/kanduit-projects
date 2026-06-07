@@ -164,8 +164,8 @@ a{ color:var(--petrol-700); text-decoration:none; }
 .field input{ min-width:220px; }
 .field select:focus,.field input:focus{ outline:2px solid var(--petrol-300); border-color:var(--petrol-400); }
 .table-wrap{ background:#fff; border:1px solid var(--neutral-200); border-radius:var(--r-card);
-  box-shadow:var(--shadow); overflow:hidden; }
-table{ width:100%; border-collapse:collapse; font-size:.9rem; }
+  box-shadow:var(--shadow); overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; }
+table{ width:100%; min-width:920px; border-collapse:collapse; font-size:.9rem; }
 thead th{ position:sticky; top:0; background:var(--neutral-100); text-align:left;
   font-family:var(--font-mono); font-size:var(--t-micro); text-transform:uppercase; letter-spacing:.06em;
   color:var(--neutral-600); padding:11px 14px; cursor:pointer; white-space:nowrap; border-bottom:1px solid var(--neutral-200); }
@@ -174,6 +174,9 @@ thead th:hover{ color:var(--petrol-700); }
 thead th .arr{ opacity:.4; }
 thead th.sorted .arr{ opacity:1; color:var(--petrol-600); }
 tbody td{ padding:10px 14px; border-bottom:1px solid var(--neutral-100); white-space:nowrap; }
+/* School-name column: allow wrapping + cap width so long names don't push other columns off-screen */
+thead th:first-child{ min-width:220px; }
+tbody td:first-child{ white-space:normal; overflow-wrap:anywhere; min-width:220px; max-width:300px; line-height:1.35; }
 tbody td.num{ text-align:right; font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
 tbody tr{ cursor:pointer; }
 tbody tr:hover{ background:var(--petrol-100); }
@@ -235,6 +238,23 @@ tbody tr:last-child td{ border-bottom:none; }
 .footer .wrap{ display:flex; flex-wrap:wrap; gap:18px; justify-content:space-between; align-items:center; padding:0; }
 .footer .src{ font-size:var(--t-small); max-width:62ch; line-height:1.5; }
 .footer .mono{ font-size:var(--t-micro); text-transform:uppercase; letter-spacing:.08em; color:var(--neutral-500); }
+
+/* ---------------- Mobile / small screens ---------------- */
+@media(max-width:760px){
+  .topbar{ flex-wrap:wrap; gap:10px 12px; padding:10px 16px; }
+  .brand{ font-size:1.02rem; }
+  .topbar .right{ margin-left:auto; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+  .stand{ display:none; }
+  .tabs{ order:3; width:100%; margin-left:0; flex-wrap:nowrap; overflow-x:auto;
+    -webkit-overflow-scrolling:touch; gap:4px; padding-bottom:2px; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar{ display:none; }
+  .tab{ flex:0 0 auto; }
+  /* filters fill the available width instead of overflowing */
+  .filters{ gap:10px 12px; }
+  .filters .field{ flex:1 1 150px; min-width:0; }
+  .filters .field select, .filters .field input{ min-width:0; width:100%; }
+  .view-head h2{ font-size:1.45rem; }
+}
 
 @media print{
   .topbar, .footer, .map-toolbar .seg, .filters, .drawer, .scrim, .kbtn{ display:none !important; }
