@@ -1,0 +1,385 @@
+/* ============================================================
+   KANDUIT ‚Äî Squarespace Custom CSS (Brand Redesign ¬∑ Route 1)
+   ------------------------------------------------------------
+   Paste into: Squarespace ‚Ä∫ Website ‚Ä∫ Website Tools ‚Ä∫
+               Custom CSS  (7.1)  ‚Äî or  Design ‚Ä∫ Custom CSS (7.0)
+
+   Implements the Kanduit brand book (Assets/Kanduit/css/tokens.css)
+   on the live Squarespace site. CSS only ‚Äî no HTML changes.
+
+   Order matters: keep the @import first, then tokens, then sections.
+   Squarespace's own styles are fairly specific, so a few rules use
+   !important ‚Äî each is flagged with WHY.
+
+   Foundation focus: color palette ¬∑ typography ¬∑ visual direction.
+   Section-specific blocks (hero/cards/footer/forms) follow.
+   ============================================================ */
+
+
+/* ============================================================
+   0. FONTS ‚Äî Archivo (display+sans) + IBM Plex Mono
+   Squarespace's font picker may not expose these; importing
+   guarantees they load. Safe to keep even if you also set the
+   site font to "Archivo" in the Squarespace Fonts panel.
+   ============================================================ */
+   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+
+   /* ============================================================
+      1. DESIGN TOKENS  (mirror of Assets/Kanduit/css/tokens.css)
+      ============================================================ */
+   :root {
+     /* Petrol (primary) */
+     --petrol-900:#06303A; --petrol-800:#084957; --petrol-700:#0A5A6B;
+     --petrol-600:#0E7490; /* PRIMARY */
+     --petrol-500:#1391AE; --petrol-400:#3FAEC8; --petrol-300:#84CEDE;
+     --petrol-200:#BEE6EE; --petrol-100:#E4F4F8;
+   
+     /* Neutrals (cool ink) */
+     --ink:#0C1517;
+     --neutral-900:#13201F; --neutral-800:#1E2D2F; --neutral-700:#33474A;
+     --neutral-600:#516164; --neutral-500:#74858A; --neutral-400:#9DABAE;
+     --neutral-300:#C5CFD0; --neutral-200:#E0E7E7; --neutral-100:#EFF3F3;
+     --neutral-050:#F7FAFA; --paper:#FBFCFC; --white:#FFFFFF;
+   
+     /* Status */
+     --ok:#2F8F6B; --warn:#C9931F; --error:#C24B57; --info:#1391AE;
+   
+     /* Type */
+     --font-display:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+     --font-sans:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+     --font-mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+   
+     /* Type scale */
+     --t-mega:clamp(3.5rem,7vw,6.5rem);
+     --t-h1:clamp(2.4rem,4.4vw,3.8rem);
+     --t-h2:clamp(1.8rem,3vw,2.6rem);
+     --t-h3:1.5rem; --t-h4:1.175rem;
+     --t-body:1.0625rem; --t-small:.875rem; --t-micro:.75rem;
+   
+     /* Spacing / radius / shadow */
+     --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px;
+     --sp-6:32px; --sp-7:48px; --sp-8:64px; --sp-9:96px; --sp-10:128px;
+     --r-sm:4px; --r-md:8px; --r-lg:14px; --r-xl:22px; --r-pill:999px;
+     --shadow-sm:0 1px 2px rgba(12,21,23,.06),0 1px 3px rgba(12,21,23,.05);
+     --shadow-md:0 4px 14px rgba(12,21,23,.07),0 2px 6px rgba(12,21,23,.05);
+     --shadow-lg:0 18px 48px rgba(12,21,23,.12),0 6px 16px rgba(12,21,23,.07);
+     --maxw:1160px;
+   }
+   
+   
+   /* ============================================================
+      2. GLOBAL TYPOGRAPHY + BASE COLORS
+      ============================================================ */
+   body,
+   .sqs-block-content,
+   p, li, .sqsrte-large {
+     font-family: var(--font-sans);
+     color: var(--ink);
+   }
+   
+   body { background: var(--paper); -webkit-font-smoothing: antialiased; }
+   
+   /* Headings ‚Äî Archivo, tight tracking, balanced wrap */
+   h1, h2, h3, h4, h5, h6,
+   .sqsrte-large, .page-title {
+     font-family: var(--font-display) !important; /* WHY: Squarespace sets heading font inline via theme ‚Äî needs override */
+     font-weight: 700;
+     letter-spacing: -0.02em;
+     line-height: 1.05;
+     color: var(--ink);
+     text-wrap: balance;
+   }
+   
+   h1 { font-size: var(--t-h1); letter-spacing: -0.03em; }
+   h2 { font-size: var(--t-h2); }
+   h3 { font-size: var(--t-h3); }
+   h4 { font-size: var(--t-h4); }
+   
+   /* Body copy rhythm */
+   p { line-height: 1.6; text-wrap: pretty; }
+   
+   /* Links ‚Äî petrol primary */
+   a, .sqs-block-content a {
+     color: var(--petrol-600);
+     text-decoration: none;
+   }
+   a:hover, .sqs-block-content a:hover {
+     color: var(--petrol-700);
+     text-decoration: underline; /* clear link affordance for Beh√∂rden audience */
+   }
+   
+   
+   /* ============================================================
+      3. EYEBROW ‚Äî brand signature (mono + short rule)
+      Apply to any text block: wrap the kicker line in <em> or give
+      the block a class. Simplest path in Squarespace: type the
+      eyebrow text, italicize it (<em>), and this styles it.
+      Or add a code block with <span class="eyebrow">‚Ä¶</span>.
+      ============================================================ */
+   .eyebrow,
+   .sqs-block-content em.eyebrow {
+     font-family: var(--font-mono);
+     font-size: var(--t-micro);
+     letter-spacing: .22em;
+     text-transform: uppercase;
+     color: var(--petrol-600);
+     display: inline-flex;
+     align-items: center;
+     gap: var(--sp-3);
+     font-style: normal;
+   }
+   .eyebrow::before {
+     content: "";
+     width: 28px; height: 2px;
+     background: var(--petrol-600);
+     display: inline-block;
+   }
+   
+   
+   /* ============================================================
+      4. BUTTONS / CTAs
+      Squarespace button selectors vary by version; these cover 7.1.
+      ============================================================ */
+   .sqs-block-button-element,
+   .sqs-button-element--primary,
+   .btn, button[type="submit"] {
+     font-family: var(--font-sans) !important;  /* WHY: theme injects button font inline */
+     font-weight: 600 !important;
+     letter-spacing: 0;
+     border-radius: var(--r-md) !important;
+     transition: background .15s, border-color .15s, color .15s;
+   }
+   
+   /* Primary CTA ‚Äî petrol fill */
+   .sqs-block-button-element--primary,
+   .sqs-button-element--primary,
+   .primary-button .sqs-block-button-element {
+     background-color: var(--petrol-600) !important;
+     color: var(--white) !important;
+     border: 1px solid transparent !important;
+   }
+   .sqs-block-button-element--primary:hover,
+   .sqs-button-element--primary:hover,
+   .primary-button .sqs-block-button-element:hover {
+     background-color: var(--petrol-700) !important;
+     color: var(--white) !important;
+   }
+   
+   /* Secondary / ghost CTA ‚Äî outline */
+   .secondary-button .sqs-block-button-element,
+   .sqs-button-element--secondary {
+     background-color: transparent !important;
+     color: var(--ink) !important;
+     border: 1px solid var(--neutral-300) !important;
+   }
+   .secondary-button .sqs-block-button-element:hover,
+   .sqs-button-element--secondary:hover {
+     border-color: var(--ink) !important;
+     color: var(--ink) !important;
+   }
+   
+   /* Form submit buttons inherit primary look */
+   .form-wrapper .form-submit-button,
+   button[type="submit"] {
+     background-color: var(--petrol-600) !important;
+     color: var(--white) !important;
+     border-radius: var(--r-md) !important;
+     font-family: var(--font-sans) !important;
+     font-weight: 600 !important;
+   }
+   .form-wrapper .form-submit-button:hover {
+     background-color: var(--petrol-700) !important;
+   }
+   
+   
+   /* ============================================================
+      5. HERO / BANNER  (page banner + first section)
+      ============================================================ */
+   .page-banner .banner-title,
+   .sqs-block-content h1:first-child,
+   section[data-section-id]:first-of-type h1 {
+     font-size: var(--t-mega);
+     letter-spacing: -0.04em;
+     line-height: 0.96;
+   }
+   
+   /* Hero lede / subtitle */
+   .page-banner .banner-subtitle,
+   section[data-section-id]:first-of-type .sqs-block-content p:first-of-type {
+     font-size: 1.22rem;
+     line-height: 1.5;
+     color: var(--neutral-700);
+     max-width: 46ch;
+   }
+   
+   /* Optional: ink hero. Add the section a "Background" of #0C1517 in the
+      Squarespace editor, then this lifts text + eyebrow to brand-on-dark. */
+   section.kd-hero-ink h1,
+   section.kd-hero-ink h2 { color: var(--white) !important; }
+   section.kd-hero-ink p  { color: var(--neutral-300) !important; }
+   section.kd-hero-ink .eyebrow { color: var(--petrol-300); }
+   section.kd-hero-ink .eyebrow::before { background: var(--petrol-300); }
+   
+   
+   /* ============================================================
+      6. CARDS  (Leistungen, Portfolio, feature blocks)
+      Targets summary blocks + generic content blocks given .kd-card.
+      ============================================================ */
+   .kd-card,
+   .summary-item,
+   .sqs-block.kd-card .sqs-block-content {
+     background: var(--white);
+     border: 1px solid var(--neutral-200);
+     border-radius: var(--r-lg);
+     padding: var(--sp-6);
+   }
+   .kd-card h4, .summary-title { font-size: var(--t-h4); margin-bottom: var(--sp-2); }
+   .kd-card .label {
+     font-family: var(--font-mono);
+     font-size: var(--t-micro);
+     letter-spacing: .08em;
+     text-transform: uppercase;
+     color: var(--neutral-500);
+   }
+   
+   /* Pills / tags */
+   .kd-pill {
+     display: inline-flex; align-items: center; gap: 6px;
+     font-family: var(--font-mono); font-size: var(--t-micro);
+     letter-spacing: .06em; text-transform: uppercase;
+     padding: 5px 11px; border-radius: var(--r-pill);
+     background: var(--petrol-100); color: var(--petrol-700);
+   }
+   
+   /* Callout (use a code block: <div class="kd-callout">‚Ä¶</div>) */
+   .kd-callout {
+     border-left: 3px solid var(--petrol-600);
+     background: var(--petrol-100);
+     padding: var(--sp-4) var(--sp-5);
+     border-radius: 0 var(--r-md) var(--r-md) 0;
+     font-size: var(--t-small);
+     color: var(--petrol-900);
+   }
+   
+   
+   /* ============================================================
+      7. FORMS  (Kontakt / Beratungsgespr√§ch)
+      ============================================================ */
+   .form-wrapper .field-list .field input,
+   .form-wrapper .field-list .field textarea,
+   .form-wrapper .field-list .field select,
+   .sqs-block-form input[type="text"],
+   .sqs-block-form input[type="email"],
+   .sqs-block-form textarea {
+     font-family: var(--font-sans) !important;
+     font-size: var(--t-small) !important;
+     padding: 10px 12px !important;
+     border: 1px solid var(--neutral-300) !important;
+     border-radius: var(--r-md) !important;
+     background: var(--white) !important;
+     color: var(--ink) !important;
+   }
+   .form-wrapper .field-list .field input:focus,
+   .form-wrapper .field-list .field textarea:focus,
+   .sqs-block-form textarea:focus {
+     outline: 2px solid var(--petrol-400) !important; /* WHY: visible keyboard focus for accessibility */
+     outline-offset: 1px;
+     border-color: var(--petrol-600) !important;
+   }
+   .form-wrapper .field-list .title {
+     font-family: var(--font-sans);
+     font-size: var(--t-small);
+     font-weight: 600;
+     color: var(--ink);
+   }
+   
+   
+   /* ============================================================
+      8. HEADER / NAV
+      ============================================================ */
+   .header-nav-item a,
+   .header-menu-nav-item a {
+     font-family: var(--font-mono);
+     font-size: var(--t-micro);
+     letter-spacing: .08em;
+     text-transform: uppercase;
+     color: var(--neutral-600);
+   }
+   .header-nav-item a:hover {
+     color: var(--ink);
+   }
+   /* Header CTA button ‚Üí primary */
+   .header-actions .btn,
+   .header-actions-action .sqs-button-element--primary {
+     background-color: var(--petrol-600) !important;
+     color: var(--white) !important;
+     border-radius: var(--r-md) !important;
+   }
+   
+   
+   /* ============================================================
+      9. FOOTER  ("Lokal in D√ºsseldorf")
+      ============================================================ */
+   #footer-sections,
+   .sqs-layout .footer {
+     border-top: 1px solid var(--neutral-200);
+   }
+   #footer-sections p,
+   #footer-sections a {
+     font-size: var(--t-small);
+     color: var(--neutral-600);
+   }
+   /* Mono uppercase meta line ‚Äî give the block class "kd-foot-meta" or italicize */
+   .kd-foot-meta,
+   #footer-sections em {
+     font-family: var(--font-mono);
+     font-size: var(--t-micro);
+     letter-spacing: .1em;
+     text-transform: uppercase;
+     color: var(--neutral-500);
+     font-style: normal;
+   }
+   
+   
+   /* ============================================================
+      10. SECTION BANDS / THEMES
+      Set a section's Background color in the editor, then add a
+      section class via a code block or the section ID to flip text.
+      ============================================================ */
+   section.kd-band { background: var(--neutral-050); }
+   section.kd-band-ink { background: var(--ink); }
+   section.kd-band-ink h1, section.kd-band-ink h2, section.kd-band-ink h3 { color: var(--white) !important; }
+   section.kd-band-ink p, section.kd-band-ink li { color: var(--neutral-300) !important; }
+   section.kd-band-ink a { color: var(--petrol-300); }
+   section.kd-wash { background: var(--petrol-100); }
+   
+   
+   /* ============================================================
+      11. DIVIDERS & MISC
+      ============================================================ */
+   hr, .sqs-block-horizontalrule hr {
+     border: 0;
+     border-top: 1px solid var(--neutral-200);
+   }
+   
+   
+   /* ============================================================
+      12. RESPONSIVE  (Squarespace mobile breakpoint = 768px)
+      The clamp()-based type scale handles most fluidity; these are
+      safety nets for overflow on small screens.
+      ============================================================ */
+   @media (max-width: 768px) {
+     .page-banner .banner-title,
+     section[data-section-id]:first-of-type h1 { letter-spacing: -0.03em; }
+   
+     .kd-card, .summary-item { padding: var(--sp-5); }
+   
+     /* Prevent long compliance terms (DSGVO-Auftragsverarbeitung) overflowing */
+     h1, h2, h3 { overflow-wrap: anywhere; }
+   }
+   
+   @media (max-width: 480px) {
+     .sqs-block-button-element { width: 100%; text-align: center; } /* full-width tap targets */
+   }
+   

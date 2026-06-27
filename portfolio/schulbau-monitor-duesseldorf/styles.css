@@ -153,6 +153,14 @@ a{ color:var(--petrol-700); text-decoration:none; }
 .tt b{ font-family:var(--font-display); font-weight:700; }
 .tt .row{ display:flex; justify-content:space-between; gap:18px; margin-top:3px; color:var(--neutral-300); }
 .tt .row span:last-child{ font-family:var(--font-mono); color:#fff; }
+.tt .def{ margin-top:5px; color:var(--neutral-200); line-height:1.45; font-weight:400; text-transform:none; letter-spacing:0; }
+
+/* ---------------- Metric info icon (ⓘ) ---------------- */
+.info-i{ display:inline-flex; align-items:center; justify-content:center; font-size:.82em;
+  line-height:1; color:currentColor; opacity:.45; cursor:help; vertical-align:baseline;
+  margin-left:3px; user-select:none; transition:opacity .12s; }
+.info-i:hover,.info-i:focus-visible{ opacity:1; outline:none; }
+.info-i:focus-visible{ outline:2px solid var(--petrol-400); outline-offset:2px; border-radius:50%; }
 
 /* ---------------- Table ---------------- */
 .filters{ display:flex; flex-wrap:wrap; gap:var(--sp-3); align-items:flex-end; margin-bottom:var(--sp-4); }
