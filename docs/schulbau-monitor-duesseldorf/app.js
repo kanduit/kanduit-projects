@@ -60,6 +60,56 @@ function showTip(html, x, y) {
 const hideTip = () => tt.classList.remove('show');
 
 /* ====================================================================
+   METRIC DEFINITIONS — plain-language glossary for the ⓘ hover tooltips.
+   Kept in sync with the "Kennzahlen" section of README.de.md / README.md.
+   ==================================================================== */
+const METRIC_INFO = {
+  // ---- Übersicht-KPIs & Stammdaten ----
+  schulstandorte: { t: 'Schulstandorte', d: 'Anzahl der erfassten Schulstandorte, verteilt auf die 10 Stadtbezirke. Reale Stammdaten aus Open Data Düsseldorf.' },
+  sanierungsstau_gesamt: { t: 'Sanierungsstau gesamt', d: 'Geschätzte Gesamtkosten, um alle Schulgebäude in einen neuwertigen Zustand zu versetzen — Summe über alle Standorte. Illustrativer Demo-Wert.' },
+  kritisch: { t: 'Kritische Standorte', d: 'Anzahl der Standorte in Zustandsklasse 4 (ungenügend) — die dringendsten Sanierungsfälle. Illustrativer Demo-Wert.' },
+  // ---- Kern-Kennzahlen je Schule ----
+  zustandsindex: { t: 'Zustandsindex', d: 'Baulicher Gesamtzustand auf einer Skala von 0 bis 100 (100 = neuwertig, 0 = ungenügend). Als Ø-Wert der Durchschnitt über alle Standorte. Illustrativer Demo-Wert.' },
+  zklasse: { t: 'Zustandsklasse', d: 'Fasst den Zustandsindex zu vier Klassen zusammen: 1 = gut (≥ 75), 2 = mittel (55–74), 3 = schlecht (38–54), 4 = ungenügend (< 38). Illustrativer Demo-Wert.' },
+  sanierungsstau: { t: 'Sanierungsstau', d: 'Geschätzte Kosten, um dieses Gebäude in einen neuwertigen Zustand zu versetzen. Steigt mit dem Zustandsdefizit und der Gebäudefläche. Illustrativer Demo-Wert.' },
+  modernisierung: { t: 'Modernisierung', d: 'Anteil des bereits umgesetzten Modernisierungsbedarfs in Prozent (0–100 %). 100 % = vollständig modernisiert. Illustrativer Demo-Wert.' },
+  prioritaet: { t: 'Prioritätsscore', d: 'Rangkennzahl von 0 bis 100, die vier Kriterien zu einer nachvollziehbaren Dringlichkeitsreihenfolge bündelt (Gebäudezustand, betroffene Schüler:innen, Höhe des Sanierungsstaus, Mängel & Recht). Höher = dringender. Illustrativer Demo-Wert.' },
+  baujahr: { t: 'Baujahr', d: 'Errichtungsjahr des Gebäudes. Illustrativer Demo-Wert.' },
+  schueler: { t: 'Schüler:innen', d: 'Anzahl der Schüler:innen am Standort; in der Übersicht als Summe über alle Standorte. Illustrativer Demo-Wert.' },
+  status: { t: 'Maßnahmenstatus', d: 'Bearbeitungsstand der Sanierungsmaßnahme: nicht begonnen, geplant, in Umsetzung oder abgeschlossen. Illustrativer Demo-Wert.' },
+  form: { t: 'Schulform', d: 'Schulform laut Stammdaten, normalisiert auf acht Kategorien (Grundschule, Gymnasium, Berufskolleg …). Reale Stammdaten.' },
+  bezirkName: { t: 'Stadtbezirk', d: 'Zugehöriger Stadtbezirk (1–10), aus den realen Koordinaten und Bezirksgrenzen abgeleitet (Punkt-in-Polygon). Reale Stammdaten.' },
+  // ---- Karten-Kennzahlen (Bezirksaggregate) ----
+  avgZustand: { t: 'Ø Zustandsindex', d: 'Durchschnittlicher Zustandsindex aller Schulen im Stadtbezirk (0–100). Illustrativer Demo-Wert.' },
+  sumSanierungsstau: { t: 'Sanierungsstau', d: 'Summe des geschätzten Sanierungsstaus aller Schulen im Stadtbezirk. Illustrativer Demo-Wert.' },
+  avgPrioritaet: { t: 'Ø Prioritätsscore', d: 'Durchschnittlicher Prioritätsscore aller Schulen im Stadtbezirk (0–100). Illustrativer Demo-Wert.' },
+  avgModernisierung: { t: 'Ø Modernisierung', d: 'Durchschnittlicher Modernisierungsgrad aller Schulen im Stadtbezirk in Prozent. Illustrativer Demo-Wert.' },
+  // ---- Gewichte im Prioritätsmodell ----
+  weight_zustand: { t: 'Kriterium: Gebäudezustand', d: 'Gewicht 40 von 100. Je schlechter der Zustandsindex, desto höher der Beitrag zum Prioritätsscore. Illustrativ — Gewichte sind mit dem Amt abstimmbar.' },
+  weight_schueler: { t: 'Kriterium: Betroffene Schüler:innen', d: 'Gewicht 20 von 100. Mehr betroffene Schüler:innen erhöhen die Priorität. Illustrativ — Gewichte sind mit dem Amt abstimmbar.' },
+  weight_stau: { t: 'Kriterium: Höhe Sanierungsstau', d: 'Gewicht 15 von 100. Ein höherer geschätzter Sanierungsstau erhöht die Priorität. Illustrativ — Gewichte sind mit dem Amt abstimmbar.' },
+  weight_maengel: { t: 'Kriterium: Mängel & Recht', d: 'Gewicht 25 von 100. Brandschutzmängel, fehlende Barrierefreiheit und Schadstoffverdacht erhöhen die Priorität. Illustrativ — Gewichte sind mit dem Amt abstimmbar.' },
+};
+
+/* Returns the markup for an ⓘ info icon, or '' if no definition exists for the key. */
+function infoIcon(key) {
+  return METRIC_INFO[key]
+    ? ` <span class="info-i" data-info="${key}" tabindex="0" role="button" aria-label="Erklärung: ${METRIC_INFO[key].t}">ⓘ</span>`
+    : '';
+}
+
+/* Delegated handlers so dynamically-rendered icons work everywhere. */
+function infoTipFor(ic, x, y) {
+  const m = METRIC_INFO[ic.dataset.info]; if (!m) return;
+  showTip(`<b>${m.t}</b><div class="def">${m.d}</div>`, x, y);
+}
+document.addEventListener('mouseover', e => { const ic = e.target.closest && e.target.closest('.info-i'); if (ic) infoTipFor(ic, e.clientX, e.clientY); });
+document.addEventListener('mousemove', e => { const ic = e.target.closest && e.target.closest('.info-i'); if (ic) infoTipFor(ic, e.clientX, e.clientY); });
+document.addEventListener('mouseout', e => { if (e.target.closest && e.target.closest('.info-i')) hideTip(); });
+document.addEventListener('focusin', e => { const ic = e.target.closest && e.target.closest('.info-i'); if (ic) { const r = ic.getBoundingClientRect(); infoTipFor(ic, r.right, r.bottom); } });
+document.addEventListener('focusout', e => { if (e.target.closest && e.target.closest('.info-i')) hideTip(); });
+
+/* ====================================================================
    SVG helpers
    ==================================================================== */
 const SVGNS = 'http://www.w3.org/2000/svg';
@@ -96,17 +146,17 @@ function barChart(container, rows, opts) {
 function renderOverview() {
   const m = DATA.meta;
   const kpis = [
-    { k: 'Schulstandorte', v: fmtInt(m.anzahlSchulen), d: m.anzahlBezirke + ' Stadtbezirke' },
-    { k: 'Sanierungsstau gesamt', v: nf1.format(m.sumSanierungsstau / 1e9) + ' Mrd €', d: 'geschätzt · illustrativ', cls: 'petrol' },
-    { k: 'Ø Zustandsindex', v: nf1.format(m.avgZustand), d: 'Skala 0–100 (100 = neuwertig)' },
-    { k: 'Kritische Standorte', v: fmtInt(m.kritisch), d: 'Zustandsklasse 4', cls: 'ink' },
-    { k: 'Ø Modernisierung', v: m.avgModernisierung + ' %', d: 'umgesetzter Bedarf' },
-    { k: 'Schüler:innen', v: fmtInt(m.schueler), d: 'an erfassten Standorten' },
+    { k: 'Schulstandorte', v: fmtInt(m.anzahlSchulen), d: m.anzahlBezirke + ' Stadtbezirke', info: 'schulstandorte' },
+    { k: 'Sanierungsstau gesamt', v: nf1.format(m.sumSanierungsstau / 1e9) + ' Mrd €', d: 'geschätzt · illustrativ', cls: 'petrol', info: 'sanierungsstau_gesamt' },
+    { k: 'Ø Zustandsindex', v: nf1.format(m.avgZustand), d: 'Skala 0–100 (100 = neuwertig)', info: 'zustandsindex' },
+    { k: 'Kritische Standorte', v: fmtInt(m.kritisch), d: 'Zustandsklasse 4', cls: 'ink', info: 'kritisch' },
+    { k: 'Ø Modernisierung', v: m.avgModernisierung + ' %', d: 'umgesetzter Bedarf', info: 'modernisierung' },
+    { k: 'Schüler:innen', v: fmtInt(m.schueler), d: 'an erfassten Standorten', info: 'schueler' },
   ];
   const wrap = $('#kpis'); wrap.innerHTML = '';
   kpis.forEach(s => {
     const c = el('div', 'stat' + (s.cls ? ' ' + s.cls : ''));
-    c.innerHTML = `<div class="k">${s.k}</div><div class="v">${s.v}</div><div class="d">${s.d}</div>`;
+    c.innerHTML = `<div class="k">${s.k}${infoIcon(s.info)}</div><div class="v">${s.v}</div><div class="d">${s.d}</div>`;
     wrap.appendChild(c);
   });
 
@@ -366,9 +416,9 @@ function buildHead() {
   const tr = $('#thead-row'); tr.innerHTML = '';
   COLS.forEach(c => {
     const th = el('th', c.num ? 'num' : '');
-    th.innerHTML = c.label + ' <span class="arr">↕</span>';
+    th.innerHTML = c.label + infoIcon(c.key) + ' <span class="arr">↕</span>';
     if (sortKey === c.key) { th.classList.add('sorted'); th.querySelector('.arr').textContent = sortDir < 0 ? '↓' : '↑'; }
-    th.onclick = () => { if (sortKey === c.key) sortDir *= -1; else { sortKey = c.key; sortDir = c.num ? -1 : 1; } buildHead(); renderRows(); };
+    th.onclick = e => { if (e.target.closest('.info-i')) return; if (sortKey === c.key) sortDir *= -1; else { sortKey = c.key; sortDir = c.num ? -1 : 1; } buildHead(); renderRows(); };
     tr.appendChild(th);
   });
 }
@@ -460,14 +510,14 @@ function openDrawer(id) {
       <div class="gauge-wrap">
         ${gauge(s.zustandsindex)}
         <div>
-          <div style="font-family:var(--font-mono);font-size:var(--t-micro);text-transform:uppercase;letter-spacing:.07em;color:var(--neutral-500)">Zustandsindex</div>
+          <div style="font-family:var(--font-mono);font-size:var(--t-micro);text-transform:uppercase;letter-spacing:.07em;color:var(--neutral-500)">Zustandsindex${infoIcon('zustandsindex')}</div>
           <div><span class="pill zk zk-${s.zklasse}">Klasse ${s.zklasse} · ${ZK_LABEL[s.zklasse]}</span></div>
           <div style="margin-top:8px"><span class="pill ${statusClass(s.status)}">${s.status}</span></div>
         </div>
       </div>
       <div class="grid g2" style="gap:10px">
-        <div class="stat" style="padding:12px 14px"><div class="k">Sanierungsstau</div><div class="v" style="font-size:1.4rem">${fmtMio(s.sanierungsstau)}</div></div>
-        <div class="stat" style="padding:12px 14px"><div class="k">Prioritätsscore</div><div class="v" style="font-size:1.4rem;color:var(--petrol-700)">${nf1.format(s.prioritaet)}</div></div>
+        <div class="stat" style="padding:12px 14px"><div class="k">Sanierungsstau${infoIcon('sanierungsstau')}</div><div class="v" style="font-size:1.4rem">${fmtMio(s.sanierungsstau)}</div></div>
+        <div class="stat" style="padding:12px 14px"><div class="k">Prioritätsscore${infoIcon('prioritaet')}</div><div class="v" style="font-size:1.4rem;color:var(--petrol-700)">${nf1.format(s.prioritaet)}</div></div>
       </div>
       <div class="section-label">Stammdaten</div>
       <dl class="kv">
@@ -477,7 +527,7 @@ function openDrawer(id) {
         <dt>Letzte Sanierung</dt><dd>${s.sanierungsjahr || '—'}</dd>
         <dt>Schüler:innen</dt><dd>${fmtInt(s.schueler)}</dd>
         <dt>Bruttogrundfläche</dt><dd>${fmtInt(s.bgf)} m²</dd>
-        <dt>Modernisierung</dt><dd>${s.modernisierung} %</dd>
+        <dt>Modernisierung${infoIcon('modernisierung')}</dt><dd>${s.modernisierung} %</dd>
       </dl>
       <div class="section-label">Mängel & Recht</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px">${flagHtml}</div>
@@ -503,12 +553,12 @@ window.__showInTable = b => { filters = { bezirk: String(b), form: '', zklasse: 
 function renderPriority() {
   // weights
   const W = [
-    { wv: '40', wl: 'Gebäudezustand' },
-    { wv: '20', wl: 'Betroffene Schüler:innen' },
-    { wv: '15', wl: 'Höhe Sanierungsstau' },
-    { wv: '25', wl: 'Mängel & Recht (Brandschutz, Barrierefreiheit, Schadstoffe)' },
+    { wv: '40', wl: 'Gebäudezustand', info: 'weight_zustand' },
+    { wv: '20', wl: 'Betroffene Schüler:innen', info: 'weight_schueler' },
+    { wv: '15', wl: 'Höhe Sanierungsstau', info: 'weight_stau' },
+    { wv: '25', wl: 'Mängel & Recht (Brandschutz, Barrierefreiheit, Schadstoffe)', info: 'weight_maengel' },
   ];
-  $('#weights').innerHTML = W.map(w => `<div class="weight"><div class="wv">${w.wv}</div><div class="wl">${w.wl}</div></div>`).join('');
+  $('#weights').innerHTML = W.map(w => `<div class="weight"><div class="wv">${w.wv}</div><div class="wl">${w.wl}${infoIcon(w.info)}</div></div>`).join('');
 
   renderScenario();
   $('#budget').addEventListener('input', renderScenario);
