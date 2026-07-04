@@ -1,0 +1,27 @@
+name: Schulbau-Monitor · docs sync check
+
+# Fails if the published copy under docs/ is out of sync with the source under
+# portfolio/. This makes the "edited source but forgot to publish" mistake
+# impossible to merge — the exact bug that left the live site stale.
+#
+# Scoped to the Schulbau-Monitor demo only; other demos are unaffected.
+
+on:
+  push:
+    paths:
+      - "portfolio/schulbau-monitor-duesseldorf/**"
+      - "docs/schulbau-monitor-duesseldorf/**"
+      - ".github/workflows/schulbau-publish-check.yml"
+  pull_request:
+    paths:
+      - "portfolio/schulbau-monitor-duesseldorf/**"
+      - "docs/schulbau-monitor-duesseldorf/**"
+      - ".github/workflows/schulbau-publish-check.yml"
+
+jobs:
+  check-docs-in-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify docs/ matches source
+        run: python3 portfolio/schulbau-monitor-duesseldorf/scripts/publish.py --check

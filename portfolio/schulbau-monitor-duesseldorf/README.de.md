@@ -216,6 +216,29 @@ python3 serve.py            # → http://localhost:8123
 python3 scripts/generate.py   # liest data/sources/*, schreibt data.js
 ```
 
+## Veröffentlichung (GitHub Pages)
+
+Dieser Ordner (`portfolio/schulbau-monitor-duesseldorf/`) ist die **Quelle der
+Wahrheit** — hier liegen auch der Generator, die Rohdaten und die internen
+`*.internal.md`-Dokumente, die **nicht** öffentlich ausgeliefert werden dürfen.
+GitHub Pages liefert eine separate, rein öffentliche Kopie aus dem
+**`/docs`**-Ordner des Repos aus (`docs/schulbau-monitor-duesseldorf/`, nur die
+vier statischen Dateien).
+
+**Das Bearbeiten der Quelle ändert die Live-Seite nicht von allein.** Veröffentlichen:
+
+```bash
+python3 scripts/publish.py          # kopiert die 4 Deploy-Dateien → docs/
+python3 scripts/publish.py --check  # prüft, ob docs/ synchron ist (für CI)
+```
+
+Danach sowohl die Quelle als auch die aktualisierte `docs/`-Kopie committen. Ein
+GitHub-Actions-Check (`.github/workflows/schulbau-publish-check.yml`) führt
+`--check` bei jedem Push/PR aus und **schlägt fehl, wenn `docs/` nicht synchron
+ist** — ein vergessenes Veröffentlichen kann so nie nach `main` gelangen.
+Gesamtablauf: *Quelle bearbeiten → `generate.py` (bei Datenänderung) →
+`publish.py` → committen → pushen*.
+
 ## Projektstruktur
 
 ```
@@ -226,8 +249,14 @@ schulbau-monitor-duesseldorf/
 ├── data.js           erzeugter Datensatz (window.KANDUIT_DATA)
 ├── serve.py          minimaler lokaler Server
 ├── data/sources/     reale Quell-GeoJSONs (Open Data Düsseldorf)
-└── scripts/generate.py   erzeugt data.js reproduzierbar
+└── scripts/
+    ├── generate.py   erzeugt data.js reproduzierbar
+    └── publish.py    kopiert die Deploy-Dateien nach docs/
 ```
+
+> Hinweis: Nur der Schulbau-Monitor nutzt dieses `publish.py`/CI-Setup. Die
+> übrigen Demos im Repo haben eine abweichende, gewachsene docs/-Struktur und
+> bleiben davon unberührt.
 
 ## Lizenz
 

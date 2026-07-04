@@ -120,6 +120,27 @@ python3 serve.py              # → http://localhost:8123
 
 Regenerate the dataset: `python3 scripts/generate.py`.
 
+## Deployment (GitHub Pages)
+
+This folder (`portfolio/schulbau-monitor-duesseldorf/`) is the **source of truth**
+— it also holds the generator, raw source data and the internal `*.internal.md`
+docs, which must **not** be served publicly. GitHub Pages serves a separate,
+public-only copy from the repo's **`/docs`** folder
+(`docs/schulbau-monitor-duesseldorf/`, four static files only).
+
+**Editing the source does not change the live site by itself.** Publish it:
+
+```bash
+python3 scripts/publish.py          # copy the 4 deployable files → docs/
+python3 scripts/publish.py --check  # verify docs/ is in sync (used by CI)
+```
+
+Then commit both the source and the updated `docs/` copy. A GitHub Actions check
+(`.github/workflows/schulbau-publish-check.yml`) runs `--check` on every push/PR
+and **fails if `docs/` is out of sync**, so a forgotten publish can never reach
+`main`. Full flow: *edit source → `generate.py` (if data changed) → `publish.py`
+→ commit → push*.
+
 ## Licence
 
 Code: MIT. Master data © Landeshauptstadt Düsseldorf, dl-de/zero-2-0. Condition and cost
