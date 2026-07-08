@@ -3,6 +3,26 @@
 Human-readable history of notable changes, in addition to the full git history on
 GitHub. Newest first. Dates are `YYYY-MM-DD`.
 
+## 2026-07-08
+
+### Fixed — simulation bar labels clipped at the top
+- In the **Sanierungsfahrplan-Simulation** burndown chart, the count label above the
+  tallest bar was drawn partly outside the SVG viewBox and appeared cut off (e.g. the
+  "75" at 150 Mio € budget). Increased the chart's top padding (`padT` 10 → 24) in
+  `renderScenario()` so labels always render fully.
+
+### Added — tooltips explaining the simulation model
+- The simulation's greedy model was easy to misread: at low budgets the completed-sites
+  bars show 0 for several years (the budget accrues over multiple years for one expensive
+  top-priority project), which looked like a bug. Added a ⓘ tooltip on the card title
+  (**"Wie die Simulation rechnet"**) explaining the sequential greedy allocation, what
+  the bars and the red backlog line mean, and that real programmes run projects in
+  parallel — plus small ⓘ tooltips on the three headline stats (years to clear the
+  backlog, sites in year 1, critical schools in ≤ 3 years).
+- Matching **"Sanierungsfahrplan-Simulation"** notes added to the metric-definition
+  sections of `README.md` and `README.de.md`, kept in sync with the tooltip text as
+  established in the tooltip feature (PR #7).
+
 ## 2026-07-04
 
 ### Added — metric tooltips & definitions

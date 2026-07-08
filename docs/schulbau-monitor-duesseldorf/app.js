@@ -84,6 +84,11 @@ const METRIC_INFO = {
   sumSanierungsstau: { t: 'Sanierungsstau', d: 'Summe des geschätzten Sanierungsstaus aller Schulen im Stadtbezirk. Illustrativer Demo-Wert.' },
   avgPrioritaet: { t: 'Ø Prioritätsscore', d: 'Durchschnittlicher Prioritätsscore aller Schulen im Stadtbezirk (0–100). Illustrativer Demo-Wert.' },
   avgModernisierung: { t: 'Ø Modernisierung', d: 'Durchschnittlicher Modernisierungsgrad aller Schulen im Stadtbezirk in Prozent. Illustrativer Demo-Wert.' },
+  // ---- Sanierungsfahrplan-Simulation ----
+  simulation_modell: { t: 'Wie die Simulation rechnet', d: 'Vereinfachtes Modell: Die Schulen werden streng nach Prioritätsscore abgearbeitet — das gesamte Jahresbudget fließt in das jeweils dringendste Projekt. Kostet es mehr als ein Jahresbudget, wird das Budget mehrere Jahre dafür angespart; erst danach beginnt das nächste Projekt. Die Balken zeigen die pro Jahr fertiggestellten Standorte: Bei kleinem Budget kann ein Jahr daher 0 zeigen, obwohl das volle Budget in ein laufendes Großprojekt fließt. Die rote Linie zeigt den verbleibenden Sanierungsstau in €, der jedes Jahr um das Budget sinkt. Reale Bauprogramme bündeln mehrere Projekte parallel — die Simulation ist bewusst vereinfacht und illustrativ.' },
+  sim_dauer: { t: 'Jahre bis zum Abbau des Staus', d: 'Anzahl der Jahre, bis der gesamte Sanierungsstau bei konstantem Jahresbudget abgetragen ist (Gesamtstau ÷ Jahresbudget, aufgerundet). Illustrativer Demo-Wert.' },
+  sim_jahr1: { t: 'Standorte in Jahr 1', d: 'Anzahl der Standorte, die im ersten Jahr vollständig saniert werden. Kann 0 sein, wenn das dringendste Projekt teurer ist als ein Jahresbudget — dann spart das Modell das Budget mehrere Jahre dafür an, und der erste Abschluss folgt in einem späteren Jahr.' },
+  sim_krit3: { t: 'Kritische Schulen in ≤ 3 Jahren', d: 'Wie viele der Schulen in Zustandsklasse 4 (ungenügend) innerhalb der ersten drei Jahre fertig saniert sind — gemessen an allen kritischen Standorten.' },
   // ---- Gewichte im Prioritätsmodell ----
   weight_zustand: { t: 'Kriterium: Gebäudezustand', d: 'Gewicht 40 von 100. Je schlechter der Zustandsindex, desto höher der Beitrag zum Prioritätsscore. Illustrativ — Gewichte sind mit dem Amt abstimmbar.' },
   weight_schueler: { t: 'Kriterium: Betroffene Schüler:innen', d: 'Gewicht 20 von 100. Mehr betroffene Schüler:innen erhöhen die Priorität. Illustrativ — Gewichte sind mit dem Amt abstimmbar.' },
@@ -579,9 +584,9 @@ function renderScenario() {
   const crit = sorted.filter(s => s.zklasse === 4);
   const crit3 = crit.filter(s => s._year <= 3).length;
   $('#scenario-out').innerHTML = `
-    <div><div class="big">${totalYears} Jahre</div><div class="note" style="margin:0">bis zum Abbau des Staus</div></div>
-    <div><div class="big">${year1}</div><div class="note" style="margin:0">Standorte in Jahr 1</div></div>
-    <div><div class="big">${crit3}/${crit.length}</div><div class="note" style="margin:0">kritische Schulen in ≤ 3 Jahren</div></div>`;
+    <div><div class="big">${totalYears} Jahre</div><div class="note" style="margin:0">bis zum Abbau des Staus${infoIcon('sim_dauer')}</div></div>
+    <div><div class="big">${year1}</div><div class="note" style="margin:0">Standorte in Jahr 1${infoIcon('sim_jahr1')}</div></div>
+    <div><div class="big">${crit3}/${crit.length}</div><div class="note" style="margin:0">kritische Schulen in ≤ 3 Jahren${infoIcon('sim_krit3')}</div></div>`;
 
   // burndown: schools completed per year (first 12) + remaining backlog line
   const maxY = Math.min(12, totalYears);
@@ -591,7 +596,8 @@ function renderScenario() {
     const remaining = Math.max(0, total - B * y);
     perYear.push({ y, done, remaining });
   }
-  const W2 = 620, H = 220, padL = 44, padB = 28, padT = 10, padR = 44;
+  // padT leaves room for the count label above the tallest bar (10px mono, baseline padT-4)
+  const W2 = 620, H = 220, padL = 44, padB = 28, padT = 24, padR = 44;
   const bw = (W2 - padL - padR) / maxY;
   const maxDone = Math.max(...perYear.map(p => p.done), 1);
   const remScale = total || 1;
