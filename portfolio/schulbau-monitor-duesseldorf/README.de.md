@@ -62,6 +62,15 @@ keine realen Bewertungen der Stadt Düsseldorf (siehe *Datenherkunft* / `DATENHE
 > obigen Schul-Kennzahlen, aggregiert über die Schulen je Stadtbezirk (Mittelwert bei
 > Durchschnitten, Summe beim Sanierungsstau).
 
+> **Sanierungsfahrplan-Simulation** — vereinfachtes Modell: Die Schulen werden streng nach
+> Prioritätsscore abgearbeitet; das gesamte Jahresbudget fließt in das jeweils dringendste
+> Projekt. Kostet es mehr als ein Jahresbudget, wird das Budget mehrere Jahre dafür
+> angespart, bevor das nächste Projekt beginnt. Die Balken zeigen die pro Jahr
+> **fertiggestellten** Standorte — bei kleinem Budget kann ein Jahr daher 0 zeigen, obwohl
+> das volle Budget in ein laufendes Großprojekt fließt. Die rote Linie zeigt den
+> verbleibenden Sanierungsstau in €, der jedes Jahr um das Budget sinkt. Reale Bauprogramme
+> bündeln mehrere Projekte parallel — die Simulation ist bewusst vereinfacht und illustrativ.
+
 ---
 
 ## Fragen, die uns das Amt typischerweise stellt

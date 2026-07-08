@@ -64,6 +64,15 @@ assessments (see *Data sources & provenance* below).
 > simply the per-school metrics above, aggregated over the schools in each district (mean
 > for averages, sum for the backlog).
 
+> **Renovation-roadmap simulation** — a deliberately simplified model: schools are worked
+> through strictly in priority-score order, with the entire annual budget flowing into the
+> single most urgent project. If that project costs more than one year's budget, the budget
+> is saved up across several years before the next project starts. The bars show sites
+> **completed** per year — so at low budgets a year can show 0 even though the full budget
+> is flowing into a large project still in progress. The red line shows the remaining
+> backlog in €, which falls by the budget amount each year. Real capital programmes run
+> several projects in parallel — the simulation is intentionally simplified and illustrative.
+
 ## Data sources & provenance
 
 The dataset has **three clearly separated layers** — every field is traceable to one of them.
