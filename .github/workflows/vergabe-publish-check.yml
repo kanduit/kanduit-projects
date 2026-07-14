@@ -1,0 +1,27 @@
+name: Vergabe-Monitor · docs sync check
+
+# Fails if the published copy under docs/ is out of sync with the source under
+# portfolio/. This makes the "edited source but forgot to publish" mistake
+# impossible to merge — same guard as the Schulbau-Monitor.
+#
+# Scoped to the Vergabe-Monitor demo only; other demos are unaffected.
+
+on:
+  push:
+    paths:
+      - "portfolio/vergabe-monitor-duesseldorf/**"
+      - "docs/vergabe-monitor-duesseldorf/**"
+      - ".github/workflows/vergabe-publish-check.yml"
+  pull_request:
+    paths:
+      - "portfolio/vergabe-monitor-duesseldorf/**"
+      - "docs/vergabe-monitor-duesseldorf/**"
+      - ".github/workflows/vergabe-publish-check.yml"
+
+jobs:
+  check-docs-in-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify docs/ matches source
+        run: python3 portfolio/vergabe-monitor-duesseldorf/scripts/publish.py --check
