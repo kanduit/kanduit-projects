@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanduit Vergabe-Monitor · Düsseldorf</title>
+<meta name="description" content="Demonstrator: Vergabe-Kennzahlen der Landeshauptstadt Düsseldorf aus öffentlichen eForms-Bekanntmachungen — Kanduit UG.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Reusable Kanduit logo symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <mask id="kmask" maskUnits="userSpaceOnUse" x="-125" y="-125" width="250" height="250">
+      <circle r="110" fill="#fff"/>
+      <rect x="-71" y="-125" width="29" height="250" fill="#000"/>
+      <g stroke="#000" stroke-width="32" stroke-linecap="butt">
+        <line x1="-42" y1="0" x2="66" y2="-122"/>
+        <line x1="-42" y1="0" x2="66" y2="122"/>
+      </g>
+    </mask>
+    <symbol id="k-mark" viewBox="-125 -125 250 250">
+      <circle r="110" fill="currentColor" mask="url(#kmask)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <span class="brand">
+    <svg width="22" height="22" style="color:var(--petrol-600)"><use href="#k-mark"/></svg>
+    Kanduit <span class="sub">Vergabe-Monitor</span>
+  </span>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-view="overview">Überblick</button>
+    <button class="tab" data-view="dauern">Verfahrensdauern</button>
+    <button class="tab" data-view="direkt">Direktauftrag 2026</button>
+    <button class="tab" data-view="benchmark">Benchmark NRW</button>
+    <button class="tab" data-view="radar">Melde-Radar</button>
+  </nav>
+  <div class="right">
+    <span class="stand" id="standLabel">Stand —</span>
+    <span class="demo-pill">Demo · öffentliche Daten</span>
+    <button class="kbtn ghost" onclick="window.print()">Drucken / PDF</button>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== ÜBERBLICK ===================== -->
+  <section class="view active" id="view-overview">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Öffentliche Bekanntmachungen · Landeshauptstadt Düsseldorf (NUTS DEA11)</p>
+        <h2>Vergabegeschehen im Überblick</h2>
+        <p>Alle Kennzahlen dieser Seite stammen ausschließlich aus den öffentlichen
+           eForms-Bekanntmachungen des <a href="https://www.oeffentlichevergabe.de" target="_blank" rel="noopener">Bekanntmachungsservice
+           (Datenservice Öffentlicher Einkauf)</a> mit Erfüllungsort Düsseldorf — abrufbar für jedermann,
+           ohne Zugang zu internen Systemen. Zeitraum und Abrufdatum siehe Fußzeile.</p>
+      </div>
+      <div class="grid g6" id="kpis" style="margin-bottom:var(--sp-5)"></div>
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Bekanntmachungen je Quartal <span class="info-i" data-info="quartal" tabindex="0" role="button" aria-label="Erklärung: Quartalszählung">ⓘ</span></div>
+          <div class="card-sub">nur vollständige Quartale · nach Bekanntmachungstyp</div>
+          <div id="chart-quartal"></div>
+          <p class="note src-note" data-src="uiDuesseldorf"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Verfahrensarten-Mix <span class="info-i" data-info="verfahrensart" tabindex="0" role="button" aria-label="Erklärung: Verfahrensarten">ⓘ</span></div>
+          <div class="card-sub">Ausschreibungen im Gesamtzeitraum</div>
+          <div id="chart-verfahren"></div>
+          <p class="note src-note" data-src="uiDuesseldorf"></p>
+        </div>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-title">Top-CPV-Gruppen <span class="info-i" data-info="cpv" tabindex="0" role="button" aria-label="Erklärung: CPV-Gruppen">ⓘ</span></div>
+          <div class="card-sub">Was wird ausgeschrieben? · Top 10 Warengruppen</div>
+          <div id="chart-cpv"></div>
+          <p class="note src-note" data-src="uiDuesseldorf"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Beteiligte Vergabestellen <span class="info-i" data-info="vergabestellen" tabindex="0" role="button" aria-label="Erklärung: Vergabestellen">ⓘ</span></div>
+          <div class="card-sub">öffentliche Auftraggeber mit Erfüllungsort Düsseldorf</div>
+          <div id="chart-buyers"></div>
+          <p class="note src-note" data-src="uiDuesseldorf"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VERFAHRENSDAUERN ===================== -->
+  <section class="view" id="view-dauern">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Bekanntmachung → Zuschlag</p>
+        <h2>Verfahrensdauern je Vergabeart</h2>
+        <p>Dauer zwischen Auftragsbekanntmachung und Zuschlagsentscheidung — berechnet nur für Verfahren,
+           bei denen beide Daten öffentlich vorliegen. Die Abdeckung wird ehrlich ausgewiesen:
+           Was fehlt, fehlt in den öffentlichen Daten, nicht in der Methodik.</p>
+      </div>
+      <div class="grid g4" id="dauer-kpis" style="margin-bottom:var(--sp-4)"></div>
+      <div class="banner info" id="dauer-gap"></div>
+      <div class="grid g2" style="margin-top:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Median-Dauer je Verfahrensart <span class="info-i" data-info="dauer_median" tabindex="0" role="button" aria-label="Erklärung: Median-Dauer">ⓘ</span></div>
+          <div class="card-sub">Düsseldorf · in Tagen · nur Verfahrensarten mit ≥ 5 Paaren</div>
+          <div id="chart-dauer-proc"></div>
+          <p class="note src-note" data-src="uiDuesseldorf"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Median-Dauer im Städtevergleich <span class="info-i" data-info="dauer_vergleich" tabindex="0" role="button" aria-label="Erklärung: Städtevergleich Dauern">ⓘ</span></div>
+          <div class="card-sub">alle Verfahrensarten · in Tagen</div>
+          <div id="chart-dauer-city"></div>
+          <p class="note src-note" data-src="bkms"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DIREKTAUFTRAG 2026 ===================== -->
+  <section class="view" id="view-direkt">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Szenario · § 75a GO NRW seit 01.01.2026 · Direktauftragsgrenze 50 T€ seit 01.02.2026</p>
+        <h2>Direktauftrags-Quote 2026</h2>
+        <p>Seit Jahresbeginn gelten in NRW neue Regeln: Die kommunalen Wertgrenzen sind entfallen
+           (<a href="https://blog.cosinex.de/2026/01/29/kommunale-beschaffung-nrw/" target="_blank" rel="noopener">§ 75a GO NRW</a>),
+           Direktaufträge sind bis 50.000 € netto zulässig
+           (<a href="https://www.land.nrw/pressemitteilung/landesregierung-regelt-die-tarifentgeltsicherung-und-schafft-erleichterungen-bei" target="_blank" rel="noopener">Land NRW</a>).
+           Was zeigen die öffentlichen Bekanntmachungen — und was können sie systembedingt nicht zeigen?</p>
+      </div>
+      <div class="banner warn">
+        <b>Die Pointe dieser Ansicht:</b> Direktaufträge tauchen in Bekanntmachungsdaten kaum auf —
+        sie sind unterhalb der Bekanntmachungspflichten. Öffentlich sichtbar ist nur der Rand des Geschehens
+        (z.&nbsp;B. freiwillige Ex-ante-Transparenz). <b>Die Direktauftrags-Quote selbst sehen nur Ihre internen
+        Verfahrensdaten</b> — genau dafür ist der Monitor als Auswertungsschicht gedacht.
+      </div>
+      <div class="grid g4" id="direkt-kpis" style="margin:var(--sp-4) 0"></div>
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Ausschreibungen je Monat <span class="info-i" data-info="monatsreihe" tabindex="0" role="button" aria-label="Erklärung: Monatsreihe">ⓘ</span></div>
+        <div class="card-sub">Düsseldorf · Auftragsbekanntmachungen · Regeländerungen markiert</div>
+        <div id="chart-monat"></div>
+        <p class="note src-note" data-src="uiDuesseldorf"></p>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-title">Verfahrensmix vor / nach dem Stichtag <span class="info-i" data-info="mixvergleich" tabindex="0" role="button" aria-label="Erklärung: Mixvergleich">ⓘ</span></div>
+          <div class="card-sub">Anteile der Verfahrensarten an den Ausschreibungen</div>
+          <div id="chart-mix"></div>
+          <p class="note src-note" data-src="uiDuesseldorf"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Freiwillige Ex-ante-Transparenz <span class="info-i" data-info="veat" tabindex="0" role="button" aria-label="Erklärung: Ex-ante-Transparenz">ⓘ</span></div>
+          <div class="card-sub">Bekanntmachungen zu Direktvergaben (VEAT) je Monat</div>
+          <div id="chart-veat"></div>
+          <p class="note src-note" data-src="uiDuesseldorf"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BENCHMARK ===================== -->
+  <section class="view" id="view-benchmark">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Düsseldorf · Köln · Essen · Dortmund</p>
+        <h2>Benchmark NRW-Großstädte</h2>
+        <p>Gleiche Quelle, gleiche Methodik, vier Städte: Bekanntmachungsaufkommen, Volumen und Dauern —
+           normiert je 100.000 Einwohner (<a href="https://www.it.nrw/nrw-einwohnerzahl-erstmals-auf-basis-des-zensus-2022-fortgeschrieben" target="_blank" rel="noopener">IT.NRW, 31.12.2024</a>).
+           Erfüllungsort-Filter heißt: Auch Landes- und Bundeseinrichtungen mit Sitz vor Ort sind enthalten —
+           der Anteil ist unten ausgewiesen.</p>
+      </div>
+      <div class="grid g4" id="bench-kpis" style="margin-bottom:var(--sp-4)"></div>
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Bekanntmachungen je 100.000 Einwohner <span class="info-i" data-info="bench_rate" tabindex="0" role="button" aria-label="Erklärung: Normierung">ⓘ</span></div>
+          <div class="card-sub">Gesamtzeitraum · alle Bekanntmachungstypen</div>
+          <div id="chart-bench-rate"></div>
+          <p class="note src-note" data-src="bkms"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Median-Verfahrensdauer <span class="info-i" data-info="dauer_vergleich" tabindex="0" role="button" aria-label="Erklärung: Städtevergleich Dauern">ⓘ</span></div>
+          <div class="card-sub">Bekanntmachung → Zuschlag · in Tagen</div>
+          <div id="chart-bench-dauer"></div>
+          <p class="note src-note" data-src="bkms"></p>
+        </div>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-title">Wer schreibt aus? Auftraggeber-Kategorien <span class="info-i" data-info="buyer_cats" tabindex="0" role="button" aria-label="Erklärung: Auftraggeber-Kategorien">ⓘ</span></div>
+          <div class="card-sub">Anteil an allen Bekanntmachungen je Stadt</div>
+          <div id="chart-bench-cats"></div>
+          <p class="note src-note" data-src="bkms"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Kennzahlen-Tabelle</div>
+          <div class="card-sub">Rohwerte · Basis der Normierung</div>
+          <div class="table-wrap" style="box-shadow:none;border:none">
+            <table id="bench-table" style="min-width:640px"></table>
+          </div>
+          <p class="note src-note" data-src="einwohner"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MELDE-RADAR ===================== -->
+  <section class="view" id="view-radar">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Konzeptansicht · VergStatVO</p>
+        <h2>Melde-Radar <span class="pill concept">schematisch</span></h2>
+        <p>Jeder Auftrag ab 25.000 € netto ist binnen 60 Tagen nach Zuschlag an die bundesweite
+           Vergabestatistik (Destatis) zu melden
+           (<a href="https://blog.cosinex.de/2025/09/10/vergabestatistik/" target="_blank" rel="noopener">VergStatVO</a>).
+           Diese Ansicht simuliert die Fristenlage aus den <b>öffentlichen</b> Zuschlagsdaten —
+           ob tatsächlich gemeldet wurde, wissen nur die internen Systeme. Genau dort setzt der Monitor an.</p>
+      </div>
+      <div class="banner info">
+        <b>Konzeptansicht:</b> Fristen sind aus öffentlichen Zuschlagsbekanntmachungen simuliert
+        (Zuschlagsdatum + 60 Tage). Unterschwellige Vergaben und der tatsächliche Meldestatus sind
+        öffentlich nicht sichtbar — mit internen Verfahrensdaten würde aus der Simulation ein
+        vollständiges Fristen-Cockpit mit Vorbefüllung der Destatis-Meldung.
+      </div>
+      <div class="grid g4" id="radar-kpis" style="margin:var(--sp-4) 0"></div>
+      <div class="card">
+        <div class="card-title">Simulierte Meldefristen · Düsseldorf <span class="info-i" data-info="radar_frist" tabindex="0" role="button" aria-label="Erklärung: simulierte Fristen">ⓘ</span></div>
+        <div class="card-sub">Zuschläge der letzten Monate · sortiert nach Frist</div>
+        <div class="table-wrap" style="box-shadow:none;border:none;margin-top:8px">
+          <table id="radar-table" style="min-width:760px"></table>
+        </div>
+        <p class="note src-note" data-src="uiDuesseldorf"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div style="display:flex; align-items:center; gap:12px">
+      <svg width="30" height="30" style="color:#fff"><use href="#k-mark"/></svg>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:1.2rem; color:#fff">Kanduit</div>
+        <div class="mono">Vergabe-Monitor · Demonstrator</div>
+      </div>
+    </div>
+    <p class="src" id="footer-src">
+      <b style="color:#cbd5e1">Demonstrator der Kanduit UG</b> — alle Daten aus öffentlichen Bekanntmachungen
+      des <a href="https://www.oeffentlichevergabe.de" style="color:var(--petrol-300)">Bekanntmachungsservice
+      (Datenservice Öffentlicher Einkauf)</a>, abgerufen über die
+      <a href="https://www.oeffentlichevergabe.de/documentation/swagger-ui/opendata/index.html" style="color:var(--petrol-300)">OpenData-API</a>,
+      Stand <span id="footer-stand">—</span>, ohne Gewähr; kein Produkt der Landeshauptstadt Düsseldorf.
+      Keine personenbezogenen Daten; Zuschlagsempfänger werden nicht genannt.
+      Einwohnerzahlen: <a href="https://www.it.nrw/nrw-einwohnerzahl-erstmals-auf-basis-des-zensus-2022-fortgeschrieben" style="color:var(--petrol-300)">IT.NRW</a>.
+      Verarbeitung vollständig im Browser · betriebsbereit für Hosting in Deutschland.
+    </p>
+  </div>
+</footer>
+
+<!-- Tooltip -->
+<div class="tt" id="tooltip"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
