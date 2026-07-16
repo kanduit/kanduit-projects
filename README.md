@@ -11,7 +11,6 @@ Monorepo fuer Kanduit-Portfolio-Projekte mit klarer Trennung zwischen Quelle und
 
 ## Aktuelle Projekte
 
-- `portfolio/schulbau-monitor-duesseldorf` -> statisch, publiziert unter `docs/schulbau-monitor-duesseldorf/`
 - `portfolio/vergabe-monitor-duesseldorf` -> statisch, publiziert unter `docs/vergabe-monitor-duesseldorf/`
 - `portfolio/kommunalatlas-nrw` -> statisch, publiziert unter `docs/kommunalatlas-nrw/`
 - `portfolio/nrw-bridge-dashboard` -> statisch, publiziert unter `docs/nrw-bridge-dashboard/`
