@@ -90,12 +90,12 @@ const METRIC_INFO = {
   dauer_median: { t: 'Median-Dauer je Verfahrensart', d: 'Tage zwischen Auftragsbekanntmachung und Zuschlagsentscheidung (bzw. Ergebnisbekanntmachung, wo kein Zuschlagsdatum ausgewiesen ist), verknüpft über die Verfahrens-ID. Median statt Mittelwert — robust gegen Ausreißer. Nur Verfahrensarten mit ≥ 5 Paaren.' },
   dauer_vergleich: { t: 'Median-Dauer im Städtevergleich', d: 'Gleiche Methodik für alle vier Städte: nur Verfahren, bei denen Bekanntmachung und Ergebnis öffentlich verknüpfbar sind. Unterschiede können auch am Verfahrensmix liegen, nicht nur an der Bearbeitungsgeschwindigkeit.' },
   dauer_abdeckung: { t: 'Abdeckung', d: 'Anteil der Ergebnisbekanntmachungen, denen eine Auftragsbekanntmachung im Beobachtungszeitraum zugeordnet werden konnte. Der Rest: Bekanntmachung vor Januar 2024, Direktvergabe ohne Bekanntmachung oder Veröffentlichung auf anderer Plattform.' },
-  monatsreihe: { t: 'Ausschreibungen je Monat', d: 'Auftragsbekanntmachungen der Stadt und aller weiteren Vergabestellen mit Erfüllungsort Düsseldorf, je Kalendermonat. Markiert: 01.01.2026 (§ 75a GO NRW — Wegfall der kommunalen Wertgrenzen) und 01.02.2026 (Direktauftragsgrenze 50 T€).' },
+  monatsreihe: { t: 'Ausschreibungen je Monat', d: 'Auftragsbekanntmachungen der Stadt und aller weiteren Vergabestellen mit Erfüllungsort Düsseldorf, je Kalendermonat. Markiert ist der 01.01.2026 (§ 75a GO NRW — Wegfall der verpflichtenden kommunalen Wertgrenzen). Zwei weitere Regeländerungen liegen außerhalb des Datenfensters: die Direktauftragsgrenze der Landesverwaltung (01.02.2026 — bindet Kommunen nicht automatisch) und das Vergabebeschleunigungsgesetz (01.07.2026 — Wirkung erst ab Q3 2026, das aktuelle Fenster endet im Juni).' },
   mixvergleich: { t: 'Verfahrensmix vor / nach dem Stichtag', d: 'Anteile der Verfahrensarten an den Ausschreibungen: Gesamtjahr 2025 gegenüber 2026 (bis zum letzten vollen Quartal). Prozentwerte, daher trotz unterschiedlicher Zeitraumlängen vergleichbar.' },
   veat: { t: 'Freiwillige Ex-ante-Transparenz (VEAT)', d: 'Bekanntmachungen, mit denen ein Auftraggeber eine beabsichtigte Direktvergabe freiwillig vorab transparent macht (Formtyp „dir-awa-pre"). Die geringe Zahl zeigt: Das Gros der Direktaufträge bleibt öffentlich unsichtbar.' },
   bench_rate: { t: 'Bekanntmachungen je 100.000 Einwohner', d: 'Gesamtzahl der Bekanntmachungen im Zeitraum, geteilt durch die amtliche Einwohnerzahl (IT.NRW, ' + DATA.meta.quellen.einwohnerStand + '), mal 100.000. Achtung Landeshauptstadt-Effekt: In Düsseldorf schreiben auch viele Landeseinrichtungen aus.' },
   buyer_cats: { t: 'Auftraggeber-Kategorien', d: 'Namens-Heuristik über die Auftraggeber der Bekanntmachungen: Stadtverwaltung, städtische Töchter, Land NRW (inkl. Unikliniken, Hochschulen, Landesbetriebe), Bund & Bahn, Sonstige. Macht den Landeshauptstadt-Effekt im Benchmark sichtbar.' },
-  radar_frist: { t: 'Simulierte Meldefrist', d: 'Zuschlagsdatum (wo ausgewiesen, sonst Datum der Ergebnisbekanntmachung) + 60 Tage — die Meldefrist der VergStatVO für Aufträge ab 25 T€ netto. Ob die Meldung an Destatis tatsächlich erfolgt ist, ist öffentlich nicht sichtbar; die Ansicht ist eine Konzept-Demonstration.' },
+  radar_frist: { t: 'Simulierte Meldefrist', d: 'Zuschlagsdatum (wo ausgewiesen, sonst Datum der Ergebnisbekanntmachung) + 60 Tage — die Meldefrist der VergStatVO. Die Meldeschwelle liegt seit 01.07.2026 bei über 50.000 € netto (zuvor 25.000 €; angehoben durch das Vergabebeschleunigungsgesetz). Ob die Meldung an Destatis tatsächlich erfolgt ist, ist öffentlich nicht sichtbar; die Ansicht ist eine Konzept-Demonstration.' },
   radar_fenster: { t: 'Zuschläge im Radar-Fenster', d: 'Ergebnisbekanntmachungen für Düsseldorf, deren simulierte 60-Tage-Frist heute noch läuft oder in den letzten 4 Monaten ablief.' },
   radar_offen: { t: 'Frist läuft', d: 'Simulierte Meldefristen, die am Stichtag (Datenstand) noch nicht abgelaufen sind.' },
   radar_knapp: { t: 'Frist < 14 Tage', d: 'Davon Fristen, die binnen 14 Tagen ablaufen — im echten Betrieb der Trigger für Erinnerungen und Vorbefüllung.' },
@@ -371,7 +371,6 @@ function renderDirekt() {
     color: 'var(--dv-petrol)', labelEvery: 3, height: 250,
     breaks: [
       { at: '2026-01', label: '§ 75a GO NRW', dy: 0 },
-      { at: '2026-02', label: 'Direktauftrag ≤ 50 T€', dy: 12 },
     ],
   });
 
@@ -387,13 +386,14 @@ function renderDirekt() {
   box.appendChild(lg);
   box.appendChild(el('p', 'note', 'Oberschwellige Verfahren ändern sich durch § 75a GO NRW kaum — der Umbruch findet ' +
     'unterhalb der Schwellenwerte statt und ist hier systembedingt unsichtbar. Der sichtbare Mix ist die Referenz, ' +
-    'gegen die interne Zahlen gelesen werden.'));
+    'gegen die interne Zahlen gelesen werden. Die zum 01.07.2026 angehobenen Melde- und Registerschwellen wirken ' +
+    'erst ab dem dritten Quartal 2026 — außerhalb dieses Datenfensters.'));
 
   // VEAT monthly
   columnChart($('#chart-veat'), S.veatMonthly.map(m => ({
     id: m.m, label: fmtMonth(m.m), n: m.n,
     tip: `<b>${fmtMonth(m.m)}</b><div class="row"><span>VEAT-Bekanntmachungen</span><span>${m.n}</span></div>`,
-  })), { color: 'var(--dv-orange)', labelEvery: 3, height: 200, breaks: [{ at: '2026-02', label: 'Direktauftrag ≤ 50 T€', dy: 0 }] });
+  })), { color: 'var(--dv-orange)', labelEvery: 3, height: 200, breaks: [{ at: '2026-01', label: '§ 75a GO NRW', dy: 0 }] });
 }
 
 /* ====================================================================

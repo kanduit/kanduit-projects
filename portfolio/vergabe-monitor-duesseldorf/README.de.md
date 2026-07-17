@@ -23,14 +23,17 @@ Software für den öffentlichen Sektor in NRW. Eine englische Übersicht steht i
   ausgewiesenes Auftragsvolumen, beteiligte Vergabestellen (Stadt · Töchter · Land · Bund).
 - **Verfahrensdauern** — Median Bekanntmachung→Zuschlag je Verfahrensart; nur Verfahren
   mit beiden Daten, Abdeckung wird ehrlich ausgewiesen.
-- **Direktauftrag 2026** — Verfahrensmix und Monatsreihe vor/nach § 75a GO NRW
-  (01.01.2026) und der neuen NRW-Direktauftragsgrenze 50 T€ (01.02.2026). Pointe der
-  Ansicht: Direktaufträge erscheinen kaum in Bekanntmachungsdaten — die Quote selbst
-  sehen nur interne Verfahrensdaten.
+- **Direktauftrag 2026** — Verfahrensmix und Monatsreihe rund um § 75a GO NRW
+  (Verfahrensfreiheit für Kommunen seit 01.01.2026; maßgeblich ist die eigene
+  Vergabeordnung, nicht die Direktauftragsgrenze der Landesverwaltung) und das
+  Vergabebeschleunigungsgesetz (01.07.2026). Pointe der Ansicht: Direktaufträge
+  erscheinen kaum in Bekanntmachungsdaten — die Quote selbst sehen nur interne
+  Verfahrensdaten.
 - **Benchmark NRW** — Düsseldorf vs. Köln, Essen, Dortmund, normiert je 100.000
   Einwohner; Auftraggeber-Kategorien machen den Landeshauptstadt-Effekt sichtbar.
 - **Melde-Radar (schematisch)** — aus Zuschlagsdaten simulierte 60-Tage-Fristen der
-  VergStatVO (Meldung ≥ 25 T€ an Destatis); als Konzeptansicht gekennzeichnet.
+  VergStatVO (Meldung an Destatis, Schwelle seit 01.07.2026 über 50 T€, zuvor 25 T€);
+  als Konzeptansicht gekennzeichnet.
 
 ## Datenquellen
 
