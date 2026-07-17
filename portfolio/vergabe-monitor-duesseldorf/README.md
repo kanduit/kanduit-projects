@@ -26,13 +26,16 @@ in [`README.de.md`](README.de.md).
   procedure type; only procedures where both dates are public, with the coverage rate
   stated honestly.
 - **Direktauftrag 2026 (Direct-award scenario)** — procedure mix and monthly series
-  before/after § 75a GO NRW (2026-01-01) and NRW's new €50k direct-award threshold
-  (2026-02-01). The point of the view: direct awards barely appear in public notice
-  data — only internal data shows the actual quota.
+  around § 75a GO NRW (procedural freedom for municipalities since 2026-01-01; the
+  binding rule is each municipality's own Vergabeordnung, not the state's direct-award
+  threshold) and the Vergabebeschleunigungsgesetz (2026-07-01). The point of the view:
+  direct awards barely appear in public notice data — only internal data shows the
+  actual quota.
 - **Benchmark NRW** — Düsseldorf vs. Cologne, Essen, Dortmund, normalized per 100,000
   inhabitants; buyer categories expose the state-capital effect.
 - **Melde-Radar (schematic)** — VergStatVO 60-day reporting deadlines simulated from
-  public award data (contracts ≥ €25k must be reported to Destatis); clearly marked as
+  public award data (reporting threshold raised to over €50k on 2026-07-01, previously
+  €25k); clearly marked as
   a concept view.
 
 ## Data sources
