@@ -87,21 +87,60 @@ CPV_DIV = {
 }
 
 # ---------------------------------------------------------------- Träger rules
-# Layer 1: core administration of each city (Kernverwaltung incl. Eigenbetriebe).
-KERN_RE = {
+#
+# Identifying "the city as buyer" cannot rely on the name alone: Köln's central
+# procurement office publishes as plain "Amt für Recht, Vergabe und
+# Versicherungen" with no city name in it at all. The reliable signal is the
+# combination of the buyer's seat (organisationCity) with the official eForms
+# self-declaration buyerLegalType, minus the supra-municipal bodies that happen
+# to be seated in the same city.
+#
+# Kernverwaltung vs. Beteiligung is then decided by LEGAL FORM, because that is
+# what actually differs between the cities: Düsseldorf runs its sewage works as
+# an Eigenbetrieb (legally part of the city), Köln runs the same function as an
+# AöR (a separate legal entity). Comparing "the city" across cities therefore
+# requires both tiers — see kommunalGesamt below.
+CITY_NAME = {"DEA11": "Düsseldorf", "DEA23": "Köln", "DEA13": "Essen", "DEA52": "Dortmund"}
+
+KERN_NAME_RE = {
     "DEA11": re.compile(r"landeshauptstadt d[üu]sseldorf|^stadt d[üu]sseldorf", re.I),
-    "DEA23": re.compile(r"^stadt k[öo]ln|stadt koeln|oberb[üu]rgermeister.*k[öo]ln", re.I),
-    "DEA13": re.compile(r"^stadt essen|stadt essen[ ,-]", re.I),
-    "DEA52": re.compile(r"^stadt dortmund|vergabe und beschaffungszentrum dortmund|dortmund.*oberb[üu]rgermeister", re.I),
+    "DEA23": re.compile(r"^stadt k[öo]ln|^stadt koeln", re.I),
+    "DEA13": re.compile(r"^stadt essen", re.I),
+    "DEA52": re.compile(r"^stadt dortmund|^vergabe und beschaffungszentrum dortmund", re.I),
 }
-# Layer 1b: municipally owned companies / Beteiligungen (independent buyers,
-# but municipal money — kept separate from the Kernverwaltung on purpose).
-BETEILIGUNG_RE = {
-    "DEA11": re.compile(r"stadtwerke d[üu]sseldorf|rheinbahn|awista|messe d[üu]sseldorf|flughafen d[üu]sseldorf|d[üu]sseldorf congress|d\.live|bädergesellschaft d[üu]sseldorf|ipm|industrieterrains|stadtsparkasse d[üu]sseldorf|netzgesellschaft d[üu]sseldorf|swd\b|holding der landeshauptstadt", re.I),
-    "DEA23": re.compile(r"stadtwerke k[öo]ln|kvb|k[öo]lner verkehrs|rheinenergie|awb k[öo]ln|k[öo]lnmesse|flughafen k[öo]ln|geb[äa]udewirtschaft.*k[öo]ln|k[öo]lnb[äa]der|h[äa]fen und g[üu]terverkehr|netcologne|gag immobilien|sparkasse k[öo]lnbonn|b[üu]hnen.*k[öo]ln|zoologischer garten k[öo]ln", re.I),
-    "DEA13": re.compile(r"stadtwerke essen|ruhrbahn|entsorgungsbetriebe essen|\bebe\b|messe essen|gr[üu]n und gruga|allbau|sparkasse essen|immobilienwirtschaft essen|\bgve\b", re.I),
-    "DEA52": re.compile(r"stadtwerke dortmund|dsw21|dew21|\bedg\b|entsorgung dortmund|messe dortmund|westfalenhallen|flughafen dortmund|sparkasse dortmund|dogewo|klinikum dortmund", re.I),
-}
+
+KOMMUNAL_LEGALTYPES = {"kommun-beh", "koerp-oer-kommun", "anst-oer-kommun", "stift-oer-kommun"}
+
+# Municipal in legal type and seated in the city — but NOT the city itself.
+# Landschaftsverbände, Zweckverbände, Kammern and joint Bund/Kommune bodies all
+# carry municipal legal types and would otherwise be counted as city procurement.
+NICHT_STADT_RE = re.compile(
+    r"landschaftsverband|\blvr\b|\blwl\b|regionalverband|ruhrverband|emschergenossenschaft|"
+    r"lippeverband|niersverband|wupperverband|linksniederrhein|"
+    r"zweckverband|go\.rheinland|\bkdn\b|kopart|"
+    r"kammer|innung|\bihk\b|kreishandwerkerschaft|"
+    r"jobcenter|job-center|"
+    r"max-planck|fraunhofer|leibniz|helmholtz|caritas|diakonie|"
+    r"bundeswehr|medizinischer dienst|kassen[äa]rztliche|kassenzahn|nrw\.bank|"
+    r"universit[äa]t|hochschule|klinikum der|uniklinik|"
+    r"studierendenwerk|studentenwerk|verkehrsverbund|"
+    r"sparkasse|versorgungskasse|zusatzversorgung", re.I)
+
+# Legally separate entity → Beteiligung rather than Kernverwaltung.
+RECHTSFORM_SEPARAT_RE = re.compile(
+    r"\b(gGmbH|GmbH|mbH|AG|AöR|AoeR|eG|e\.\s?G\.|KGaA|KG|e\.\s?V\.)\b|"
+    r"\bgemeinn[üu]tzige\b", re.I)
+
+
+def primary_name(name):
+    """Strip representation clauses so the legal form of the ACTUAL buyer is read.
+
+    "Stadt Essen, vertreten durch die GVE … GmbH" is the city procuring, with a
+    municipal company merely administering the procedure — the trailing GmbH
+    must not turn the city into a Beteiligung.
+    """
+    return re.split(r",?\s*(?:vertreten durch|verfahrensbegleitung durch|"
+                    r"handelnd durch|über\s+die)\b", name, flags=re.I)[0].strip()
 
 # Layer 2: official eForms buyerLegalType taxonomy → Träger.
 LEGALTYPE_TRAEGER = {
@@ -145,14 +184,25 @@ def traeger_of(n):
     nuts = n["nuts"]
     if not name:
         return "unklar"
-    if KERN_RE[nuts].search(name):
-        return "kern"
-    if BETEILIGUNG_RE[nuts].search(name):
-        return "beteiligung"
-    lt = LEGALTYPE_TRAEGER.get(n.get("buyerLegalType") or "")
+
+    prim = primary_name(name)
+    legal = n.get("buyerLegalType") or ""
+    seat_matches = (n.get("buyerCity") or "").strip().lower() == CITY_NAME[nuts].lower()
+
+    # Is this the city itself procuring? Either it says so in the name, or it is
+    # a municipal-type buyer seated here that is not a supra-municipal body.
+    ist_stadt = bool(KERN_NAME_RE[nuts].search(name)) or (
+        seat_matches and legal in KOMMUNAL_LEGALTYPES and not NICHT_STADT_RE.search(name)
+    )
+    if ist_stadt:
+        # Eigenbetrieb (no own legal personality) → part of the administration;
+        # AöR / GmbH / AG → legally separate municipal company.
+        return "beteiligung" if RECHTSFORM_SEPARAT_RE.search(prim) else "kern"
+
+    lt = LEGALTYPE_TRAEGER.get(legal)
     if lt:
-        # a legal type of "kommunal" for a body that is not this city's own
-        # administration means another municipal carrier (Kreis, Zweckverband …)
+        # municipal legal type but not this city's own administration means
+        # another municipal carrier (Kreis, Landschaftsverband, Zweckverband …)
         return lt
     if BUND_RE.search(name):
         return "bund"
@@ -318,6 +368,8 @@ def main():
         kern = [n for n in ns if n["traeger"] == "kern"]
         beteiligung = [n for n in ns if n["traeger"] == "beteiligung"]
 
+        kommunal_gesamt = kern + beteiligung
+
         cities_out[nuts] = {
             **cfg,
             "nuts": nuts,
@@ -327,12 +379,17 @@ def main():
                 "traegerMix": [{"key": k, "label": TRAEGER_LABEL[k], "n": mix.get(k, 0)}
                                for k in TRAEGER_ORDER if mix.get(k)],
                 "kernAnteil": round(len(kern) / len(ns) * 100, 1) if ns else 0,
+                "kommunalAnteil": round(len(kommunal_gesamt) / len(ns) * 100, 1) if ns else 0,
                 "unklarAnteil": round(mix.get("unklar", 0) / len(ns) * 100, 1) if ns else 0,
             },
             # buyer level — every headline figure comes from here
             "kern": profile(kern, last_full_q),
             "beteiligung": profile(beteiligung, last_full_q),
+            # legal-form-robust comparison unit: Eigenbetrieb vs. AöR differs by
+            # city, so only Kernverwaltung + Beteiligungen is comparable 1:1
+            "kommunal": profile(kommunal_gesamt, last_full_q),
             "dauernKern": durations(kern),
+            "dauernKommunal": durations(kommunal_gesamt),
         }
 
     # Düsseldorf detail: named Vergabestellen behind the place total, by Träger
@@ -381,6 +438,22 @@ def main():
             "einwohnerStand": "31.12.2024 (Basis Zensus 2022)",
         },
         "noticesGesamt": len(notices),
+        # Known limits of the comparison, shown in the UI rather than hidden.
+        "vergleichbarkeit": [
+            "Die Städte organisieren gleiche Aufgaben in unterschiedlichen Rechtsformen: "
+            "Düsseldorf führt die Stadtentwässerung als Eigenbetrieb (Teil der Verwaltung), "
+            "Köln dieselbe Aufgabe als AöR (eigene Rechtsperson). Ein Vergleich nur der "
+            "Kernverwaltungen benachteiligt daher Städte mit vielen ausgegliederten Betrieben — "
+            "deshalb ist „Kommunal gesamt“ (Kernverwaltung + Beteiligungen) die belastbarere Größe.",
+            "Zugeordnet wird über den Sitz des Auftraggebers und die amtliche eForms-Angabe zur "
+            "Art des Auftraggebers. Überörtliche Träger mit kommunaler Rechtsform "
+            "(Landschaftsverbände, Zweckverbände, Kammern, Jobcenter) sind ausgenommen.",
+            "Bekanntmachungen ohne auswertbaren Auftraggebernamen werden als „nicht zuordenbar“ "
+            "ausgewiesen und nicht geschätzt.",
+            "Gezählt werden Bekanntmachungen, nicht Aufträge oder Euro-Volumen: Ein Verfahren mit "
+            "vielen Losen kann mehrere Bekanntmachungen erzeugen, ein Rahmenvertrag deckt "
+            "umgekehrt viele Einzelabrufe ab.",
+        ],
     }
 
     payload = {"meta": meta, "cities": cities_out,

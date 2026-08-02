@@ -194,16 +194,18 @@
       <div class="view-head">
         <p class="eyebrow">Düsseldorf · Köln · Essen · Dortmund</p>
         <h2>Benchmark NRW-Großstädte</h2>
-        <p>Vier Städte, gleiche Quelle, gleiche Methodik — und in jeder Stadt <b>nur die
-           Kernverwaltung</b> als Auftraggeber. Erst diese Eingrenzung macht den Vergleich
-           belastbar: Ein Ortsfilter würde in Düsseldorf die Landesbehörden, in Köln das
-           Universitätsklinikum und in Dortmund Bundeseinrichtungen mitzählen.</p>
+        <p>Vier Städte, gleiche Quelle, gleiche Methodik — und in jeder Stadt <b>nur die eigene
+           Kommune</b> als Auftraggeber. Erst diese Eingrenzung macht den Vergleich belastbar:
+           Ein Ortsfilter würde in Düsseldorf die Landesbehörden, in Köln das Universitätsklinikum
+           und in Dortmund Bundeseinrichtungen mitzählen. Verglichen wird <b>kommunal gesamt</b>
+           (Kernverwaltung + eigene Betriebe), weil die Städte dieselben Aufgaben in
+           unterschiedlichen Rechtsformen führen.</p>
       </div>
       <div class="grid g4" id="bench-kpis" style="margin-bottom:var(--sp-4)"></div>
       <div class="grid g2" style="margin-bottom:var(--sp-4)">
         <div class="card">
           <div class="card-title">Bekanntmachungen je 100.000 Einwohner <span class="info-i" data-info="bench_rate" tabindex="0" role="button" aria-label="Erklärung: Normierung">ⓘ</span></div>
-          <div class="card-sub">nur Kernverwaltung · Gesamtzeitraum</div>
+          <div class="card-sub">kommunal gesamt · Gesamtzeitraum</div>
           <div id="chart-bench-rate"></div>
           <p class="note src-note" data-src="einwohner"></p>
         </div>
@@ -214,13 +216,18 @@
           <p class="note src-note" data-src="bkms"></p>
         </div>
       </div>
-      <div class="card">
+      <div class="card" style="margin-bottom:var(--sp-4)">
         <div class="card-title">Kennzahlen-Tabelle</div>
-        <div class="card-sub">Rohwerte · Kernverwaltung je Stadt</div>
+        <div class="card-sub">Rohwerte je Stadt · kommunal gesamt und Kernverwaltung</div>
         <div class="table-wrap" style="box-shadow:none;border:none">
           <table id="bench-table" style="min-width:640px"></table>
         </div>
         <p class="note src-note" data-src="einwohner"></p>
+      </div>
+
+      <div class="banner info">
+        <b>Grenzen dieses Vergleichs — offen benannt:</b>
+        <ul id="vergleichbarkeit" style="margin:8px 0 0; padding-left:20px; line-height:1.5"></ul>
       </div>
     </div>
   </section>
