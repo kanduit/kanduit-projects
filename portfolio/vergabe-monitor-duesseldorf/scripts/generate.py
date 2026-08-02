@@ -6,11 +6,29 @@ for the Kanduit Vergabe-Monitor Düsseldorf.
 
 Run:  python3 scripts/generate.py     (from the vergabe-monitor folder)
 
-All inputs are public eForms-DE notices from the Bekanntmachungsservice
-(Datenservice Öffentlicher Einkauf). No personal data. Winner/company names
-are not present in the snapshots and therefore cannot appear in the output.
+UNIT OF ANALYSIS: the Vergabestelle (contracting authority), not the place.
+--------------------------------------------------------------------------
+The snapshots are collected by place of performance (NUTS DEA11 …), because
+that is the only filter the public search offers. But a NUTS code says where a
+service is delivered, NOT who is buying: Land NRW, Bund, Universitätsklinikum
+and the Landeshauptstadt all tender for delivery in Düsseldorf and procure
+independently of one another. Every headline figure in this monitor is
+therefore computed per BUYER, and the place-level total is only ever shown as
+the decomposition that makes that distinction visible.
 
-Output: data.js — window.KANDUIT_VERGABE = {meta, cities, dauern, radar, …}
+Träger classification is layered, strongest evidence first:
+  1. explicit buyerId (Leitweg-ID) / name rules for a city's core administration
+  2. buyerLegalType — the official eForms self-declaration, whose German
+     taxonomy carries -kommun / -land / -bund suffixes
+  3. conservative name patterns
+  4. otherwise: "nicht zuordenbar", counted and displayed, never silently bucketed
+
+NEVER classify by the leading block of a Leitweg-ID: it is the Gemeindeschlüssel
+of the authority's SEAT, so Land bodies seated in Düsseldorf also carry 05111.
+That is a location signal and would reproduce the very error described above.
+
+All inputs are public eForms-DE notices. No personal data. Winner/company names
+are not present in the snapshots and therefore cannot appear in the output.
 """
 import glob
 import json
@@ -50,15 +68,6 @@ PROC_LABEL = {
     None: "ohne Angabe",
 }
 
-FORM_LABEL = {
-    "planning": "Vorinformation",
-    "competition": "Ausschreibung",
-    "result": "Zuschlag/Ergebnis",
-    "dir-awa-pre": "Ex-ante-Transparenz (Direktvergabe)",
-    "cont-modif": "Auftragsänderung",
-}
-
-# CPV divisions (first two digits) — short German labels
 CPV_DIV = {
     "03": "Land-/Forstwirtschaft", "09": "Energie & Brennstoffe", "14": "Bergbau & Rohstoffe",
     "15": "Nahrungsmittel", "16": "Landmaschinen", "18": "Bekleidung", "19": "Leder/Textil",
@@ -77,28 +86,81 @@ CPV_DIV = {
     "92": "Kultur/Sport/Erholung", "98": "Sonstige Dienstleistungen",
 }
 
-# Buyer categories: Landeshauptstadt + Beteiligungen vs. Land/Bund/Sonstige.
-# City companies (Töchter/Beteiligungen) via keyword heuristics per city.
-STADT_RE = {
-    "DEA11": re.compile(r"landeshauptstadt d[üu]sseldorf|stadt d[üu]sseldorf", re.I),
-    "DEA23": re.compile(r"stadt k[öo]ln|stadt koeln", re.I),
-    "DEA13": re.compile(r"stadt essen", re.I),
-    "DEA52": re.compile(r"stadt dortmund", re.I),
+# ---------------------------------------------------------------- Träger rules
+# Layer 1: core administration of each city (Kernverwaltung incl. Eigenbetriebe).
+KERN_RE = {
+    "DEA11": re.compile(r"landeshauptstadt d[üu]sseldorf|^stadt d[üu]sseldorf", re.I),
+    "DEA23": re.compile(r"^stadt k[öo]ln|stadt koeln|oberb[üu]rgermeister.*k[öo]ln", re.I),
+    "DEA13": re.compile(r"^stadt essen|stadt essen[ ,-]", re.I),
+    "DEA52": re.compile(r"^stadt dortmund|vergabe und beschaffungszentrum dortmund|dortmund.*oberb[üu]rgermeister", re.I),
 }
-TOCHTER_RE = {
-    "DEA11": re.compile(r"stadtwerke d[üu]sseldorf|rheinbahn|awista|messe d[üu]sseldorf|flughafen d[üu]sseldorf|d[üu]sseldorf congress|zoo|ipm|industrieterrains|IDR|stadtsparkasse d[üu]sseldorf|wohnungsgesellschaft d[üu]sseldorf|swd|netzgesellschaft d[üu]sseldorf|bädergesellschaft", re.I),
-    "DEA23": re.compile(r"stadtwerke k[öo]ln|kvb|k[öo]lner verkehrs|rheinenergie|awb k[öo]ln|k[öo]lnmesse|flughafen k[öo]ln|geb[äa]udewirtschaft.*k[öo]ln|k[öo]lnbäder|häfen und güterverkehr|netcologne|gag immobilien|sparkasse k[öo]lnbonn|bühnen.*k[öo]ln|zoologischer garten k[öo]ln", re.I),
-    "DEA13": re.compile(r"stadtwerke essen|ruhrbahn|ebe|entsorgungsbetriebe essen|messe essen|grün und gruga|allbau|sparkasse essen|immobilienwirtschaft essen|gve", re.I),
-    "DEA52": re.compile(r"stadtwerke dortmund|dsw21|dew21|edg|entsorgung dortmund|messe dortmund|westfalenhallen|flughafen dortmund|sparkasse dortmund|dogewo|klinikum dortmund", re.I),
+# Layer 1b: municipally owned companies / Beteiligungen (independent buyers,
+# but municipal money — kept separate from the Kernverwaltung on purpose).
+BETEILIGUNG_RE = {
+    "DEA11": re.compile(r"stadtwerke d[üu]sseldorf|rheinbahn|awista|messe d[üu]sseldorf|flughafen d[üu]sseldorf|d[üu]sseldorf congress|d\.live|bädergesellschaft d[üu]sseldorf|ipm|industrieterrains|stadtsparkasse d[üu]sseldorf|netzgesellschaft d[üu]sseldorf|swd\b|holding der landeshauptstadt", re.I),
+    "DEA23": re.compile(r"stadtwerke k[öo]ln|kvb|k[öo]lner verkehrs|rheinenergie|awb k[öo]ln|k[öo]lnmesse|flughafen k[öo]ln|geb[äa]udewirtschaft.*k[öo]ln|k[öo]lnb[äa]der|h[äa]fen und g[üu]terverkehr|netcologne|gag immobilien|sparkasse k[öo]lnbonn|b[üu]hnen.*k[öo]ln|zoologischer garten k[öo]ln", re.I),
+    "DEA13": re.compile(r"stadtwerke essen|ruhrbahn|entsorgungsbetriebe essen|\bebe\b|messe essen|gr[üu]n und gruga|allbau|sparkasse essen|immobilienwirtschaft essen|\bgve\b", re.I),
+    "DEA52": re.compile(r"stadtwerke dortmund|dsw21|dew21|\bedg\b|entsorgung dortmund|messe dortmund|westfalenhallen|flughafen dortmund|sparkasse dortmund|dogewo|klinikum dortmund", re.I),
 }
-LAND_RE = re.compile(r"\bland nrw\b|landesbetrieb|land nordrhein|landeshaupt(?!stadt)|landesamt|landeskriminalamt|landtag|ministerium|bezirksregierung|universit[äa]t|hochschule|nrw\.bank|nrw\.urban|it\.nrw|polizei|finanzverwaltung|justiz|straßen\.nrw|strassen\.nrw|bau- und liegenschaftsbetrieb|blb", re.I)
-BUND_RE = re.compile(r"\bbundes|deutsche bahn|db \w|db-|autobahn gmbh|bundeswehr|zoll|agentur f[üu]r arbeit|deutsche rentenversicherung", re.I)
+
+# Layer 2: official eForms buyerLegalType taxonomy → Träger.
+LEGALTYPE_TRAEGER = {
+    "kommun-beh": "kommunal", "koerp-oer-kommun": "kommunal",
+    "anst-oer-kommun": "kommunal", "stift-oer-kommun": "kommunal",
+    "omu-lbeh": "land", "oberst-lbeh": "land", "koerp-oer-land": "land",
+    "anst-oer-land": "land", "stift-oer-land": "land",
+    "omu-bbeh": "bund", "omu-bbeh-niedrig": "bund", "oberst-bbeh": "bund",
+    "koerp-oer-bund": "bund", "anst-oer-bund": "bund", "stift-oer-bund": "bund",
+    "pub-undert": "unternehmen", "pub-undert-ra": "unternehmen",
+    "pub-undert-cga": "unternehmen", "pub-undert-la": "unternehmen",
+    "def-cont": "bund", "spec-rights-entity": "unternehmen",
+}
+
+# Layer 3: conservative name patterns (only clear-cut institutional markers).
+LAND_RE = re.compile(r"\bland nrw\b|land nordrhein|landesbetrieb|landesamt|landeskriminalamt|landtag|ministerium|bezirksregierung|universit[äa]tsklinikum|universit[äa]t|hochschule|fachhochschule|nrw\.bank|nrw\.urban|it\.nrw|polizei|finanzverwaltung des landes|justizvollzug|stra[sß]en\.nrw|bau- und liegenschaftsbetrieb|\bblb\b|vergabekammer|landschaftsverband", re.I)
+BUND_RE = re.compile(r"\bbundes|deutsche bahn|\bdb \w|db infrago|db netz|autobahn gmbh|bundeswehr|\bzoll\b|agentur f[üu]r arbeit|deutsche rentenversicherung|jobcenter|bundesanstalt", re.I)
+UNTERNEHMEN_RE = re.compile(r"\bgmbh\b|\bag\b$|\bag \(|aktiengesellschaft|\bkg\b|mbh|e\.? ?v\.?$|gGmbH", re.I)
+
+TRAEGER_LABEL = {
+    "kern": "Kernverwaltung der Stadt",
+    "beteiligung": "Städtische Beteiligungen",
+    "kommunal": "Sonstige kommunale Träger",
+    "land": "Land NRW & Landeseinrichtungen",
+    "bund": "Bund, Bahn & Sozialversicherung",
+    "unternehmen": "Öffentliche Unternehmen (Sektoren)",
+    "unklar": "nicht zuordenbar",
+}
+TRAEGER_ORDER = ["kern", "beteiligung", "kommunal", "land", "bund", "unternehmen", "unklar"]
 
 VALUE_CAP = 500e6  # guard against nonsense values (e.g. cent errors) in KPIs
 
 
 def log(*a):
     print(*a)
+
+
+def traeger_of(n):
+    """Which public body owns this buyer? Layered, strongest evidence first."""
+    name = (n.get("buyer") or "").strip()
+    nuts = n["nuts"]
+    if not name:
+        return "unklar"
+    if KERN_RE[nuts].search(name):
+        return "kern"
+    if BETEILIGUNG_RE[nuts].search(name):
+        return "beteiligung"
+    lt = LEGALTYPE_TRAEGER.get(n.get("buyerLegalType") or "")
+    if lt:
+        # a legal type of "kommunal" for a body that is not this city's own
+        # administration means another municipal carrier (Kreis, Zweckverband …)
+        return lt
+    if BUND_RE.search(name):
+        return "bund"
+    if LAND_RE.search(name):
+        return "land"
+    if UNTERNEHMEN_RE.search(name):
+        return "unternehmen"
+    return "unklar"
 
 
 def load_notices():
@@ -128,23 +190,6 @@ def quarter(d):  # 'YYYY-MM-DD' -> 'YYYY-Qn'
     return f"{d[:4]}-Q{(int(d[5:7]) - 1) // 3 + 1}"
 
 
-def buyer_category(n):
-    name = n.get("buyer") or ""
-    nuts = n["nuts"]
-    if STADT_RE[nuts].search(name):
-        return "stadt"
-    if TOCHTER_RE[nuts].search(name):
-        return "tochter"
-    if BUND_RE.search(name):
-        return "bund"
-    if LAND_RE.search(name):
-        return "land"
-    legal = n.get("buyerLegalType") or ""
-    if legal == "koerp-oer-kommun":
-        return "kommunal-sonst"
-    return "sonstige"
-
-
 def median(vals):
     vals = sorted(vals)
     if not vals:
@@ -161,181 +206,167 @@ def pctl(vals, p):
     return vals[i]
 
 
+def profile(ns, last_full_q):
+    """Aggregate one set of notices belonging to ONE buyer group."""
+    comp = [n for n in ns if n.get("formType") == "competition"]
+    res = [n for n in ns if n.get("formType") == "result"]
+
+    quarters = sorted({quarter(n["pubDate"]) for n in ns
+                       if n.get("pubDate") and n["pubDate"] >= "2024-01-01"
+                       and quarter(n["pubDate"]) <= last_full_q})
+    q_counts = []
+    for q in quarters:
+        in_q = [n for n in ns if n.get("pubDate") and quarter(n["pubDate"]) == q]
+        q_counts.append({
+            "q": q,
+            "competition": sum(1 for n in in_q if n.get("formType") == "competition"),
+            "result": sum(1 for n in in_q if n.get("formType") == "result"),
+            "other": sum(1 for n in in_q if n.get("formType") not in ("competition", "result")),
+        })
+
+    proc = Counter(n.get("procedureType") for n in comp)
+    cpv = Counter((n.get("cpv") or "")[:2] for n in comp if n.get("cpv"))
+
+    vals = [n["awardValue"] for n in res if n.get("awardValue")]
+    vals_ok = [v for v in vals if v <= VALUE_CAP]
+    bids = [n["bidsAvg"] for n in res if n.get("bidsAvg")]
+
+    # distinct Vergabestellen inside this group (public bodies — naming is fine)
+    stellen = Counter()
+    ids = set()
+    for n in ns:
+        if n.get("buyer"):
+            stellen[n["buyer"].strip()] += 1
+        if n.get("buyerId"):
+            ids.add(n["buyerId"])
+
+    return {
+        "total": len(ns),
+        "competitions": len(comp),
+        "results": len(res),
+        "veat": sum(1 for n in ns if n.get("formType") == "dir-awa-pre"),
+        "contModif": sum(1 for n in ns if n.get("formType") == "cont-modif"),
+        "quarterly": q_counts,
+        "procMix": [{"key": k or "none", "label": PROC_LABEL.get(k, k), "n": c}
+                    for k, c in proc.most_common()],
+        "cpvTop": [{"div": d, "label": CPV_DIV.get(d, "CPV " + d), "n": c}
+                   for d, c in cpv.most_common(10)],
+        "awardSum": round(sum(vals_ok)),
+        "awardN": len(vals_ok),
+        "resultsWithValue": len(vals),
+        "bidsMedian": median(bids),
+        "bidsN": len(bids),
+        "topStellen": [{"name": b, "n": c} for b, c in stellen.most_common(10)],
+        "distinctStellen": len(stellen),
+        "distinctIds": len(ids),
+    }
+
+
+def durations(ns, label_lookup=PROC_LABEL, min_n=5):
+    """Median days competition pubDate -> award decision, within one buyer group."""
+    comp_by_proc = defaultdict(list)
+    for n in ns:
+        if n.get("formType") == "competition" and n.get("procedureId") and n.get("pubDate"):
+            comp_by_proc[n["procedureId"]].append(n)
+    results = [n for n in ns if n.get("formType") == "result"]
+    pairs = []
+    for r in results:
+        comps = comp_by_proc.get(r.get("procedureId"))
+        if not comps:
+            continue
+        c0 = min(comps, key=lambda c: c["pubDate"])
+        end = r.get("decisionDate") or r.get("pubDate")
+        if not end or end < c0["pubDate"]:
+            continue
+        days = (date.fromisoformat(end) - date.fromisoformat(c0["pubDate"])).days
+        if days > 1200:
+            continue
+        pairs.append({"proc": c0.get("procedureType"), "days": days})
+    by_proc = defaultdict(list)
+    for p in pairs:
+        by_proc[p["proc"]].append(p["days"])
+    return {
+        "results": len(results),
+        "matched": len(pairs),
+        "medianAll": median([p["days"] for p in pairs]),
+        "p25": pctl([p["days"] for p in pairs], .25),
+        "p75": pctl([p["days"] for p in pairs], .75),
+        "byProc": [{"key": k or "none", "label": label_lookup.get(k, k), "n": len(v),
+                    "median": median(v), "p25": pctl(v, .25), "p75": pctl(v, .75)}
+                   for k, v in sorted(by_proc.items(), key=lambda kv: -len(kv[1])) if len(v) >= min_n],
+    }
+
+
 def main():
     notices, fetched, files = load_notices()
     months = sorted(f[-12:-5] for f in files)
     first_month, last_month = months[0], months[-1]
 
     today = date.fromisoformat(fetched) if fetched else date.today()
-    # last complete quarter (partial quarters are excluded from time series)
     lq_end = date(today.year, 3 * ((today.month - 1) // 3) + 1, 1) - timedelta(days=1)
     last_full_q = quarter(lq_end.isoformat())
 
     by_city = defaultdict(list)
     for n in notices:
-        n["cat"] = buyer_category(n)
+        n["traeger"] = traeger_of(n)
         by_city[n["nuts"]].append(n)
-
-    def q_ok(d):
-        return d and quarter(d) <= last_full_q and d >= "2024-01-01"
 
     cities_out = {}
     for nuts, cfg in CITIES.items():
         ns = by_city.get(nuts, [])
-        comp = [n for n in ns if n.get("formType") == "competition"]
-        res = [n for n in ns if n.get("formType") == "result"]
-        veat = [n for n in ns if n.get("formType") == "dir-awa-pre"]
-
-        # quarterly counts (complete quarters only)
-        quarters = sorted({quarter(n["pubDate"]) for n in ns if q_ok(n.get("pubDate"))})
-        q_counts = []
-        for q in quarters:
-            in_q = [n for n in ns if n.get("pubDate") and quarter(n["pubDate"]) == q]
-            q_counts.append({
-                "q": q,
-                "competition": sum(1 for n in in_q if n.get("formType") == "competition"),
-                "result": sum(1 for n in in_q if n.get("formType") == "result"),
-                "other": sum(1 for n in in_q if n.get("formType") not in ("competition", "result")),
-            })
-
-        # procedure mix (competition notices)
-        proc = Counter(n.get("procedureType") for n in comp)
-        proc_mix = [{"key": k or "none", "label": PROC_LABEL.get(k, k), "n": c}
-                    for k, c in proc.most_common()]
-
-        # CPV divisions (competitions; results not double-counted)
-        cpv = Counter((n.get("cpv") or "")[:2] for n in comp if n.get("cpv"))
-        cpv_top = [{"div": d, "label": CPV_DIV.get(d, "CPV " + d), "n": c}
-                   for d, c in cpv.most_common(10)]
-
-        # award volume where stated (capped outliers excluded from the sum, counted separately)
-        vals = [n["awardValue"] for n in res if n.get("awardValue")]
-        vals_ok = [v for v in vals if v <= VALUE_CAP]
-        award_sum = sum(vals_ok)
-
-        # buyer categories + top buyers (public authorities — not winners)
-        cat = Counter(n["cat"] for n in ns)
-        buyers = Counter((n.get("buyer") or "").strip() for n in ns if n.get("buyer"))
-        top_buyers = [{"name": b, "n": c, "cat": buyer_category({"buyer": b, "nuts": nuts, "buyerLegalType": ""})}
-                      for b, c in buyers.most_common(12)]
-
-        bids = [n["bidsAvg"] for n in res if n.get("bidsAvg")]
+        mix = Counter(n["traeger"] for n in ns)
+        kern = [n for n in ns if n["traeger"] == "kern"]
+        beteiligung = [n for n in ns if n["traeger"] == "beteiligung"]
 
         cities_out[nuts] = {
             **cfg,
             "nuts": nuts,
-            "total": len(ns),
-            "competitions": len(comp),
-            "results": len(res),
-            "veat": len(veat),
-            "contModif": sum(1 for n in ns if n.get("formType") == "cont-modif"),
-            "quarterly": q_counts,
-            "procMix": proc_mix,
-            "cpvTop": cpv_top,
-            "awardSum": round(award_sum),
-            "awardN": len(vals_ok),
-            "awardOutliers": len(vals) - len(vals_ok),
-            "resultsWithValue": len(vals),
-            "buyerCats": dict(cat),
-            "topBuyers": top_buyers,
-            "distinctBuyers": len(buyers),
-            "bidsMedian": median(bids),
-            "bidsN": len(bids),
+            # place level — only ever shown as the decomposition, never as a headline
+            "platz": {
+                "total": len(ns),
+                "traegerMix": [{"key": k, "label": TRAEGER_LABEL[k], "n": mix.get(k, 0)}
+                               for k in TRAEGER_ORDER if mix.get(k)],
+                "kernAnteil": round(len(kern) / len(ns) * 100, 1) if ns else 0,
+                "unklarAnteil": round(mix.get("unklar", 0) / len(ns) * 100, 1) if ns else 0,
+            },
+            # buyer level — every headline figure comes from here
+            "kern": profile(kern, last_full_q),
+            "beteiligung": profile(beteiligung, last_full_q),
+            "dauernKern": durations(kern),
         }
 
-    # ---------------- durations: competition pubDate -> result decision/pub ----
-    dauern = {}
-    for nuts in CITIES:
-        ns = by_city.get(nuts, [])
-        comp_by_proc = defaultdict(list)
-        for n in ns:
-            if n.get("formType") == "competition" and n.get("procedureId") and n.get("pubDate"):
-                comp_by_proc[n["procedureId"]].append(n)
-        pairs = []
-        results = [n for n in ns if n.get("formType") == "result"]
-        matched = 0
-        for r in results:
-            comps = comp_by_proc.get(r.get("procedureId"))
-            if not comps:
-                continue
-            c0 = min(comps, key=lambda c: c["pubDate"])
-            end = r.get("decisionDate") or r.get("pubDate")
-            if not end or end < c0["pubDate"]:
-                continue
-            days = (date.fromisoformat(end) - date.fromisoformat(c0["pubDate"])).days
-            if days > 1200:  # implausible pairing
-                continue
-            matched += 1
-            pairs.append({"proc": c0.get("procedureType"), "days": days,
-                          "endBasis": "decision" if r.get("decisionDate") else "resultPub"})
-        by_proc = defaultdict(list)
-        for p in pairs:
-            by_proc[p["proc"]].append(p["days"])
-        dauern[nuts] = {
-            "results": len(results),
-            "matched": matched,
-            "medianAll": median([p["days"] for p in pairs]),
-            "p25": pctl([p["days"] for p in pairs], .25),
-            "p75": pctl([p["days"] for p in pairs], .75),
-            "byProc": [{"key": k or "none", "label": PROC_LABEL.get(k, k), "n": len(v),
-                        "median": median(v), "p25": pctl(v, .25), "p75": pctl(v, .75)}
-                       for k, v in sorted(by_proc.items(), key=lambda kv: -len(kv[1])) if len(v) >= 5],
-        }
-
-    # ---------------- scenario: mix before/after 2026-01-01 (Düsseldorf) -------
+    # Düsseldorf detail: named Vergabestellen behind the place total, by Träger
     d11 = by_city.get("DEA11", [])
-    def mix_for(pred):
-        sel = [n for n in d11 if n.get("formType") == "competition" and n.get("pubDate") and pred(n["pubDate"])]
-        c = Counter(n.get("procedureType") for n in sel)
-        return {"n": len(sel), "mix": [{"key": k or "none", "label": PROC_LABEL.get(k, k), "n": v}
-                                        for k, v in c.most_common()]}
-    # half-year windows around the break for a fair per-month comparison
-    szenario = {
-        "vor": mix_for(lambda d: "2025-01-01" <= d <= "2025-12-31"),
-        "nach": mix_for(lambda d: "2026-01-01" <= d <= (lq_end.isoformat())),
-        "vorLabel": "2025 (Jan–Dez)",
-        "nachLabel": f"2026 (Jan–{lq_end.strftime('%b')})".replace("Mar", "Mrz").replace("Jun", "Jun"),
-        "monthlyComp": [],
-        "veatMonthly": [],
+    stellen_by_traeger = defaultdict(Counter)
+    for n in d11:
+        if n.get("buyer"):
+            stellen_by_traeger[n["traeger"]][n["buyer"].strip()] += 1
+    vergabestellen = {
+        t: [{"name": b, "n": c} for b, c in stellen_by_traeger[t].most_common(8)]
+        for t in TRAEGER_ORDER if stellen_by_traeger.get(t)
     }
-    monthly = Counter(n["pubDate"][:7] for n in d11 if n.get("formType") == "competition" and n.get("pubDate"))
-    for m in months:
-        if m <= lq_end.isoformat()[:7]:
-            szenario["monthlyComp"].append({"m": m, "n": monthly.get(m, 0)})
-    veat_m = Counter(n["pubDate"][:7] for n in d11 if n.get("formType") == "dir-awa-pre" and n.get("pubDate"))
-    szenario["veatMonthly"] = [{"m": m, "n": veat_m.get(m, 0)} for m in months if m <= lq_end.isoformat()[:7]]
 
-    # ---------------- Melde-Radar (schematisch): 60-Tage-Fristen ---------------
-    radar_src = [n for n in d11 if n.get("formType") == "result"]
-    radar_items = []
-    for n in radar_src:
-        basis = n.get("decisionDate") or n.get("pubDate")
-        if not basis:
-            continue
-        frist = (date.fromisoformat(basis) + timedelta(days=60)).isoformat()
-        rest = (date.fromisoformat(frist) - today).days
-        if rest < -120:
-            continue  # keep the radar list recent
-        radar_items.append({
-            "buyer": n.get("buyer") or "—",
-            "cat": n["cat"],
-            "basis": basis,
-            "basisTyp": "Zuschlagsdatum" if n.get("decisionDate") else "Bekanntmachung Ergebnis",
-            "frist": frist,
-            "rest": rest,
-            "value": n.get("awardValue"),
-        })
-    radar_items.sort(key=lambda r: r["frist"])
-    radar = {
-        "stand": today.isoformat(),
-        "items": radar_items,
-        "n90": len(radar_items),
-        "offen": sum(1 for r in radar_items if r["rest"] >= 0),
-        "unter14": sum(1 for r in radar_items if 0 <= r["rest"] < 14),
-        "abgelaufen": sum(1 for r in radar_items if r["rest"] < 0),
-        "resultsOhneDatum": sum(1 for n in radar_src if not (n.get("decisionDate") or n.get("pubDate"))),
-        "mitZuschlagsdatum": sum(1 for n in radar_src if n.get("decisionDate")),
-        "gesamtResults": len(radar_src),
+    # competition intensity — bidder counts for the city's own procedures
+    kern11 = [n for n in d11 if n["traeger"] == "kern"]
+    res_with_bids = [n for n in kern11 if n.get("formType") == "result" and n.get("bidsAvg")]
+    bid_buckets = Counter()
+    for n in res_with_bids:
+        b = n["bidsAvg"]
+        key = "1" if b < 1.5 else "2" if b < 2.5 else "3-5" if b < 5.5 else "6-9" if b < 9.5 else "10+"
+        bid_buckets[key] += 1
+    by_cpv_bids = defaultdict(list)
+    for n in res_with_bids:
+        if n.get("cpv"):
+            by_cpv_bids[n["cpv"][:2]].append(n["bidsAvg"])
+    wettbewerb = {
+        "n": len(res_with_bids),
+        "resultsGesamt": sum(1 for n in kern11 if n.get("formType") == "result"),
+        "median": median([n["bidsAvg"] for n in res_with_bids]),
+        "buckets": [{"k": k, "n": bid_buckets.get(k, 0)} for k in ["1", "2", "3-5", "6-9", "10+"]],
+        "byCpv": sorted(
+            [{"div": d, "label": CPV_DIV.get(d, "CPV " + d), "n": len(v), "median": median(v)}
+             for d, v in by_cpv_bids.items() if len(v) >= 8],
+            key=lambda r: r["median"])[:10],
     }
 
     meta = {
@@ -352,26 +383,33 @@ def main():
         "noticesGesamt": len(notices),
     }
 
-    payload = {"meta": meta, "cities": cities_out, "dauern": dauern,
-               "szenario": szenario, "radar": radar}
+    payload = {"meta": meta, "cities": cities_out,
+               "vergabestellen": vergabestellen, "wettbewerb": wettbewerb,
+               "traegerLabel": TRAEGER_LABEL, "traegerOrder": TRAEGER_ORDER}
 
     header = (
         "/* Kanduit Vergabe-Monitor Düsseldorf — aggregierte öffentliche Bekanntmachungsdaten.\n"
         "   Quelle: Bekanntmachungsservice / Datenservice Öffentlicher Einkauf (eForms-DE),\n"
         "   https://www.oeffentlichevergabe.de — OpenData-API, Abruf siehe meta.stand.\n"
+        "   Auswertungseinheit ist die VERGABESTELLE, nicht der Erfüllungsort:\n"
+        "   NUTS-Codes sagen, wo geliefert wird, nicht wer beschafft.\n"
         "   Keine personenbezogenen Daten; Namen von Zuschlagsempfängern werden nicht verarbeitet.\n*/\n"
     )
     out = os.path.join(ROOT, "data.js")
     with open(out, "w", encoding="utf-8") as fh:
         fh.write(header + "window.KANDUIT_VERGABE = " +
-                 json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n")
+                 json.dumps(payload, ensure_ascii=False, sort_keys=True,
+                            separators=(",", ":")) + ";\n")
 
     log(f"notices gesamt: {len(notices)}  (Monate {first_month}..{last_month})")
     for nuts, c in cities_out.items():
-        log(f"  {c['name']}: {c['total']} notices, {c['competitions']} Ausschreibungen, "
-            f"{c['results']} Ergebnisse, Median-Dauer {dauern[nuts]['medianAll']} Tage "
-            f"({dauern[nuts]['matched']}/{dauern[nuts]['results']} Paare)")
-    log(f"radar: {radar['n90']} Einträge, {radar['offen']} offen, Stand {radar['stand']}")
+        p, k = c["platz"], c["kern"]
+        log(f"  {c['name']}: Erfüllungsort {p['total']} → Kernverwaltung {k['total']} "
+            f"({p['kernAnteil']} %), Beteiligungen {c['beteiligung']['total']}, "
+            f"nicht zuordenbar {p['unklarAnteil']} % | Median-Dauer {c['dauernKern']['medianAll']} T "
+            f"({c['dauernKern']['matched']}/{c['dauernKern']['results']})")
+    log(f"Wettbewerb (D'dorf Kernverwaltung): Median {wettbewerb['median']} Angebote, "
+        f"{wettbewerb['n']}/{wettbewerb['resultsGesamt']} Ergebnisse mit Angabe")
     log("wrote " + out)
 
 

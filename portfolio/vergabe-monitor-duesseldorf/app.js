@@ -1,11 +1,16 @@
 /* =========================================================================
    Kanduit Vergabe-Monitor Düsseldorf — application logic
-   (vanilla JS, no build step; gleiche Systematik wie Schulbau-Monitor)
+   (vanilla JS, no build step; gleiche Systematik wie Kommunalatlas NRW)
+
+   Auswertungseinheit ist durchgängig die VERGABESTELLE. Der Erfüllungsort
+   (NUTS) ist nur der Filter der Quelle und wird ausschließlich in der Ansicht
+   „Wer beschafft?" als Zerlegung gezeigt — nie als Kennzahl der Stadt.
    ========================================================================= */
 (function () {
 "use strict";
 const DATA = window.KANDUIT_VERGABE;
 const D11 = DATA.cities.DEA11;
+const KERN = D11.kern;                       // Kernverwaltung = Auftraggeber Stadt
 const CITY_ORDER = ['DEA11', 'DEA23', 'DEA13', 'DEA52'];
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
@@ -16,20 +21,13 @@ const nf = new Intl.NumberFormat('de-DE');
 const nf1 = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
 const fmtInt = v => nf.format(Math.round(v));
 const fmtMio = v => nf1.format(v / 1e6) + ' Mio €';
-const fmtTsd = v => nf.format(Math.round(v / 1000)) + ' T€';
-const fmtVal = v => v == null ? '—' : (v >= 1e6 ? fmtMio(v) : fmtTsd(v));
-const fmtDate = iso => iso ? iso.slice(8, 10) + '.' + iso.slice(5, 7) + '.' + iso.slice(0, 4) : '—';
-const MONTH_SHORT = { '01': 'Jan', '02': 'Feb', '03': 'Mrz', '04': 'Apr', '05': 'Mai', '06': 'Jun', '07': 'Jul', '08': 'Aug', '09': 'Sep', '10': 'Okt', '11': 'Nov', '12': 'Dez' };
-const fmtMonth = m => MONTH_SHORT[m.slice(5, 7)] + ' ' + m.slice(2, 4);
+const fmtPct = v => nf1.format(v) + ' %';
 
-const CAT_LABEL = {
-  stadt: 'Landeshauptstadt / Stadt', tochter: 'Städtische Töchter',
-  'kommunal-sonst': 'Sonstige kommunale Träger', land: 'Land NRW & Einrichtungen',
-  bund: 'Bund & Bahn', sonstige: 'Sonstige öffentliche Auftraggeber',
-};
-const CAT_COLOR = {
-  stadt: 'var(--dv-petrol)', tochter: 'var(--dv-green)', 'kommunal-sonst': 'var(--dv-lime)',
-  land: 'var(--dv-orange)', bund: 'var(--dv-violet)', sonstige: 'var(--neutral-400)',
+const TL = DATA.traegerLabel;
+const TRAEGER_COLOR = {
+  kern: 'var(--dv-petrol)', beteiligung: 'var(--dv-green)', kommunal: 'var(--dv-lime)',
+  land: 'var(--dv-orange)', bund: 'var(--dv-violet)', unternehmen: 'var(--dv-cyan)',
+  unklar: 'var(--neutral-400)',
 };
 const PROC_COLOR = {
   'open': 'var(--dv-petrol)', 'restricted': 'var(--dv-cyan)', 'neg-w-call': 'var(--dv-green)',
@@ -48,13 +46,18 @@ const SRC_LABEL = {
 /* ====================================================================
    TABS
    ==================================================================== */
-const views = { overview: 'view-overview', dauern: 'view-dauern', direkt: 'view-direkt', benchmark: 'view-benchmark', radar: 'view-radar' };
+const views = { overview: 'view-overview', stellen: 'view-stellen', dauern: 'view-dauern',
+                wettbewerb: 'view-wettbewerb', benchmark: 'view-benchmark' };
 function showView(name) {
   $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === name));
   Object.entries(views).forEach(([k, id]) => $('#' + id).classList.toggle('active', k === name));
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) showView(b.dataset.view); });
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-goto]'); if (!a) return;
+  e.preventDefault(); showView(a.dataset.goto);
+});
 
 /* ====================================================================
    TOOLTIP
@@ -75,31 +78,37 @@ const hideTip = () => tt.classList.remove('show');
    Jede Kennzahl benennt Berechnung UND Datenlücken.
    ==================================================================== */
 const Z = DATA.meta.zeitraum;
-const PERIOD = `Zeitraum ${fmtMonth(Z.von + '-01')} – ${fmtMonth(Z.bis + '-01')}`;
+const PERIOD = `Zeitraum ${Z.von} bis ${Z.bis}`;
+const PLATZ = D11.platz;
+const faktor = KERN.total ? (PLATZ.total / KERN.total) : 0;
+
 const METRIC_INFO = {
-  kpi_gesamt: { t: 'Bekanntmachungen gesamt', d: `Alle eForms-Bekanntmachungen mit Erfüllungsort Düsseldorf (NUTS DEA11) im Bekanntmachungsservice: Ausschreibungen, Zuschläge, Vorinformationen, Auftragsänderungen. ${PERIOD}. Unterschwellige Vergaben ohne Bekanntmachungspflicht sind systembedingt nicht enthalten.` },
-  kpi_ausschreibungen: { t: 'Ausschreibungen', d: 'Auftragsbekanntmachungen (eForms-Formtyp „competition"). Reale, veröffentlichte Verfahren — keine Schätzung.' },
-  kpi_ergebnisse: { t: 'Zuschläge / Ergebnisse', d: 'Zuschlags- und Ergebnisbekanntmachungen (Formtyp „result"). Nicht jedes Verfahren aus dem Zeitraum hat schon ein veröffentlichtes Ergebnis.' },
-  kpi_volumen: { t: 'Auftragsvolumen (wo ausgewiesen)', d: `Summe der in Zuschlagsbekanntmachungen ausgewiesenen Auftragswerte. Nur ${fmtInt(D11.resultsWithValue)} von ${fmtInt(D11.results)} Ergebnissen nennen einen Wert — die Summe ist also eine Untergrenze, kein Gesamtvolumen.` },
-  kpi_buyers: { t: 'Beteiligte Vergabestellen', d: 'Anzahl unterschiedlicher öffentlicher Auftraggeber, die im Zeitraum mit Erfüllungsort Düsseldorf bekannt gemacht haben — Stadt, Töchter, Land, Bund und weitere.' },
-  kpi_bids: { t: 'Median Angebote je Los', d: `Median der in Ergebnisbekanntmachungen ausgewiesenen Angebotszahlen (${fmtInt(D11.bidsN)} Ergebnisse mit Angabe). Kennzahl für Wettbewerbsintensität.` },
-  quartal: { t: 'Bekanntmachungen je Quartal', d: 'Zählung nach Veröffentlichungsdatum im Bekanntmachungsservice; nur vollständige Quartale (aktuelles Teilquartal ausgeblendet). „Sonstige" = Vorinformationen, Ex-ante-Transparenz, Auftragsänderungen.' },
-  verfahrensart: { t: 'Verfahrensarten-Mix', d: 'Verteilung der eForms-Verfahrensarten über alle Ausschreibungen im Zeitraum. Oberschwellig dominiert das Offene Verfahren; unterschwellige Verfahren erscheinen nur, soweit freiwillig bekannt gemacht.' },
-  cpv: { t: 'CPV-Gruppen', d: 'Common Procurement Vocabulary — EU-weit einheitliche Klassifikation des Auftragsgegenstands. Gruppiert nach den ersten zwei Ziffern (Abteilung), gezählt je Ausschreibung (Haupt-CPV).' },
-  vergabestellen: { t: 'Beteiligte Vergabestellen', d: 'Öffentliche Auftraggeber laut Bekanntmachung, kategorisiert per Namens-Heuristik: Stadt, städtische Töchter, Land NRW, Bund/Bahn, Sonstige. Auftraggeber sind öffentliche Stellen — Zuschlagsempfänger (Firmen) werden bewusst nicht gerankt.' },
-  dauer_median: { t: 'Median-Dauer je Verfahrensart', d: 'Tage zwischen Auftragsbekanntmachung und Zuschlagsentscheidung (bzw. Ergebnisbekanntmachung, wo kein Zuschlagsdatum ausgewiesen ist), verknüpft über die Verfahrens-ID. Median statt Mittelwert — robust gegen Ausreißer. Nur Verfahrensarten mit ≥ 5 Paaren.' },
-  dauer_vergleich: { t: 'Median-Dauer im Städtevergleich', d: 'Gleiche Methodik für alle vier Städte: nur Verfahren, bei denen Bekanntmachung und Ergebnis öffentlich verknüpfbar sind. Unterschiede können auch am Verfahrensmix liegen, nicht nur an der Bearbeitungsgeschwindigkeit.' },
-  dauer_abdeckung: { t: 'Abdeckung', d: 'Anteil der Ergebnisbekanntmachungen, denen eine Auftragsbekanntmachung im Beobachtungszeitraum zugeordnet werden konnte. Der Rest: Bekanntmachung vor Januar 2024, Direktvergabe ohne Bekanntmachung oder Veröffentlichung auf anderer Plattform.' },
-  monatsreihe: { t: 'Ausschreibungen je Monat', d: 'Auftragsbekanntmachungen der Stadt und aller weiteren Vergabestellen mit Erfüllungsort Düsseldorf, je Kalendermonat. Markiert ist der 01.01.2026 (§ 75a GO NRW — Wegfall der verpflichtenden kommunalen Wertgrenzen). Zwei weitere Regeländerungen liegen außerhalb des Datenfensters: die Direktauftragsgrenze der Landesverwaltung (01.02.2026 — bindet Kommunen nicht automatisch) und das Vergabebeschleunigungsgesetz (01.07.2026 — Wirkung erst ab Q3 2026, das aktuelle Fenster endet im Juni).' },
-  mixvergleich: { t: 'Verfahrensmix vor / nach dem Stichtag', d: 'Anteile der Verfahrensarten an den Ausschreibungen: Gesamtjahr 2025 gegenüber 2026 (bis zum letzten vollen Quartal). Prozentwerte, daher trotz unterschiedlicher Zeitraumlängen vergleichbar.' },
-  veat: { t: 'Freiwillige Ex-ante-Transparenz (VEAT)', d: 'Bekanntmachungen, mit denen ein Auftraggeber eine beabsichtigte Direktvergabe freiwillig vorab transparent macht (Formtyp „dir-awa-pre"). Die geringe Zahl zeigt: Das Gros der Direktaufträge bleibt öffentlich unsichtbar.' },
-  bench_rate: { t: 'Bekanntmachungen je 100.000 Einwohner', d: 'Gesamtzahl der Bekanntmachungen im Zeitraum, geteilt durch die amtliche Einwohnerzahl (IT.NRW, ' + DATA.meta.quellen.einwohnerStand + '), mal 100.000. Achtung Landeshauptstadt-Effekt: In Düsseldorf schreiben auch viele Landeseinrichtungen aus.' },
-  buyer_cats: { t: 'Auftraggeber-Kategorien', d: 'Namens-Heuristik über die Auftraggeber der Bekanntmachungen: Stadtverwaltung, städtische Töchter, Land NRW (inkl. Unikliniken, Hochschulen, Landesbetriebe), Bund & Bahn, Sonstige. Macht den Landeshauptstadt-Effekt im Benchmark sichtbar.' },
-  radar_frist: { t: 'Simulierte Meldefrist', d: 'Zuschlagsdatum (wo ausgewiesen, sonst Datum der Ergebnisbekanntmachung) + 60 Tage — die Meldefrist der VergStatVO. Die Meldeschwelle liegt seit 01.07.2026 bei über 50.000 € netto (zuvor 25.000 €; angehoben durch das Vergabebeschleunigungsgesetz). Ob die Meldung an Destatis tatsächlich erfolgt ist, ist öffentlich nicht sichtbar; die Ansicht ist eine Konzept-Demonstration.' },
-  radar_fenster: { t: 'Zuschläge im Radar-Fenster', d: 'Ergebnisbekanntmachungen für Düsseldorf, deren simulierte 60-Tage-Frist heute noch läuft oder in den letzten 4 Monaten ablief.' },
-  radar_offen: { t: 'Frist läuft', d: 'Simulierte Meldefristen, die am Stichtag (Datenstand) noch nicht abgelaufen sind.' },
-  radar_knapp: { t: 'Frist < 14 Tage', d: 'Davon Fristen, die binnen 14 Tagen ablaufen — im echten Betrieb der Trigger für Erinnerungen und Vorbefüllung.' },
-  radar_abgelaufen: { t: 'Frist abgelaufen', d: 'Simulierte Fristen im Fenster, die bereits abgelaufen sind. Heißt nicht „Meldung versäumt" — der tatsächliche Meldestatus steht nur in internen Systemen.' },
+  kpi_gesamt: { t: 'Bekanntmachungen der Stadt', d: `eForms-Bekanntmachungen, deren Auftraggeber die Kernverwaltung der Landeshauptstadt ist (Ämter und Eigenbetriebe). ${PERIOD}. Nicht enthalten: andere öffentliche Auftraggeber am selben Ort sowie unterschwellige Vergaben ohne Bekanntmachungspflicht.` },
+  kpi_ausschreibungen: { t: 'Ausschreibungen', d: 'Auftragsbekanntmachungen der Kernverwaltung (eForms-Formtyp „competition"). Reale, veröffentlichte Verfahren — keine Schätzung.' },
+  kpi_ergebnisse: { t: 'Zuschläge / Ergebnisse', d: 'Zuschlags- und Ergebnisbekanntmachungen der Kernverwaltung (Formtyp „result"). Nicht jedes Verfahren im Zeitraum hat schon ein veröffentlichtes Ergebnis.' },
+  kpi_volumen: { t: 'Auftragsvolumen (wo ausgewiesen)', d: `Summe der in Zuschlagsbekanntmachungen der Stadt ausgewiesenen Auftragswerte. Nur ${fmtInt(KERN.resultsWithValue)} von ${fmtInt(KERN.results)} Ergebnissen nennen einen Wert — die Summe ist eine Untergrenze, kein Gesamtvolumen.` },
+  kpi_stellen: { t: 'Vergabestellen der Stadt', d: 'Anzahl unterschiedlich benannter Vergabestellen innerhalb der Kernverwaltung (Zentrale Vergabestelle, Eigenbetriebe, einzelne Ämter). Schreibweisen können variieren; die Zahl ist daher eine Obergrenze.' },
+  kpi_bids: { t: 'Median Angebote je Los', d: `Median der in Ergebnisbekanntmachungen der Stadt ausgewiesenen Angebotszahlen (${fmtInt(KERN.bidsN)} Ergebnisse mit Angabe).` },
+  quartal: { t: 'Bekanntmachungen je Quartal', d: 'Zählung nach Veröffentlichungsdatum, nur Verfahren der Kernverwaltung und nur vollständige Quartale (aktuelles Teilquartal ausgeblendet). „Sonstige" = Vorinformationen, Ex-ante-Transparenz, Auftragsänderungen.' },
+  verfahrensart: { t: 'Verfahrensarten-Mix', d: 'Verteilung der eForms-Verfahrensarten über die Ausschreibungen der Kernverwaltung. Oberschwellig dominiert das Offene Verfahren; unterschwellige Verfahren erscheinen nur, soweit freiwillig bekannt gemacht.' },
+  cpv: { t: 'CPV-Gruppen', d: 'Common Procurement Vocabulary — EU-weit einheitliche Klassifikation des Auftragsgegenstands, gruppiert nach den ersten zwei Ziffern (Abteilung), gezählt je Ausschreibung der Stadt (Haupt-CPV).' },
+  stellen_kern: { t: 'Vergabestellen der Stadt', d: 'Welche Stellen der Stadt selbst bekannt machen — die Zentrale Vergabestelle bündelt den Großteil, Eigenbetriebe treten daneben eigenständig auf. Grundlage ist der in der Bekanntmachung genannte Auftraggeber.' },
+
+  traegermix: { t: 'Zerlegung nach Träger', d: 'Alle Bekanntmachungen mit Erfüllungsort Düsseldorf, aufgeteilt nach dem tatsächlichen Auftraggeber. Zuordnung mehrstufig: eindeutige Kennung bzw. Name der Stadt, sonst die amtliche eForms-Selbstauskunft „Art des Auftraggebers" (Suffixe kommunal/Land/Bund), sonst konservative Namensmuster. Nicht eindeutig Zuordenbares wird als solches ausgewiesen statt stillschweigend einsortiert.' },
+  stellenliste: { t: 'Vergabestellen je Träger', d: 'Öffentliche Auftraggeber, gezählt nach Bekanntmachungen. Auftraggeber sind öffentliche Stellen — Zuschlagsempfänger (Firmen) werden bewusst nicht genannt und nicht gerankt.' },
+  ortsfaktor: { t: 'Überzeichnung durch den Ortsfilter', d: `Verhältnis aller Bekanntmachungen mit Erfüllungsort Düsseldorf (${fmtInt(PLATZ.total)}) zu denen der städtischen Kernverwaltung (${fmtInt(KERN.total)}). Wer nur nach Ort filtert, überzeichnet das Beschaffungsvolumen der Stadt um diesen Faktor.` },
+  unklar: { t: 'Nicht zuordenbar', d: 'Anteil der Bekanntmachungen, deren Auftraggeber sich nicht zweifelsfrei einem Träger zuordnen lässt — meist weil die Bekanntmachung keinen Auftraggebernamen im ausgewerteten Feld führt. Wird ausgewiesen statt geschätzt.' },
+
+  dauer_median: { t: 'Median-Dauer je Verfahrensart', d: 'Tage zwischen Auftragsbekanntmachung und Zuschlagsentscheidung (bzw. Ergebnisbekanntmachung, wo kein Zuschlagsdatum ausgewiesen ist), verknüpft über die Verfahrens-ID, nur innerhalb der Kernverwaltung. Median statt Mittelwert — robust gegen Ausreißer. Nur Verfahrensarten mit ≥ 5 Paaren.' },
+  dauer_vergleich: { t: 'Median-Dauer im Städtevergleich', d: 'Gleiche Methodik in allen vier Städten, jeweils nur für die Kernverwaltung. Unterschiede können auch am Verfahrensmix liegen, nicht nur an der Bearbeitungsgeschwindigkeit.' },
+  dauer_abdeckung: { t: 'Abdeckung', d: 'Anteil der Ergebnisbekanntmachungen der Stadt, denen eine Auftragsbekanntmachung im Beobachtungszeitraum zugeordnet werden konnte. Der Rest: Bekanntmachung vor Januar 2024, Verfahren ohne vorherige Bekanntmachung oder Veröffentlichung auf anderer Plattform.' },
+
+  wett_median: { t: 'Median Angebote je Zuschlag', d: 'Median der in Zuschlagsbekanntmachungen der Stadt ausgewiesenen Angebotszahlen. Kennzahl für Wettbewerbsintensität: Je niedriger, desto dünner der Markt.' },
+  wett_buckets: { t: 'Verteilung der Angebotszahlen', d: 'Wie viele Zuschläge der Stadt auf 1, 2, 3–5, 6–9 bzw. 10+ Angebote entfielen. Verfahren mit nur einem Angebot sind vergaberechtlich zulässig, aber ein Signal für Marktenge oder zu enge Leistungsbeschreibung.' },
+  wett_cpv: { t: 'Wettbewerb je Warengruppe', d: 'Median-Angebotszahl je CPV-Abteilung, aufsteigend sortiert — oben die Warengruppen mit dem dünnsten Wettbewerb. Nur Gruppen mit mindestens 8 Zuschlägen, damit einzelne Verfahren das Bild nicht verzerren.' },
+
+  bench_rate: { t: 'Bekanntmachungen je 100.000 Einwohner', d: 'Bekanntmachungen der jeweiligen Kernverwaltung im Zeitraum, geteilt durch die amtliche Einwohnerzahl (IT.NRW, ' + DATA.meta.quellen.einwohnerStand + '), mal 100.000. Erst die Eingrenzung auf die Kernverwaltung macht den Vergleich belastbar.' },
+  bench_effekt: { t: 'Ortsfilter vs. Auftraggeberfilter', d: 'Je Stadt: alle Bekanntmachungen am Ort gegenüber denen der Kernverwaltung. Der Abstand ist der Landeshauptstadt- bzw. Klinikums-Effekt — in Düsseldorf besonders groß, weil hier viele Landesbehörden sitzen.' },
 };
 
 function infoIcon(key) {
@@ -124,12 +133,11 @@ $$('.src-note').forEach(n => {
 });
 
 /* ====================================================================
-   SVG helpers
+   SVG chart kit
    ==================================================================== */
 const SVGNS = 'http://www.w3.org/2000/svg';
 function svgEl(tag, attrs) { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
 
-/* horizontal bar chart (labels left, value right) */
 function barChart(container, rows, opts) {
   opts = opts || {};
   const W = 560, rowH = opts.rowH || 30, padL = opts.padL || 170, padR = 76, padT = 8;
@@ -153,16 +161,44 @@ function barChart(container, rows, opts) {
   container.innerHTML = ''; container.appendChild(svg);
 }
 
-/* vertical column chart, optionally stacked, with optional break markers */
+/* grouped horizontal bars: rows = [{label, a, b, ...}] with two series */
+function pairedBarChart(container, rows, opts) {
+  const W = 560, rowH = 42, padL = opts.padL || 110, padR = 90, padT = 10;
+  const H = padT * 2 + rows.length * rowH;
+  const max = Math.max(...rows.map(r => Math.max(r.a, r.b)), 1);
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart', style: `height:${H}px` });
+  rows.forEach((r, i) => {
+    const y = padT + i * rowH;
+    const lbl = svgEl('text', { x: padL - 10, y: y + rowH / 2 + 4, 'text-anchor': 'end', class: 'axis-txt' });
+    lbl.textContent = r.label; svg.appendChild(lbl);
+    [['a', opts.colorA, 4], ['b', opts.colorB, 19]].forEach(([k, color, dy]) => {
+      const bw = (W - padL - padR) * (r[k] / max);
+      const bar = svgEl('rect', { x: padL, y: y + dy, width: Math.max(bw, 1.5), height: 13, rx: 3, fill: color, class: 'bar' });
+      if (r.tip) {
+        bar.addEventListener('mousemove', e => showTip(r.tip, e.clientX, e.clientY));
+        bar.addEventListener('mouseleave', hideTip);
+      }
+      svg.appendChild(bar);
+      const t = svgEl('text', { x: padL + Math.max(bw, 1.5) + 7, y: y + dy + 11, class: 'bar-label' });
+      t.textContent = fmtInt(r[k]); svg.appendChild(t);
+    });
+  });
+  container.innerHTML = ''; container.appendChild(svg);
+  if (opts.legend) {
+    const lg = el('div', 'legend');
+    opts.legend.forEach(l => lg.appendChild(el('div', 'item', `<span class="sw" style="background:${l.color}"></span>${l.label}`)));
+    container.appendChild(lg);
+  }
+}
+
 function columnChart(container, cols, opts) {
   opts = opts || {};
   const W = 620, H = opts.height || 240, padL = 40, padR = 10, padT = 20, padB = 34;
-  const keys = opts.keys;                          // [{key,label,color}] for stacks
+  const keys = opts.keys;
   const totals = cols.map(c => keys ? keys.reduce((a, k) => a + (c[k.key] || 0), 0) : c.n);
   const max = Math.max(...totals, 1);
   const iw = (W - padL - padR) / cols.length;
   const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart', style: `height:${H}px` });
-  // y gridlines
   const steps = 4;
   for (let s = 0; s <= steps; s++) {
     const v = max * s / steps, y = H - padB - (H - padT - padB) * (s / steps);
@@ -188,19 +224,17 @@ function columnChart(container, cols, opts) {
       const t = svgEl('text', { x: x + iw / 2, y: y0 - 4, 'text-anchor': 'middle', class: 'bar-label' });
       t.textContent = fmtInt(totals[i]); svg.appendChild(t);
     }
-    const everyN = opts.labelEvery || 1;
-    if (i % everyN === 0) {
+    if (i % (opts.labelEvery || 1) === 0) {
       const t = svgEl('text', { x: x + iw / 2, y: H - padB + 14, 'text-anchor': 'middle', class: 'axis-txt' });
       t.textContent = c.label; svg.appendChild(t);
     }
   });
-  // break markers between columns (e.g. rule changes)
   (opts.breaks || []).forEach(b => {
     const i = cols.findIndex(c => c.id === b.at);
     if (i < 0) return;
-    const x = padL + i * iw;                       // left edge of that column
+    const x = padL + i * iw;
     svg.appendChild(svgEl('line', { x1: x, y1: padT - 6, x2: x, y2: H - padB, class: 'break-line' }));
-    const right = x > (W - padL - padR) * 0.6;     // anchor away from the nearer edge
+    const right = x > (W - padL - padR) * 0.6;
     const t = svgEl('text', { x: right ? x - 4 : x + 4, y: padT + (b.dy || 0),
       'text-anchor': right ? 'end' : 'start', class: 'break-label' });
     t.textContent = b.label; svg.appendChild(t);
@@ -213,7 +247,6 @@ function columnChart(container, cols, opts) {
   }
 }
 
-/* 100% stacked horizontal bar built from divs */
 function mixBar(container, label, parts, totalLabel) {
   const total = parts.reduce((a, p) => a + p.n, 0) || 1;
   const row = el('div', 'mixrow');
@@ -224,7 +257,7 @@ function mixBar(container, label, parts, totalLabel) {
     span.style.width = (p.n / total * 100) + '%';
     span.style.background = p.color;
     span.addEventListener('mousemove', e => showTip(
-      `<b>${p.label}</b><div class="row"><span>Anzahl</span><span>${fmtInt(p.n)}</span></div><div class="row"><span>Anteil</span><span>${nf1.format(p.n / total * 100)} %</span></div>`, e.clientX, e.clientY));
+      `<b>${p.label}</b><div class="row"><span>Bekanntmachungen</span><span>${fmtInt(p.n)}</span></div><div class="row"><span>Anteil</span><span>${nf1.format(p.n / total * 100)} %</span></div>`, e.clientX, e.clientY));
     span.addEventListener('mouseleave', hideTip);
     bar.appendChild(span);
   });
@@ -237,30 +270,26 @@ function statCard(s) {
   c.innerHTML = `<div class="k">${s.k}${infoIcon(s.info)}</div><div class="v">${s.v}</div><div class="d">${s.d}</div>`;
   return c;
 }
+const fill = (sel, cards) => { const b = $(sel); b.innerHTML = ''; cards.forEach(s => b.appendChild(statCard(s))); };
 
 /* ====================================================================
-   ÜBERBLICK
+   ÜBERBLICK (Kernverwaltung)
    ==================================================================== */
 function renderOverview() {
-  const kpis = [
-    { k: 'Bekanntmachungen', v: fmtInt(D11.total), d: `${fmtMonth(Z.von + '-01')} – ${fmtMonth(Z.bis + '-01')}`, info: 'kpi_gesamt' },
-    { k: 'Ausschreibungen', v: fmtInt(D11.competitions), d: 'Auftragsbekanntmachungen', info: 'kpi_ausschreibungen' },
-    { k: 'Zuschläge / Ergebnisse', v: fmtInt(D11.results), d: 'veröffentlichte Ergebnisse', cls: 'petrol', info: 'kpi_ergebnisse' },
-    { k: 'Volumen (ausgewiesen)', v: fmtMio(D11.awardSum), d: `bei ${fmtInt(D11.resultsWithValue)} von ${fmtInt(D11.results)} Zuschlägen`, cls: 'ink', info: 'kpi_volumen' },
-    { k: 'Vergabestellen', v: fmtInt(D11.distinctBuyers), d: 'Stadt · Töchter · Land · Bund', info: 'kpi_buyers' },
-    { k: 'Median Angebote/Los', v: nf1.format(D11.bidsMedian), d: 'Wettbewerbsintensität', info: 'kpi_bids' },
-  ];
-  const wrap = $('#kpis'); wrap.innerHTML = '';
-  kpis.forEach(s => wrap.appendChild(statCard(s)));
+  fill('#kpis', [
+    { k: 'Bekanntmachungen der Stadt', v: fmtInt(KERN.total), d: `${Z.von} – ${Z.bis}`, info: 'kpi_gesamt' },
+    { k: 'Ausschreibungen', v: fmtInt(KERN.competitions), d: 'Auftragsbekanntmachungen', info: 'kpi_ausschreibungen' },
+    { k: 'Zuschläge / Ergebnisse', v: fmtInt(KERN.results), d: 'veröffentlichte Ergebnisse', cls: 'petrol', info: 'kpi_ergebnisse' },
+    { k: 'Volumen (ausgewiesen)', v: fmtMio(KERN.awardSum), d: `bei ${fmtInt(KERN.resultsWithValue)} von ${fmtInt(KERN.results)} Zuschlägen`, cls: 'ink', info: 'kpi_volumen' },
+    { k: 'Vergabestellen der Stadt', v: fmtInt(KERN.distinctStellen), d: 'Ämter & Eigenbetriebe', info: 'kpi_stellen' },
+    { k: 'Median Angebote/Los', v: KERN.bidsMedian == null ? '—' : nf1.format(KERN.bidsMedian), d: 'Wettbewerbsintensität', info: 'kpi_bids' },
+  ]);
 
-  // quarterly stacked columns
-  const qcols = D11.quarterly.map(q => ({
-    id: q.q,
-    label: q.q.replace('20', "Q" + q.q.slice(6) + " '").slice(-6),  // -> "Q1 '24"
+  columnChart($('#chart-quartal'), KERN.quarterly.map(q => ({
+    id: q.q, label: 'Q' + q.q.slice(6) + " '" + q.q.slice(2, 4),
     competition: q.competition, result: q.result, other: q.other,
     tip: `<b>${q.q}</b><div class="row"><span>Ausschreibungen</span><span>${q.competition}</span></div><div class="row"><span>Zuschläge/Ergebnisse</span><span>${q.result}</span></div><div class="row"><span>Sonstige</span><span>${q.other}</span></div>`,
-  }));
-  columnChart($('#chart-quartal'), qcols, {
+  })), {
     keys: [
       { key: 'competition', color: 'var(--dv-petrol)' },
       { key: 'result', color: 'var(--petrol-300)' },
@@ -274,55 +303,79 @@ function renderOverview() {
     showTotals: true,
   });
 
-  // procedure mix
-  barChart($('#chart-verfahren'), D11.procMix.map(p => ({
+  barChart($('#chart-verfahren'), KERN.procMix.map(p => ({
     label: p.label.length > 30 ? p.label.slice(0, 29) + '…' : p.label,
     value: p.n, color: procColor(p.key),
-    tip: `<b>${p.label}</b><div class="row"><span>Ausschreibungen</span><span>${fmtInt(p.n)}</span></div><div class="row"><span>Anteil</span><span>${nf1.format(p.n / D11.competitions * 100)} %</span></div>`,
+    tip: `<b>${p.label}</b><div class="row"><span>Ausschreibungen</span><span>${fmtInt(p.n)}</span></div><div class="row"><span>Anteil</span><span>${nf1.format(p.n / KERN.competitions * 100)} %</span></div>`,
   })), { padL: 190 });
 
-  // CPV top 10
-  barChart($('#chart-cpv'), D11.cpvTop.map(p => ({
+  barChart($('#chart-cpv'), KERN.cpvTop.map(p => ({
     label: p.label, value: p.n, color: 'var(--petrol-500)',
     tip: `<b>CPV ${p.div} — ${p.label}</b><div class="row"><span>Ausschreibungen</span><span>${fmtInt(p.n)}</span></div>`,
   })), { padL: 190 });
 
-  // buyers: category mix + top list (fixed order — Stadt first, like Benchmark view)
-  const box = $('#chart-buyers'); box.innerHTML = '';
-  const catParts = ['stadt', 'tochter', 'kommunal-sonst', 'land', 'bund', 'sonstige']
-    .map(k => ({ label: CAT_LABEL[k], n: D11.buyerCats[k] || 0, color: CAT_COLOR[k] }))
-    .filter(p => p.n > 0);
-  mixBar(box, 'Alle Bekanntmachungen nach Auftraggeber-Kategorie', catParts, fmtInt(D11.total));
-  const lg = el('div', 'legend');
-  catParts.forEach(p => lg.appendChild(el('div', 'item', `<span class="sw" style="background:${p.color}"></span>${p.label} (${fmtInt(p.n)})`)));
-  box.appendChild(lg);
-  const list = el('div');
-  list.style.marginTop = '14px';
-  D11.topBuyers.slice(0, 8).forEach(b => {
-    list.appendChild(el('div', 'buyer-row',
-      `<span class="nm">${b.name}</span><span style="display:flex;gap:8px;align-items:center"><span class="pill cat-${b.cat}">${CAT_LABEL[b.cat].split(' ')[0].replace('/', '')}</span><span class="n">${fmtInt(b.n)}</span></span>`));
+  const box = $('#chart-kernstellen'); box.innerHTML = '';
+  KERN.topStellen.forEach(s => {
+    box.appendChild(el('div', 'buyer-row',
+      `<span class="nm">${s.name}</span><span class="n">${fmtInt(s.n)}</span>`));
   });
-  box.appendChild(list);
+  box.appendChild(el('p', 'note', `Die Stadt tritt im Zeitraum unter ${fmtInt(KERN.distinctStellen)} Bezeichnungen als Auftraggeber auf — Ämter, Eigenbetriebe und geänderte Amtsbezeichnungen. Verfahren der städtischen Beteiligungen (${fmtInt(D11.beteiligung.total)} Bekanntmachungen) sind hier bewusst nicht enthalten.`));
+}
+
+/* ====================================================================
+   WER BESCHAFFT? — die Zerlegung
+   ==================================================================== */
+function renderStellen() {
+  fill('#stellen-kpis', [
+    { k: 'Erfüllungsort Düsseldorf', v: fmtInt(PLATZ.total), d: 'alle Auftraggeber zusammen', info: 'traegermix' },
+    { k: 'davon Kernverwaltung', v: fmtInt(KERN.total), d: fmtPct(PLATZ.kernAnteil) + ' der Bekanntmachungen', cls: 'petrol', info: 'kpi_gesamt' },
+    { k: 'Überzeichnung durch Ortsfilter', v: nf1.format(faktor) + '×', d: 'Ort statt Auftraggeber gerechnet', cls: 'ink', info: 'ortsfaktor' },
+    { k: 'Nicht zuordenbar', v: fmtPct(PLATZ.unklarAnteil), d: 'offen ausgewiesen, nicht geschätzt', info: 'unklar' },
+  ]);
+
+  const box = $('#chart-traeger'); box.innerHTML = '';
+  const parts = PLATZ.traegerMix.map(t => ({ label: t.label, n: t.n, color: TRAEGER_COLOR[t.key] }));
+  mixBar(box, 'Erfüllungsort Düsseldorf', parts, fmtInt(PLATZ.total) + ' Bekanntmachungen');
+  const lg = el('div', 'legend');
+  parts.forEach(p => lg.appendChild(el('div', 'item', `<span class="sw" style="background:${p.color}"></span>${p.label} (${fmtInt(p.n)})`)));
+  box.appendChild(lg);
+  const barBox = el('div'); barBox.style.marginTop = '18px';
+  barChart(barBox, PLATZ.traegerMix.map(t => ({
+    label: t.label.length > 28 ? t.label.slice(0, 27) + '…' : t.label,
+    value: t.n, color: TRAEGER_COLOR[t.key],
+    valLabel: fmtInt(t.n) + '  ·  ' + nf1.format(t.n / PLATZ.total * 100) + ' %',
+    tip: `<b>${t.label}</b><div class="row"><span>Bekanntmachungen</span><span>${fmtInt(t.n)}</span></div><div class="row"><span>Anteil am Ort</span><span>${nf1.format(t.n / PLATZ.total * 100)} %</span></div>`,
+  })), { padL: 200, padR: 120 });
+  box.appendChild(barBox);
+  box.appendChild(el('p', 'note', 'Die Landeshauptstadt ist nur einer von vielen Auftraggebern am Ort. Land, Bund, Klinikum und öffentliche Unternehmen beschaffen eigenständig; kooperative Vergaben sind die Ausnahme. Eine Auswertung „für Düsseldorf" muss deshalb nach Auftraggeber gefiltert werden, nicht nach Erfüllungsort.'));
+
+  const list = $('#stellen-liste'); list.innerHTML = '';
+  DATA.traegerOrder.filter(t => DATA.vergabestellen[t]).forEach(t => {
+    list.appendChild(el('div', 'section-label', `<span class="pill" style="background:${TRAEGER_COLOR[t]};color:#fff">${TL[t]}</span>`));
+    DATA.vergabestellen[t].forEach(s => {
+      list.appendChild(el('div', 'buyer-row', `<span class="nm">${s.name}</span><span class="n">${fmtInt(s.n)}</span>`));
+    });
+  });
 }
 
 /* ====================================================================
    VERFAHRENSDAUERN
    ==================================================================== */
 function renderDauern() {
-  const d = DATA.dauern.DEA11;
-  const cov = Math.round(d.matched / d.results * 100);
-  $('#dauer-kpis').innerHTML = '';
-  [
-    { k: 'Median gesamt', v: fmtInt(d.medianAll) + ' Tage', d: 'Bekanntmachung → Zuschlag', cls: 'petrol', info: 'dauer_median' },
-    { k: 'Spannweite (P25–P75)', v: `${fmtInt(d.p25)}–${fmtInt(d.p75)}`, d: 'Tage · mittlere 50 %', info: 'dauer_median' },
+  const d = D11.dauernKern;
+  const cov = d.results ? Math.round(d.matched / d.results * 100) : 0;
+  fill('#dauer-kpis', [
+    { k: 'Median gesamt', v: d.medianAll == null ? '—' : fmtInt(d.medianAll) + ' Tage', d: 'Bekanntmachung → Zuschlag', cls: 'petrol', info: 'dauer_median' },
+    { k: 'Spannweite (P25–P75)', v: d.p25 == null ? '—' : `${fmtInt(d.p25)}–${fmtInt(d.p75)}`, d: 'Tage · mittlere 50 %', info: 'dauer_median' },
     { k: 'Auswertbare Paare', v: fmtInt(d.matched), d: `von ${fmtInt(d.results)} Ergebnissen`, info: 'dauer_abdeckung' },
     { k: 'Abdeckung', v: cov + ' %', d: 'ehrlich ausgewiesen', cls: 'ink', info: 'dauer_abdeckung' },
-  ].forEach(s => $('#dauer-kpis').appendChild(statCard(s)));
+  ]);
 
   $('#dauer-gap').innerHTML = `<b>Datenlücke, transparent gemacht:</b> ${fmtInt(d.results - d.matched)} der
-    ${fmtInt(d.results)} Ergebnisbekanntmachungen (${100 - cov} %) lassen sich keiner Auftragsbekanntmachung im
-    Beobachtungszeitraum zuordnen — Bekanntmachung vor Januar 2024, Verfahren ohne vorherige Bekanntmachung
-    oder Veröffentlichung auf anderer Plattform. Mit internen Verfahrensdaten wäre die Abdeckung vollständig.`;
+    ${fmtInt(d.results)} Ergebnisbekanntmachungen der Stadt (${100 - cov} %) lassen sich keiner
+    Auftragsbekanntmachung im Beobachtungszeitraum zuordnen — Bekanntmachung vor Januar 2024,
+    Verfahren ohne vorherige Bekanntmachung oder Veröffentlichung auf anderer Plattform.
+    Mit internen Verfahrensdaten wäre die Abdeckung vollständig.`;
 
   barChart($('#chart-dauer-proc'), d.byProc.map(p => ({
     label: p.label.length > 30 ? p.label.slice(0, 29) + '…' : p.label,
@@ -332,170 +385,94 @@ function renderDauern() {
   })), { padL: 190 });
 
   barChart($('#chart-dauer-city'), CITY_ORDER.map(nuts => {
-    const dd = DATA.dauern[nuts], c = DATA.cities[nuts];
+    const dd = DATA.cities[nuts].dauernKern, c = DATA.cities[nuts];
     return {
-      label: c.name, value: dd.medianAll, valLabel: fmtInt(dd.medianAll) + ' T.',
+      label: c.name, value: dd.medianAll || 0, valLabel: dd.medianAll == null ? '—' : fmtInt(dd.medianAll) + ' T.',
       color: CITY_COLOR(nuts),
-      tip: `<b>${c.name}</b><div class="row"><span>Median</span><span>${fmtInt(dd.medianAll)} Tage</span></div><div class="row"><span>P25–P75</span><span>${fmtInt(dd.p25)}–${fmtInt(dd.p75)} Tage</span></div><div class="row"><span>Paare</span><span>${fmtInt(dd.matched)} von ${fmtInt(dd.results)}</span></div>`,
+      tip: `<b>${c.name} · Kernverwaltung</b><div class="row"><span>Median</span><span>${dd.medianAll == null ? '—' : fmtInt(dd.medianAll) + ' Tage'}</span></div><div class="row"><span>Paare</span><span>${fmtInt(dd.matched)} von ${fmtInt(dd.results)}</span></div>`,
     };
   }), { padL: 110 });
 }
 
 /* ====================================================================
-   DIREKTAUFTRAG 2026
+   WETTBEWERB
    ==================================================================== */
-function renderDirekt() {
-  const S = DATA.szenario;
-  const monthly = S.monthlyComp;
-  const m2025 = monthly.filter(m => m.m >= '2025-01' && m.m <= '2025-12');
-  const m2026 = monthly.filter(m => m.m >= '2026-01');
-  const avg = arr => arr.length ? arr.reduce((a, m) => a + m.n, 0) / arr.length : 0;
-  const a25 = avg(m2025), a26 = avg(m2026);
-  const delta = a25 ? Math.round((a26 - a25) / a25 * 100) : 0;
-  const veatTotal = S.veatMonthly.reduce((a, m) => a + m.n, 0);
-  const veat2026 = S.veatMonthly.filter(m => m.m >= '2026-01').reduce((a, m) => a + m.n, 0);
+function renderWettbewerb() {
+  const W = DATA.wettbewerb;
+  const eins = W.buckets.find(b => b.k === '1');
+  const anteil1 = W.n ? (eins.n / W.n * 100) : 0;
+  fill('#wett-kpis', [
+    { k: 'Median Angebote', v: W.median == null ? '—' : nf1.format(W.median), d: 'je Zuschlag der Stadt', cls: 'petrol', info: 'wett_median' },
+    { k: 'Zuschläge mit Angabe', v: fmtInt(W.n), d: `von ${fmtInt(W.resultsGesamt)} Ergebnissen`, info: 'wett_buckets' },
+    { k: 'Nur ein Angebot', v: fmtPct(anteil1), d: `${fmtInt(eins.n)} Zuschläge`, cls: 'ink', info: 'wett_buckets' },
+    { k: 'Warengruppen ausgewertet', v: fmtInt(W.byCpv.length), d: 'mit ≥ 8 Zuschlägen', info: 'wett_cpv' },
+  ]);
 
-  $('#direkt-kpis').innerHTML = '';
-  [
-    { k: 'Ø Ausschreibungen/Monat 2025', v: nf1.format(a25), d: S.vorLabel, info: 'monatsreihe' },
-    { k: 'Ø Ausschreibungen/Monat 2026', v: nf1.format(a26), d: S.nachLabel, cls: 'petrol', info: 'monatsreihe' },
-    { k: 'Veränderung', v: (delta > 0 ? '+' : '') + delta + ' %', d: 'öffentlich sichtbares Aufkommen', cls: 'ink', info: 'monatsreihe' },
-    { k: 'Ex-ante-Transparenz', v: fmtInt(veatTotal), d: `davon ${fmtInt(veat2026)} seit Jan 2026`, info: 'veat' },
-  ].forEach(s => $('#direkt-kpis').appendChild(statCard(s)));
+  columnChart($('#chart-wett-buckets'), W.buckets.map(b => ({
+    id: b.k, label: b.k + (b.k === '1' ? ' Angebot' : ' Angebote'), n: b.n,
+    tip: `<b>${b.k} Angebot(e)</b><div class="row"><span>Zuschläge</span><span>${fmtInt(b.n)}</span></div><div class="row"><span>Anteil</span><span>${W.n ? nf1.format(b.n / W.n * 100) : 0} %</span></div>`,
+  })), { color: 'var(--dv-petrol)', height: 220, showTotals: true });
 
-  // monthly columns with rule-change markers
-  columnChart($('#chart-monat'), monthly.map(m => ({
-    id: m.m, label: fmtMonth(m.m), n: m.n,
-    tip: `<b>${fmtMonth(m.m)}</b><div class="row"><span>Ausschreibungen</span><span>${m.n}</span></div>`,
-  })), {
-    color: 'var(--dv-petrol)', labelEvery: 3, height: 250,
-    breaks: [
-      { at: '2026-01', label: '§ 75a GO NRW', dy: 0 },
-    ],
-  });
-
-  // mix comparison (share bars)
-  const box = $('#chart-mix'); box.innerHTML = '';
-  const mkParts = mix => mix.mix.map(p => ({ label: p.label, n: p.n, color: procColor(p.key) }));
-  mixBar(box, S.vorLabel, mkParts(S.vor), fmtInt(S.vor.n) + ' Ausschreibungen');
-  mixBar(box, S.nachLabel, mkParts(S.nach), fmtInt(S.nach.n) + ' Ausschreibungen');
-  const lgKeys = {};
-  [...S.vor.mix, ...S.nach.mix].forEach(p => { lgKeys[p.key] = p; });
-  const lg = el('div', 'legend');
-  Object.values(lgKeys).forEach(p => lg.appendChild(el('div', 'item', `<span class="sw" style="background:${procColor(p.key)}"></span>${p.label}`)));
-  box.appendChild(lg);
-  box.appendChild(el('p', 'note', 'Oberschwellige Verfahren ändern sich durch § 75a GO NRW kaum — der Umbruch findet ' +
-    'unterhalb der Schwellenwerte statt und ist hier systembedingt unsichtbar. Der sichtbare Mix ist die Referenz, ' +
-    'gegen die interne Zahlen gelesen werden. Die zum 01.07.2026 angehobenen Melde- und Registerschwellen wirken ' +
-    'erst ab dem dritten Quartal 2026 — außerhalb dieses Datenfensters.'));
-
-  // VEAT monthly
-  columnChart($('#chart-veat'), S.veatMonthly.map(m => ({
-    id: m.m, label: fmtMonth(m.m), n: m.n,
-    tip: `<b>${fmtMonth(m.m)}</b><div class="row"><span>VEAT-Bekanntmachungen</span><span>${m.n}</span></div>`,
-  })), { color: 'var(--dv-orange)', labelEvery: 3, height: 200, breaks: [{ at: '2026-01', label: '§ 75a GO NRW', dy: 0 }] });
+  barChart($('#chart-wett-cpv'), W.byCpv.map(c => ({
+    label: c.label.length > 26 ? c.label.slice(0, 25) + '…' : c.label,
+    value: c.median, valLabel: nf1.format(c.median) + ' Ang.',
+    color: c.median < 2.5 ? 'var(--dv-coral)' : c.median < 4 ? 'var(--dv-amber)' : 'var(--dv-green)',
+    tip: `<b>CPV ${c.div} — ${c.label}</b><div class="row"><span>Median Angebote</span><span>${nf1.format(c.median)}</span></div><div class="row"><span>Zuschläge</span><span>${fmtInt(c.n)}</span></div>`,
+  })), { padL: 180 });
 }
 
 /* ====================================================================
-   BENCHMARK
+   BENCHMARK (Kernverwaltung je Stadt)
    ==================================================================== */
 function renderBenchmark() {
-  const per100k = c => c.total / c.einwohner * 100000;
-  const kommShare = c => {
-    const k = (c.buyerCats.stadt || 0) + (c.buyerCats.tochter || 0) + (c.buyerCats['kommunal-sonst'] || 0);
-    return k / c.total * 100;
-  };
-  $('#bench-kpis').innerHTML = '';
-  CITY_ORDER.forEach(nuts => {
+  const per100k = c => c.kern.total / c.einwohner * 100000;
+  fill('#bench-kpis', CITY_ORDER.map(nuts => {
     const c = DATA.cities[nuts];
-    $('#bench-kpis').appendChild(statCard({
+    return {
       k: c.name, v: nf1.format(per100k(c)),
-      d: `Bekanntm. je 100.000 Einw. · ${fmtInt(c.total)} gesamt`,
+      d: `je 100.000 Einw. · ${fmtInt(c.kern.total)} Bekanntm. der Kernverwaltung`,
       cls: nuts === 'DEA11' ? 'petrol' : '', info: 'bench_rate',
-    }));
-  });
+    };
+  }));
 
   barChart($('#chart-bench-rate'), CITY_ORDER.map(nuts => {
     const c = DATA.cities[nuts];
     return {
       label: c.name, value: per100k(c), valLabel: nf1.format(per100k(c)),
       color: CITY_COLOR(nuts),
-      tip: `<b>${c.name}</b><div class="row"><span>Bekanntmachungen</span><span>${fmtInt(c.total)}</span></div><div class="row"><span>Einwohner</span><span>${fmtInt(c.einwohner)}</span></div><div class="row"><span>je 100.000</span><span>${nf1.format(per100k(c))}</span></div><div class="row"><span>kommunaler Anteil</span><span>${fmtInt(kommShare(c))} %</span></div>`,
+      tip: `<b>${c.name} · Kernverwaltung</b><div class="row"><span>Bekanntmachungen</span><span>${fmtInt(c.kern.total)}</span></div><div class="row"><span>Einwohner</span><span>${fmtInt(c.einwohner)}</span></div><div class="row"><span>je 100.000</span><span>${nf1.format(per100k(c))}</span></div>`,
     };
   }), { padL: 110 });
 
-  barChart($('#chart-bench-dauer'), CITY_ORDER.map(nuts => {
-    const c = DATA.cities[nuts], d = DATA.dauern[nuts];
-    return {
-      label: c.name, value: d.medianAll, valLabel: fmtInt(d.medianAll) + ' T.',
-      color: CITY_COLOR(nuts),
-      tip: `<b>${c.name}</b><div class="row"><span>Median</span><span>${fmtInt(d.medianAll)} Tage</span></div><div class="row"><span>Paare</span><span>${fmtInt(d.matched)} von ${fmtInt(d.results)}</span></div>`,
-    };
-  }), { padL: 110 });
-
-  // buyer categories per city (share bars)
-  const box = $('#chart-bench-cats'); box.innerHTML = '';
-  const CAT_ORDER = ['stadt', 'tochter', 'kommunal-sonst', 'land', 'bund', 'sonstige'];
-  CITY_ORDER.forEach(nuts => {
+  pairedBarChart($('#chart-bench-effekt'), CITY_ORDER.map(nuts => {
     const c = DATA.cities[nuts];
-    mixBar(box, c.name, CAT_ORDER.map(k => ({ label: CAT_LABEL[k], n: c.buyerCats[k] || 0, color: CAT_COLOR[k] })), fmtInt(c.total));
+    return {
+      label: c.name, a: c.platz.total, b: c.kern.total,
+      tip: `<b>${c.name}</b><div class="row"><span>Erfüllungsort gesamt</span><span>${fmtInt(c.platz.total)}</span></div><div class="row"><span>davon Kernverwaltung</span><span>${fmtInt(c.kern.total)}</span></div><div class="row"><span>Überzeichnung</span><span>${nf1.format(c.platz.total / (c.kern.total || 1))}×</span></div>`,
+    };
+  }), {
+    colorA: 'var(--neutral-300)', colorB: 'var(--petrol-600)', padL: 110,
+    legend: [
+      { label: 'alle Auftraggeber am Ort', color: 'var(--neutral-300)' },
+      { label: 'nur Kernverwaltung', color: 'var(--petrol-600)' },
+    ],
   });
-  const lg = el('div', 'legend');
-  CAT_ORDER.forEach(k => lg.appendChild(el('div', 'item', `<span class="sw" style="background:${CAT_COLOR[k]}"></span>${CAT_LABEL[k]}`)));
-  box.appendChild(lg);
 
-  // raw table
   const rows = [
     ['Einwohner (IT.NRW)', c => fmtInt(c.einwohner)],
-    ['Bekanntmachungen', c => fmtInt(c.total)],
-    ['Ausschreibungen', c => fmtInt(c.competitions)],
-    ['Zuschläge/Ergebnisse', c => fmtInt(c.results)],
-    ['Volumen ausgewiesen', c => fmtMio(c.awardSum)],
-    ['… bei Zuschlägen', c => fmtInt(c.resultsWithValue) + ' / ' + fmtInt(c.results)],
-    ['Median-Dauer (Tage)', (c, nuts) => fmtInt(DATA.dauern[nuts].medianAll)],
-    ['Median Angebote/Los', c => c.bidsMedian == null ? '—' : nf1.format(c.bidsMedian)],
-    ['Vergabestellen', c => fmtInt(c.distinctBuyers)],
+    ['Bekanntmachungen am Ort', c => fmtInt(c.platz.total)],
+    ['… davon Kernverwaltung', c => `${fmtInt(c.kern.total)} (${fmtPct(c.platz.kernAnteil)})`],
+    ['Ausschreibungen (Stadt)', c => fmtInt(c.kern.competitions)],
+    ['Zuschläge (Stadt)', c => fmtInt(c.kern.results)],
+    ['Volumen ausgewiesen', c => fmtMio(c.kern.awardSum)],
+    ['… bei Zuschlägen', c => `${fmtInt(c.kern.resultsWithValue)} / ${fmtInt(c.kern.results)}`],
+    ['Median-Dauer (Tage)', c => c.dauernKern.medianAll == null ? '—' : fmtInt(c.dauernKern.medianAll)],
+    ['Median Angebote/Los', c => c.kern.bidsMedian == null ? '—' : nf1.format(c.kern.bidsMedian)],
+    ['Städtische Beteiligungen', c => fmtInt(c.beteiligung.total)],
   ];
   $('#bench-table').innerHTML =
     `<thead><tr><th>Kennzahl</th>${CITY_ORDER.map(n => `<th class="num">${DATA.cities[n].name}</th>`).join('')}</tr></thead>` +
-    `<tbody>${rows.map(([lbl, fn]) => `<tr><td>${lbl}</td>${CITY_ORDER.map(n => `<td class="num">${fn(DATA.cities[n], n)}</td>`).join('')}</tr>`).join('')}</tbody>`;
-}
-
-/* ====================================================================
-   MELDE-RADAR (schematisch)
-   ==================================================================== */
-function renderRadar() {
-  const R = DATA.radar;
-  $('#radar-kpis').innerHTML = '';
-  [
-    { k: 'Zuschläge im Fenster', v: fmtInt(R.n90), d: 'letzte ~6 Monate', info: 'radar_fenster' },
-    { k: 'Frist läuft', v: fmtInt(R.offen), d: 'simulierte 60-Tage-Frist', cls: 'petrol', info: 'radar_offen' },
-    { k: 'Frist < 14 Tage', v: fmtInt(R.unter14), d: 'Trigger für Erinnerung', cls: 'ink', info: 'radar_knapp' },
-    { k: 'Frist abgelaufen', v: fmtInt(R.abgelaufen), d: 'Meldestatus nur intern sichtbar', info: 'radar_abgelaufen' },
-  ].forEach(s => $('#radar-kpis').appendChild(statCard(s)));
-
-  const MAX_ROWS = 40;
-  const items = R.items.filter(r => r.rest >= 0).concat(R.items.filter(r => r.rest < 0)).slice(0, MAX_ROWS);
-  // the category pill already says "Landeshauptstadt" — strip the boilerplate prefix
-  const buyerShort = b => b.replace(/^Landeshauptstadt Düsseldorf,?\s*(Der Oberbürgermeister,?\s*)?/i, '') || b;
-  const pill = r => r.rest < 0
-    ? `<span class="pill err">abgelaufen</span>`
-    : r.rest < 14 ? `<span class="pill warn">${r.rest} Tage</span>` : `<span class="pill ok">${r.rest} Tage</span>`;
-  $('#radar-table').innerHTML =
-    `<thead><tr><th>Vergabestelle</th><th>Basis</th><th class="num">Zuschlag/Ergebnis</th><th class="num">Meldefrist (simuliert)</th><th class="num">Rest</th><th class="num">Wert (ausgew.)</th></tr></thead>` +
-    `<tbody>${items.map(r => `<tr>
-      <td style="max-width:340px;overflow-wrap:anywhere"><span class="pill cat-${r.cat}" style="margin-right:6px">${(CAT_LABEL[r.cat] || '').split(' ')[0].replace('/', '')}</span>${buyerShort(r.buyer)}</td>
-      <td style="white-space:nowrap;color:var(--neutral-500);font-size:var(--t-small)">${r.basisTyp}</td>
-      <td class="num">${fmtDate(r.basis)}</td>
-      <td class="num">${fmtDate(r.frist)}</td>
-      <td class="num">${pill(r)}</td>
-      <td class="num">${fmtVal(r.value)}</td>
-    </tr>`).join('')}</tbody>`;
-  if (R.items.length > MAX_ROWS) {
-    $('#radar-table').insertAdjacentHTML('afterend',
-      `<p class="note">Angezeigt: ${MAX_ROWS} von ${fmtInt(R.items.length)} Einträgen im Fenster — laufende Fristen zuerst. ` +
-      `${fmtInt(R.mitZuschlagsdatum)} von ${fmtInt(R.gesamtResults)} Ergebnissen im Gesamtzeitraum weisen ein explizites Zuschlagsdatum aus.</p>`);
-  }
+    `<tbody>${rows.map(([lbl, fn]) => `<tr><td>${lbl}</td>${CITY_ORDER.map(n => `<td class="num">${fn(DATA.cities[n])}</td>`).join('')}</tr>`).join('')}</tbody>`;
 }
 
 /* ====================================================================
@@ -504,8 +481,8 @@ function renderRadar() {
 $('#standLabel').textContent = 'Stand ' + DATA.meta.stand;
 $('#footer-stand').textContent = DATA.meta.stand;
 renderOverview();
+renderStellen();
 renderDauern();
-renderDirekt();
+renderWettbewerb();
 renderBenchmark();
-renderRadar();
 })();
