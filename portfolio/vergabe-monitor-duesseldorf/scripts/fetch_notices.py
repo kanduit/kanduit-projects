@@ -218,13 +218,27 @@ def process_month(month, zip_path):
         if n is not None:
             n["bidsAvg"] = round(sum(counts) / len(counts), 1)
 
-    # buyer organisation (role=buyer). Winner names deliberately not extracted.
+    # Buyer organisation (role=buyer). Winner names deliberately not extracted.
+    #
+    # buyerId is the organisationIdentifier — usually a Leitweg-ID
+    # ("05111-31001-70"). It identifies ONE Vergabestelle exactly, which name
+    # matching cannot: the Düsseldorf Zentrale Vergabestelle alone appears under
+    # several spellings after its Amt was renamed.
+    #
+    # CAUTION: the leading block of a Leitweg-ID is the Amtlicher
+    # Gemeindeschlüssel of the authority's SEAT, not of its owner. Land NRW
+    # bodies seated in Düsseldorf (Bau- und Liegenschaftsbetrieb, Hochschule)
+    # also carry 05111. It is therefore a location signal — exactly the trap the
+    # NUTS place-of-performance filter falls into — and must never be used to
+    # decide who owns a buyer. Ownership is derived in generate.py from
+    # buyerLegalType (official self-declaration) plus explicit ID/name rules.
     for row in read_csv(zf, "organisation.csv"):
         n = get(row["noticeIdentifier"])
         if n is None or row.get("organisationRole") != "buyer":
             continue
         if not n.get("buyer"):
             n["buyer"] = (row.get("organisationName") or "").strip() or None
+            n["buyerId"] = (row.get("organisationIdentifier") or "").strip() or None
             n["buyerLegalType"] = row.get("buyerLegalType") or None
             n["buyerCity"] = (row.get("organisationCity") or "").strip() or None
 
