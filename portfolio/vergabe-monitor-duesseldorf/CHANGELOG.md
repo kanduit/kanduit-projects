@@ -1,5 +1,31 @@
 # Changelog — Vergabe-Monitor Düsseldorf
 
+## 2026-07-21 · Auswertung je Vergabestelle statt je Erfüllungsort
+
+Grundlegender Umbau der Auswertungseinheit, ausgelöst durch einen fachlichen Hinweis
+aus der Praxis: Der NUTS-Code beschreibt den **Erfüllungsort**, nicht den Auftraggeber.
+Land NRW, Bund, Universitätsklinikum und die Stadt beschaffen in Düsseldorf unabhängig
+voneinander — ein Ortsfilter überzeichnet das städtische Volumen um **Faktor 3,8**
+(4.845 Bekanntmachungen am Ort, davon 1.312 kommunal).
+
+- **Alle Kennzahlen je Auftraggeber gerechnet.** Zuordnung über Sitz des Auftraggebers
+  und die amtliche eForms-Angabe `buyerLegalType` (Suffixe kommunal/Land/Bund), abzüglich
+  überörtlicher Träger mit kommunaler Rechtsform (Landschaftsverbände, Zweckverbände,
+  Kammern, Jobcenter, Universitäten). `fetch_notices.py` speichert dafür zusätzlich die
+  Leitweg-ID des Auftraggebers.
+  *Fallstrick dokumentiert:* Das AGS-Präfix der Leitweg-ID bezeichnet den **Sitz**, nicht
+  den Träger — Landesbehörden in Düsseldorf tragen ebenfalls 05111. Es darf daher nie zur
+  Trägerbestimmung verwendet werden (derselbe Fehlertyp wie der NUTS-Filter).
+- **Kernverwaltung vs. eigene Betriebe über die Rechtsform**, nicht über Namenslisten:
+  Düsseldorf führt die Stadtentwässerung als Eigenbetrieb, Köln dieselbe Aufgabe als AöR.
+  Städtevergleich läuft deshalb auf **„kommunal gesamt"**.
+- **Neue Ansicht „Wer beschafft?"** macht die Zerlegung selbst zur Kennzahl;
+  nicht zuordenbare Fälle (8,9 %) werden ausgewiesen statt geschätzt.
+- **Neue Ansicht „Wettbewerb"** (Angebotszahlen je Zuschlag, dünnste Warengruppen)
+  ersetzt das Melde-Radar — Meldungen an die Statistikstellen laufen bei der Stadt
+  automatisiert über Systemschnittstellen und sind kein offener Bedarf.
+- **Grenzen des Städtevergleichs** stehen sichtbar in der Benchmark-Ansicht.
+
 ## 2026-07-17 · Rechtsstand aktualisiert
 
 Anlass: Das **Vergabebeschleunigungsgesetz** ist zum 01.07.2026 in Kraft getreten.
