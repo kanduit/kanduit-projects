@@ -425,12 +425,14 @@ function renderWettbewerb() {
    BENCHMARK (Kernverwaltung je Stadt)
    ==================================================================== */
 function renderBenchmark() {
-  const per100k = c => c.kern.total / c.einwohner * 100000;
+  // "kommunal gesamt" (Kernverwaltung + eigene Betriebe) is the comparable unit:
+  // the same task sits in an Eigenbetrieb in one city and in an AöR in the next.
+  const per100k = c => c.kommunal.total / c.einwohner * 100000;
   fill('#bench-kpis', CITY_ORDER.map(nuts => {
     const c = DATA.cities[nuts];
     return {
       k: c.name, v: nf1.format(per100k(c)),
-      d: `je 100.000 Einw. · ${fmtInt(c.kern.total)} Bekanntm. der Kernverwaltung`,
+      d: `je 100.000 Einw. · ${fmtInt(c.kommunal.total)} Bekanntm. kommunal gesamt`,
       cls: nuts === 'DEA11' ? 'petrol' : '', info: 'bench_rate',
     };
   }));
@@ -440,39 +442,43 @@ function renderBenchmark() {
     return {
       label: c.name, value: per100k(c), valLabel: nf1.format(per100k(c)),
       color: CITY_COLOR(nuts),
-      tip: `<b>${c.name} · Kernverwaltung</b><div class="row"><span>Bekanntmachungen</span><span>${fmtInt(c.kern.total)}</span></div><div class="row"><span>Einwohner</span><span>${fmtInt(c.einwohner)}</span></div><div class="row"><span>je 100.000</span><span>${nf1.format(per100k(c))}</span></div>`,
+      tip: `<b>${c.name} · kommunal gesamt</b><div class="row"><span>Bekanntmachungen</span><span>${fmtInt(c.kommunal.total)}</span></div><div class="row"><span>davon Kernverwaltung</span><span>${fmtInt(c.kern.total)}</span></div><div class="row"><span>Einwohner</span><span>${fmtInt(c.einwohner)}</span></div><div class="row"><span>je 100.000</span><span>${nf1.format(per100k(c))}</span></div>`,
     };
   }), { padL: 110 });
 
   pairedBarChart($('#chart-bench-effekt'), CITY_ORDER.map(nuts => {
     const c = DATA.cities[nuts];
     return {
-      label: c.name, a: c.platz.total, b: c.kern.total,
-      tip: `<b>${c.name}</b><div class="row"><span>Erfüllungsort gesamt</span><span>${fmtInt(c.platz.total)}</span></div><div class="row"><span>davon Kernverwaltung</span><span>${fmtInt(c.kern.total)}</span></div><div class="row"><span>Überzeichnung</span><span>${nf1.format(c.platz.total / (c.kern.total || 1))}×</span></div>`,
+      label: c.name, a: c.platz.total, b: c.kommunal.total,
+      tip: `<b>${c.name}</b><div class="row"><span>Erfüllungsort gesamt</span><span>${fmtInt(c.platz.total)}</span></div><div class="row"><span>davon kommunal</span><span>${fmtInt(c.kommunal.total)}</span></div><div class="row"><span>Überzeichnung</span><span>${nf1.format(c.platz.total / (c.kommunal.total || 1))}×</span></div>`,
     };
   }), {
     colorA: 'var(--neutral-300)', colorB: 'var(--petrol-600)', padL: 110,
     legend: [
       { label: 'alle Auftraggeber am Ort', color: 'var(--neutral-300)' },
-      { label: 'nur Kernverwaltung', color: 'var(--petrol-600)' },
+      { label: 'nur die Kommune', color: 'var(--petrol-600)' },
     ],
   });
 
   const rows = [
     ['Einwohner (IT.NRW)', c => fmtInt(c.einwohner)],
     ['Bekanntmachungen am Ort', c => fmtInt(c.platz.total)],
+    ['… davon kommunal gesamt', c => `${fmtInt(c.kommunal.total)} (${fmtPct(c.platz.kommunalAnteil)})`],
     ['… davon Kernverwaltung', c => `${fmtInt(c.kern.total)} (${fmtPct(c.platz.kernAnteil)})`],
-    ['Ausschreibungen (Stadt)', c => fmtInt(c.kern.competitions)],
-    ['Zuschläge (Stadt)', c => fmtInt(c.kern.results)],
-    ['Volumen ausgewiesen', c => fmtMio(c.kern.awardSum)],
-    ['… bei Zuschlägen', c => `${fmtInt(c.kern.resultsWithValue)} / ${fmtInt(c.kern.results)}`],
-    ['Median-Dauer (Tage)', c => c.dauernKern.medianAll == null ? '—' : fmtInt(c.dauernKern.medianAll)],
-    ['Median Angebote/Los', c => c.kern.bidsMedian == null ? '—' : nf1.format(c.kern.bidsMedian)],
-    ['Städtische Beteiligungen', c => fmtInt(c.beteiligung.total)],
+    ['… davon eigene Betriebe', c => fmtInt(c.beteiligung.total)],
+    ['Ausschreibungen (kommunal)', c => fmtInt(c.kommunal.competitions)],
+    ['Zuschläge (kommunal)', c => fmtInt(c.kommunal.results)],
+    ['Volumen ausgewiesen', c => fmtMio(c.kommunal.awardSum)],
+    ['… bei Zuschlägen', c => `${fmtInt(c.kommunal.resultsWithValue)} / ${fmtInt(c.kommunal.results)}`],
+    ['Median-Dauer (Tage)', c => c.dauernKommunal.medianAll == null ? '—' : fmtInt(c.dauernKommunal.medianAll)],
+    ['Median Angebote/Los', c => c.kommunal.bidsMedian == null ? '—' : nf1.format(c.kommunal.bidsMedian)],
   ];
   $('#bench-table').innerHTML =
     `<thead><tr><th>Kennzahl</th>${CITY_ORDER.map(n => `<th class="num">${DATA.cities[n].name}</th>`).join('')}</tr></thead>` +
     `<tbody>${rows.map(([lbl, fn]) => `<tr><td>${lbl}</td>${CITY_ORDER.map(n => `<td class="num">${fn(DATA.cities[n])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+
+  $('#vergleichbarkeit').innerHTML =
+    (DATA.meta.vergleichbarkeit || []).map(t => `<li>${t}</li>`).join('');
 }
 
 /* ====================================================================

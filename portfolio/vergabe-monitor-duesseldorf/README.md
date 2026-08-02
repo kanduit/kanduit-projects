@@ -1,9 +1,9 @@
 # Vergabe-Monitor Düsseldorf
 
 Public-procurement KPIs for the City of Düsseldorf, built **entirely from public
-eForms notices** — procedure mix, award durations, a 2026 direct-award scenario, an
-NRW city benchmark and a schematic VergStatVO reporting radar. Every figure links to
-its source; all processing happens in the browser.
+eForms notices** — procedure mix, award durations, competition intensity and an NRW
+city benchmark. The unit of analysis is the **contracting authority**, never the place
+of performance. Every figure links to its source; all processing happens in the browser.
 
 A portfolio project by [Kanduit](https://kanduit.de) — digitalization, data & software
 for the public sector in NRW. 🇩🇪 **German-language UI.** A German README is available
@@ -20,23 +20,19 @@ in [`README.de.md`](README.de.md).
 ## Views
 
 - **Überblick (Overview)** — notices per quarter, procedure-type mix, top CPV groups,
-  stated award volume, participating contracting authorities (city · municipal
-  companies · state · federal).
+  stated award volume and procurement units — all for the **city administration as
+  buyer**, not the location.
+- **Wer beschafft? (Who actually buys?)** — decomposition of all notices with place of
+  performance Düsseldorf by actual contracting authority (city, own operations, state,
+  federal, public undertakings). Headline: a place filter overstates city volume 3.8×.
 - **Verfahrensdauern (Durations)** — median days from contract notice to award per
-  procedure type; only procedures where both dates are public, with the coverage rate
-  stated honestly.
-- **Direktauftrag 2026 (Direct-award scenario)** — procedure mix and monthly series
-  around § 75a GO NRW (procedural freedom for municipalities since 2026-01-01; the
-  binding rule is each municipality's own Vergabeordnung, not the state's direct-award
-  threshold) and the Vergabebeschleunigungsgesetz (2026-07-01). The point of the view:
-  direct awards barely appear in public notice data — only internal data shows the
-  actual quota.
-- **Benchmark NRW** — Düsseldorf vs. Cologne, Essen, Dortmund, normalized per 100,000
-  inhabitants; buyer categories expose the state-capital effect.
-- **Melde-Radar (schematic)** — VergStatVO 60-day reporting deadlines simulated from
-  public award data (reporting threshold raised to over €50k on 2026-07-01, previously
-  €25k); clearly marked as
-  a concept view.
+  procedure type; only procedures where both dates are public, coverage stated honestly.
+- **Wettbewerb (Competition)** — bidder counts from award notices: distribution and the
+  product categories with the thinnest competition.
+- **Benchmark NRW** — Düsseldorf vs. Cologne, Essen, Dortmund per 100,000 inhabitants,
+  compared as **municipal total** (administration + own operations), because the cities
+  run the same tasks in different legal forms. The comparison's limits are stated in the
+  view itself.
 
 ## Data sources
 
