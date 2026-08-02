@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanduit Ganztags-Platzmonitor Mönchengladbach</title>
+<meta name="description" content="Demonstrator: Ganztags-Platzmonitor Mönchengladbach — Platzbedarf, Kapazität und Lücke je Grundschule und Stadtbezirk für jede Ausbaustufe des Rechtsanspruchs bis 2029/30. Kanduit UG, aus öffentlichen Daten.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Reusable Kanduit logo symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <mask id="kmask" maskUnits="userSpaceOnUse" x="-125" y="-125" width="250" height="250">
+      <circle r="110" fill="#fff"/>
+      <rect x="-71" y="-125" width="29" height="250" fill="#000"/>
+      <g stroke="#000" stroke-width="32" stroke-linecap="butt">
+        <line x1="-42" y1="0" x2="66" y2="-122"/>
+        <line x1="-42" y1="0" x2="66" y2="122"/>
+      </g>
+    </mask>
+    <symbol id="k-mark" viewBox="-125 -125 250 250">
+      <circle r="110" fill="currentColor" mask="url(#kmask)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <span class="brand">
+    <svg width="22" height="22" style="color:var(--petrol-600)"><use href="#k-mark"/></svg>
+    Kanduit <span class="sub">Ganztags-Platzmonitor</span>
+  </span>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-view="overview">Überblick</button>
+    <button class="tab" data-view="map">Karte</button>
+    <button class="tab" data-view="table">Standorte</button>
+    <button class="tab" data-view="capacity">Kapazitätsmodell</button>
+    <button class="tab" data-view="measures">Maßnahmen</button>
+    <button class="tab" data-view="sheet">Kennzahlenblatt</button>
+  </nav>
+  <div class="right">
+    <span class="stand" id="standLabel">Stand —</span>
+    <span class="demo-pill">Demo · öffentliche Daten</span>
+    <button class="kbtn ghost" onclick="window.print()">Drucken / PDF</button>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== ÜBERBLICK ===================== -->
+  <section class="view active" id="view-overview">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Rechtsanspruch § 24 Abs. 4 SGB VIII · Ausbaustufen bis 2029/30</p>
+        <h2>Überblick: Platzbedarf, Kapazität und Lücke</h2>
+        <p>Diese Ansicht bricht die gesamtstädtische Ganztagsbilanz auf die vier Ausbaustufen des
+          Rechtsanspruchs herunter. Standorte, Schüler- und Klassenzahlen stammen aus dem Open-Data-Angebot
+          des Schulministeriums NRW; die Raumkennwerte des Kapazitätsmodells und die Maßnahmenliste sind
+          gekennzeichnete Demo-Annahmen. Sämtliche Rechnung läuft im Browser — die Regler unter
+          „Kapazitätsmodell“ wirken auf alle Ansichten.</p>
+      </div>
+
+      <div class="banner info" style="margin-bottom:var(--sp-4)" id="legal-banner"></div>
+
+      <div id="controls-overview"></div>
+
+      <div class="grid g4" id="overview-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Stadtweite Bilanz je Ausbaustufe <span class="info-i" data-info="stufenbilanz" tabindex="0" role="button" aria-label="Erklärung: Stadtweite Bilanz je Ausbaustufe">ⓘ</span></div>
+          <div class="card-sub">Plätze · gedeckt und offen</div>
+          <div id="chart-stufen"></div>
+          <p class="note src-note" data-src="msb"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Plausibilitätsanker 2026/27 <span class="info-i" data-info="anker" tabindex="0" role="button" aria-label="Erklärung: Plausibilitätsanker 2026/27">ⓘ</span></div>
+          <div class="card-sub">Modellergebnis gegen die öffentlich genannten Zahlen</div>
+          <div id="anker-box"></div>
+          <p class="note src-note" data-src="stadt"></p>
+        </div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-title">Grundschülerinnen und Grundschüler in Mönchengladbach <span class="info-i" data-info="zeitreihe" tabindex="0" role="button" aria-label="Erklärung: Grundschülerzahlen im Zeitverlauf">ⓘ</span></div>
+          <div class="card-sub">Schuljahre 2012/13 bis 2029/30 · Ist und Fortschreibung</div>
+          <div id="chart-zeitreihe"></div>
+          <p class="note src-note" data-src="msbReihe"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Offene Plätze je Stadtbezirk <span class="info-i" data-info="luecke_bezirk" tabindex="0" role="button" aria-label="Erklärung: Offene Plätze je Stadtbezirk">ⓘ</span></div>
+          <div class="card-sub">gewählte Ausbaustufe · Plätze</div>
+          <div id="chart-bezirke"></div>
+          <p class="note src-note" data-src="osm"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== KARTE ===================== -->
+  <section class="view" id="view-map">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">38 Grundschulstandorte · 4 Stadtbezirke</p>
+        <h2>Karte: Deckungsgrad je Standort</h2>
+        <p>Jeder Punkt ist ein Grundschulstandort, eingefärbt nach dem Deckungsgrad in der gewählten
+          Ausbaustufe. Die Punktgröße folgt dem Platzbedarf. Koordinaten aus dem Schulverzeichnis NRW,
+          Bezirksgrenzen aus OpenStreetMap. Ein freier Platz im einen Bezirk deckt keinen Anspruch im
+          anderen — genau dafür ist diese Ansicht da.</p>
+      </div>
+
+      <div id="controls-map"></div>
+
+      <div class="grid g4" id="map-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-title">Standortkarte <span class="info-i" data-info="karte" tabindex="0" role="button" aria-label="Erklärung: Standortkarte">ⓘ</span></div>
+          <div class="card-sub">Ampellogik nach Deckungsgrad</div>
+          <div class="map-wrap" id="map-canvas"></div>
+          <div class="legend" id="map-legend"></div>
+          <p class="note src-note" data-src="osm"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Standorte je Ampelstufe und Bezirk <span class="info-i" data-info="ampel_bezirk" tabindex="0" role="button" aria-label="Erklärung: Standorte je Ampelstufe und Bezirk">ⓘ</span></div>
+          <div class="card-sub">Anteile je Stadtbezirk · Anzahl Standorte</div>
+          <div id="chart-ampel"></div>
+          <p class="note src-note" data-src="msb"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== STANDORTE ===================== -->
+  <section class="view" id="view-table">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Standort- und Bezirksebene · sortierbar · CSV-Export</p>
+        <h2>Standorte und Stadtbezirke</h2>
+        <p>Bedarf, Kapazität, Lücke und Deckungsgrad je Grundschule und je Stadtbezirk für die gewählte
+          Ausbaustufe und das gewählte Szenario. Ein Klick auf eine Zeile öffnet das Kennzahlenblatt
+          des Standorts. Der CSV-Export enthält genau die angezeigten Werte.</p>
+      </div>
+
+      <div id="controls-table"></div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Stadtbezirke <span class="info-i" data-info="bezirkstabelle" tabindex="0" role="button" aria-label="Erklärung: Bezirkstabelle">ⓘ</span></div>
+        <div class="card-sub">gewählte Ausbaustufe · Plätze</div>
+        <div class="table-wrap" style="margin-top:var(--sp-3); border:none; box-shadow:none">
+          <table id="tbl-bezirke"></table>
+        </div>
+        <p class="note src-note" data-src="kitas"></p>
+      </div>
+
+      <div class="toolbar">
+        <div class="note" id="table-count"></div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <select class="field" id="filter-bezirk" aria-label="Stadtbezirk filtern"></select>
+          <button class="kbtn solid" id="btn-csv">CSV exportieren</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="tbl-schulen"></table>
+      </div>
+      <p class="note src-note" data-src="msb"></p>
+    </div>
+  </section>
+
+  <!-- ===================== KAPAZITÄTSMODELL ===================== -->
+  <section class="view" id="view-capacity">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Kapazität aus Fläche und Nutzung — nicht aus festen Gruppengrößen</p>
+        <h2>Kapazitätsmodell</h2>
+        <p>Mönchengladbach stellt auf offene und halboffene Modelle mit multifunktional genutzten Räumen
+          um. Die Rechengröße „Gruppen mal Plätze“ trägt damit nicht mehr. Dieses Modell leitet die
+          Kapazität je Standort stattdessen aus der ganztagsrelevanten Fläche und den Nutzungsannahmen ab.
+          Alle Annahmen sind hier sichtbar und veränderbar; jede Änderung wirkt sofort auf alle Ansichten.</p>
+      </div>
+
+      <div class="banner warn" style="margin-bottom:var(--sp-4)">
+        <b>Demo-Annahme — im Projekt durch Daten des Fachbereichs zu ersetzen.</b>
+        Raumflächen je Standort liegen nicht offen vor. Das Modell rechnet ersatzweise mit
+        Klassenraum-Äquivalenten, die aus der Schülerzahl und der mittleren Klassengröße des
+        Schulministeriums abgeleitet sind. Weil der Raumbestand real nicht der Schülerzahl folgt,
+        streut ein fünfter Regler die Äquivalente deterministisch um die Schulnummer — stadtweit
+        auf null zentriert. Stellen Sie ihn auf 0 %, rechnet das Modell strikt proportional, und
+        alle Standorte landen beim nahezu gleichen Deckungsgrad; das ist ein Artefakt des Modells,
+        keine Aussage über die Stadt. Die Voreinstellungen sind so gewählt, dass das Modell
+        stadtweit die öffentlich genannte Größenordnung für 2026/27 reproduziert. Im Projekt treten
+        an ihre Stelle die Raumbücher und Belegungspläne des Fachbereichs.
+      </div>
+
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Raumannahmen <span class="info-i" data-info="raummodell" tabindex="0" role="button" aria-label="Erklärung: Raumannahmen">ⓘ</span></div>
+          <div class="card-sub">Kapazität je Standort · veränderbar</div>
+          <div id="sliders-raum"></div>
+          <div class="calc" id="formel-raum"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Nachfrageannahmen <span class="info-i" data-info="nachfrage" tabindex="0" role="button" aria-label="Erklärung: Nachfrageannahmen">ⓘ</span></div>
+          <div class="card-sub">Inanspruchnahme und Jahrgangsentwicklung · veränderbar</div>
+          <div id="sliders-nachfrage"></div>
+          <div class="calc" id="formel-nachfrage"></div>
+        </div>
+      </div>
+
+      <div class="grid g4" id="capacity-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-title">Kapazität und Bedarf je Stadtbezirk <span class="info-i" data-info="kap_bezirk" tabindex="0" role="button" aria-label="Erklärung: Kapazität und Bedarf je Stadtbezirk">ⓘ</span></div>
+          <div class="card-sub">gewählte Ausbaustufe · Plätze</div>
+          <div id="chart-kap-bezirk"></div>
+          <p class="note src-note" data-src="msb"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Empfindlichkeit des Flächenrichtwerts <span class="info-i" data-info="sensitivitaet" tabindex="0" role="button" aria-label="Erklärung: Empfindlichkeit des Flächenrichtwerts">ⓘ</span></div>
+          <div class="card-sub">stadtweite Kapazität je m² pro Kind</div>
+          <div id="chart-sens"></div>
+          <p class="note src-note" data-src="ganztag"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MASSNAHMEN ===================== -->
+  <section class="view" id="view-measures">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Bau- und Umbaumaßnahmen · Platzwirkung je Standort und Jahr</p>
+        <h2>Maßnahmenwirkung</h2>
+        <p>Welche geplante Maßnahme schafft wie viele Plätze, an welchem Standort, ab wann — und was
+          bleibt danach offen. Die Liste ist vollständig eine Demo-Annahme: geplante Schulbaumaßnahmen
+          werden nicht offen veröffentlicht. Ihre Struktur entspricht dem, was im Projekt aus der
+          Koordination Schulbaumaßnahmen (40.G) übernommen würde.</p>
+      </div>
+
+      <div class="banner warn" style="margin-bottom:var(--sp-4)">
+        <b>Demo-Annahme — im Projekt durch Daten des Fachbereichs zu ersetzen.</b>
+        Standort, Maßnahmentyp, Platzwirkung und Wirksamkeitsjahr sind hier deterministisch aus der
+        modellierten Endstufenlücke abgeleitet, damit die Mechanik nachvollziehbar ist. Keine dieser
+        Maßnahmen ist beschlossen oder öffentlich angekündigt.
+      </div>
+
+      <div id="controls-measures"></div>
+
+      <div class="banner info" id="measures-hint" style="display:none; margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g4" id="measures-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Kumulierte Wirkung auf die stadtweite Lücke <span class="info-i" data-info="wirkung" tabindex="0" role="button" aria-label="Erklärung: Kumulierte Wirkung auf die stadtweite Lücke">ⓘ</span></div>
+          <div class="card-sub">je Ausbaustufe · Plätze</div>
+          <div id="chart-wirkung"></div>
+          <p class="note src-note" data-src="stadt"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Geschaffene Plätze je Wirksamkeitsjahr <span class="info-i" data-info="plaetze_jahr" tabindex="0" role="button" aria-label="Erklärung: Geschaffene Plätze je Wirksamkeitsjahr">ⓘ</span></div>
+          <div class="card-sub">Demo-Annahme · Plätze</div>
+          <div id="chart-jahre"></div>
+          <p class="note src-note" data-src="msb"></p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="tbl-massnahmen"></table>
+      </div>
+      <p class="note">Alle Angaben dieser Tabelle sind Demo-Annahmen und ersetzen keine
+        Maßnahmenplanung des Schulträgers.</p>
+    </div>
+  </section>
+
+  <!-- ===================== KENNZAHLENBLATT ===================== -->
+  <section class="view" id="view-sheet">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Druckbar · jede Zahl mit Quelle, Stand und Rechenweg</p>
+        <h2>Kennzahlenblatt je Standort</h2>
+        <p>Ein Blatt je Grundschule, geeignet als Anlage für Ausschussvorlagen und Haushaltsberatungen.
+          Über „Drucken / PDF“ wird ausschließlich diese Ansicht ausgegeben. Jede Kennzahl ist mit ihrer
+          Quelle, dem Stand und dem Rechenweg hinterlegt; Demo-Annahmen sind als solche markiert.</p>
+      </div>
+
+      <div class="toolbar">
+        <select class="field" id="sheet-select" aria-label="Grundschule auswählen"></select>
+        <button class="kbtn ghost" onclick="window.print()">Dieses Blatt drucken</button>
+      </div>
+
+      <div id="sheet-body"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div style="display:flex; align-items:center; gap:12px">
+      <svg width="30" height="30" style="color:#fff"><use href="#k-mark"/></svg>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:1.2rem; color:#fff">Kanduit</div>
+        <div class="mono">Ganztags-Platzmonitor · Demonstrator</div>
+      </div>
+    </div>
+    <p class="src" id="footer-src">
+      <b style="color:#cbd5e1">Demonstrator der Kanduit UG</b> — alle Daten aus öffentlichen Quellen:
+      <a style="color:var(--petrol-300)" href="https://www.schulministerium.nrw/open-data" target="_blank" rel="noopener">MSB NRW Open Data</a> (Schulverzeichnis, Schüler- und Klassenzahlen, Sozialindexstufen),
+      <a style="color:var(--petrol-300)" href="https://www.opengeodata.nrw.de/produkte/bildung_wissenschaft/kitas/" target="_blank" rel="noopener">Open Data NRW</a> (Kindertageseinrichtungen),
+      <a style="color:var(--petrol-300)" href="https://www.openstreetmap.org/relation/62644" target="_blank" rel="noopener">OpenStreetMap</a> (Stadtbezirksgrenzen, ODbL — © OpenStreetMap-Mitwirkende),
+      <a style="color:var(--petrol-300)" href="https://www.moenchengladbach.de/aktuell-aktiv/newsroom/ogs-ausbau-in-moenchengladbach-umsetzung-des-rechtsanspruchs-ab-2026-27" target="_blank" rel="noopener">Stadt Mönchengladbach — OGS-Ausbau</a> und
+      <a style="color:var(--petrol-300)" href="https://www.moenchengladbach.de/bildungsnetzwerk-ogs/der-offene-ganztag" target="_blank" rel="noopener">Bildungsnetzwerk — Der offene Ganztag</a>.
+      Stand <span id="footer-stand">—</span>, ohne Gewähr; kein Produkt der Stadt Mönchengladbach.
+      Raumkennwerte, Bestandsquote und Maßnahmenliste sind gekennzeichnete Demo-Annahmen.
+      Keine personenbezogenen Daten — Aggregationsstufe Schule, Stadtbezirk, Jahrgang (§ 120 SchulG NRW).
+      Verarbeitung vollständig im Browser · betriebsbereit für Hosting in Deutschland.
+    </p>
+  </div>
+</footer>
+
+<!-- Tooltip -->
+<div class="tt" id="tooltip"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

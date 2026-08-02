@@ -1,0 +1,167 @@
+{
+ "meta": {
+  "abruf": "2026-08-03",
+  "dateien": [
+   "https://www.schulministerium.nrw/system/files/media/document/file/opendata2025-26.csv"
+  ],
+  "filter": "Kreis 116 (Krfr. Stadt Moenchengladbach), Schulform Grundschule",
+  "quelle": "Ministerium fuer Schule und Bildung NRW — Open Data, Schuelerzahlen nach Kreis und Schulform",
+  "quelle_url": "https://www.schulministerium.nrw/open-data"
+ },
+ "reihe": [
+  {
+   "jahr": 2012,
+   "klassen": 379,
+   "rechtsform": "oeffentlich",
+   "schueler": 9079,
+   "schulen": 39
+  },
+  {
+   "jahr": 2013,
+   "klassen": 370,
+   "rechtsform": "oeffentlich",
+   "schueler": 8839,
+   "schulen": 37
+  },
+  {
+   "jahr": 2014,
+   "klassen": 371,
+   "rechtsform": "oeffentlich",
+   "schueler": 8893,
+   "schulen": 37
+  },
+  {
+   "jahr": 2015,
+   "klassen": 370,
+   "rechtsform": "oeffentlich",
+   "schueler": 9010,
+   "schulen": 36
+  },
+  {
+   "jahr": 2016,
+   "klassen": 375,
+   "rechtsform": "oeffentlich",
+   "schueler": 9278,
+   "schulen": 36
+  },
+  {
+   "jahr": 2017,
+   "klassen": 371,
+   "rechtsform": "oeffentlich",
+   "schueler": 9319,
+   "schulen": 35
+  },
+  {
+   "jahr": 2018,
+   "klassen": 373,
+   "rechtsform": "oeffentlich",
+   "schueler": 9323,
+   "schulen": 35
+  },
+  {
+   "jahr": 2018,
+   "klassen": 1,
+   "rechtsform": "privat",
+   "schueler": 17,
+   "schulen": 1
+  },
+  {
+   "jahr": 2019,
+   "klassen": 368,
+   "rechtsform": "oeffentlich",
+   "schueler": 9342,
+   "schulen": 35
+  },
+  {
+   "jahr": 2019,
+   "klassen": 1,
+   "rechtsform": "privat",
+   "schueler": 30,
+   "schulen": 1
+  },
+  {
+   "jahr": 2020,
+   "klassen": 370,
+   "rechtsform": "oeffentlich",
+   "schueler": 9358,
+   "schulen": 35
+  },
+  {
+   "jahr": 2020,
+   "klassen": 1,
+   "rechtsform": "privat",
+   "schueler": 50,
+   "schulen": 1
+  },
+  {
+   "jahr": 2021,
+   "klassen": 379,
+   "rechtsform": "oeffentlich",
+   "schueler": 9610,
+   "schulen": 35
+  },
+  {
+   "jahr": 2021,
+   "klassen": 1,
+   "rechtsform": "privat",
+   "schueler": 53,
+   "schulen": 1
+  },
+  {
+   "jahr": 2022,
+   "klassen": 391,
+   "rechtsform": "oeffentlich",
+   "schueler": 10170,
+   "schulen": 35
+  },
+  {
+   "jahr": 2022,
+   "klassen": 1,
+   "rechtsform": "privat",
+   "schueler": 62,
+   "schulen": 1
+  },
+  {
+   "jahr": 2023,
+   "klassen": 406,
+   "rechtsform": "oeffentlich",
+   "schueler": 10624,
+   "schulen": 35
+  },
+  {
+   "jahr": 2023,
+   "klassen": 1,
+   "rechtsform": "privat",
+   "schueler": 62,
+   "schulen": 1
+  },
+  {
+   "jahr": 2024,
+   "klassen": 415,
+   "rechtsform": "oeffentlich",
+   "schueler": 10867,
+   "schulen": 35
+  },
+  {
+   "jahr": 2024,
+   "klassen": 4,
+   "rechtsform": "privat",
+   "schueler": 58,
+   "schulen": 1
+  },
+  {
+   "jahr": 2025,
+   "klassen": 421,
+   "rechtsform": "oeffentlich",
+   "schueler": 10965,
+   "schulen": 37
+  },
+  {
+   "jahr": 2025,
+   "klassen": 4,
+   "rechtsform": "privat",
+   "schueler": 57,
+   "schulen": 1
+  }
+ ]
+}

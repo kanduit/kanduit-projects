@@ -1,0 +1,27 @@
+name: Ganztags-Platzmonitor Mönchengladbach · docs sync check
+
+# Fails if the published copy under docs/ is out of sync with the source under
+# portfolio/. This makes the "edited source but forgot to publish" mistake
+# impossible to merge — same guard as the Schulbau-Monitor.
+#
+# Scoped to the Ganztags-Platzmonitor Mönchengladbach demo only; other demos are unaffected.
+
+on:
+  push:
+    paths:
+      - "portfolio/ganztags-platzmonitor-moenchengladbach/**"
+      - "docs/ganztags-platzmonitor-moenchengladbach/**"
+      - ".github/workflows/ganztags-platzmonitor-moenchengladbach-publish-check.yml"
+  pull_request:
+    paths:
+      - "portfolio/ganztags-platzmonitor-moenchengladbach/**"
+      - "docs/ganztags-platzmonitor-moenchengladbach/**"
+      - ".github/workflows/ganztags-platzmonitor-moenchengladbach-publish-check.yml"
+
+jobs:
+  check-docs-in-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify docs/ matches source
+        run: python3 portfolio/ganztags-platzmonitor-moenchengladbach/scripts/publish.py --check
