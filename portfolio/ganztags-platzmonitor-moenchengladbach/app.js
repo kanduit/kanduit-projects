@@ -331,6 +331,7 @@ function buildMetricInfo() {
   const anzahl = DATA.schulen.length;
   const dq = `Aus offenen Daten stammen Standorte, Schüler- und Klassenzahlen (${anzahl} Grundschulen, Schuljahr ${DATA.meta.schuljahrBasis}). `;
   const demo = 'Demo-Annahme — im Projekt durch Daten des Fachbereichs zu ersetzen.';
+  const bt = K.backtest;
 
   METRIC_INFO = {
     bedarf: { t: 'Platzbedarf gesamt', d: `Summe über alle ${anzahl} Standorte: Jahrgangsstärke × Zahl der geführten Jahrgänge × Quote. Für die Anspruchsjahrgänge (${st.klassen}) gilt die Inanspruchnahmequote von ${fmtPct(quoteEffektiv())}, für die übrigen Jahrgänge die Bestandsquote von ${fmtPct(state.bestandsquote)}. ${dq}Nicht offen verfügbar sind die Jahrgangsstärken je Schule — sie werden als Schülerzahl ÷ 4 Jahrgänge angesetzt (Schulen im Aufbau: ÷ Zahl der bereits geführten Jahrgänge). Die Bestandsquote ist eine ${demo}` },
@@ -340,9 +341,9 @@ function buildMetricInfo() {
     deckung: { t: 'Deckungsgrad', d: `Kapazität geteilt durch Platzbedarf. Ampellogik: grün ab 100 %, gelb ab 85 %, rot darunter. Der Deckungsgrad wird je Standort gerechnet und für Bezirke und die Gesamtstadt aus den Summen gebildet.` },
     stufenbilanz: { t: 'Stadtweite Bilanz je Ausbaustufe', d: `Je Ausbaustufe der gedeckte Anteil des Platzbedarfs und die offenen Plätze, gestapelt. Der Rechtsanspruch wächst jährlich um einen Jahrgang: ${DATA.stufen.map(s => s.id + ' = ' + s.klassen).join(', ')}. Die Balkenhöhe ist der Gesamtplatzbedarf, also einschließlich der Jahrgänge ohne Anspruch. Fortschreibung der Jahrgangsstärken mit ${fmtPct(state.trend)} p. a.` },
     anker: { t: 'Plausibilitätsanker 2026/27', d: `Vergleich des Modellergebnisses mit den Zahlen, die die Stadt Mönchengladbach für das Schuljahr 2026/27 öffentlich genannt hat: ${fmtInt(DATA.anker.bedarfVon)}–${fmtInt(DATA.anker.bedarfBis)} benötigte Plätze für Erstklässler, rund ${fmtInt(DATA.anker.freiePlaetze)} freie Plätze, bis zu ${fmtInt(DATA.anker.luecke)} zusätzlich zu schaffende Plätze. Die Voreinstellungen der Raumregler sind bewusst so gewählt, dass das Modell diese Größenordnung reproduziert — der Anker prüft also die Kalibrierung, nicht das Ergebnis. Bei veränderten Reglern läuft er auseinander; das ist beabsichtigt.` },
-    zeitreihe: { t: 'Grundschülerzahlen im Zeitverlauf', d: `Ist-Werte 2012/13 bis ${BASISJAHR}/${String(BASISJAHR + 1).slice(2)} aus dem Open-Data-Angebot des Schulministeriums NRW (Kreis 116, Schulform Grundschule, öffentlich und privat). Ab ${BASISJAHR + 1} Fortschreibung mit dem eingestellten Jahrgangstrend von ${fmtPct(state.trend)} p. a. Geburtsjahrgänge, Wanderungssalden und Einzugsbereiche liegen nicht offen vor — im Projekt tritt die Bevölkerungsprognose des Fachbereichs an die Stelle dieser Fortschreibung.` },
-    luecke_bezirk: { t: 'Offene Plätze je Stadtbezirk', d: `Summe der standortscharfen Lücken je Stadtbezirk in der Stufe ${st.id}. Die Zuordnung der Standorte zu den vier Stadtbezirken erfolgt geometrisch über die Grenzen aus OpenStreetMap (ODbL); amtliche Bezirksgrenzen liegen für Mönchengladbach nicht als offener Datensatz vor. Schuleinzugsbereiche sind nicht abgebildet — sie wären im Projekt die genauere Aggregationsebene.` },
-    karte: { t: 'Standortkarte', d: `Punktposition aus den UTM-Koordinaten des Schulverzeichnisses NRW (EPSG:25832, nach WGS84 umgerechnet). Farbe nach Deckungsgrad in der Stufe ${st.id}, Fläche des Punktes proportional zum Platzbedarf. Die Bezirksflächen sind vereinfachte OSM-Grenzen (Toleranz rund 35 m) und dienen der Orientierung, nicht der Flächenberechnung.` },
+    zeitreihe: { t: 'Grundschülerzahlen im Zeitverlauf', d: `Ist-Werte 2012/13 bis ${BASISJAHR}/${String(BASISJAHR + 1).slice(2)} aus dem Open-Data-Angebot des Schulministeriums NRW (Kreis 116, Schulform Grundschule, öffentlich und privat). Ab ${BASISJAHR + 1} Fortschreibung mit dem eingestellten Jahrgangstrend von ${fmtPct(state.trend)} p. a. Geburtsjahrgänge, Wanderungssalden und Einzugsbereiche liegen nicht offen vor — im Projekt tritt die Bevölkerungsprognose des Fachbereichs an die Stelle dieser Fortschreibung. Wie belastbar die reine Trendfortschreibung ist, zeigt die Rückrechnung unter dem Diagramm.` },
+    luecke_bezirk: { t: 'Offene Plätze je Stadtbezirk', d: `Summe der standortscharfen Lücken je Stadtbezirk in der Stufe ${st.id}. Die Zuordnung der Standorte zu den vier Stadtbezirken erfolgt geometrisch über die amtliche Kleinräumige Gebietsgliederung der Stadt Mönchengladbach (Geoportal, EPSG:25832). Schuleinzugsbereiche sind nicht abgebildet — sie wären im Projekt die genauere Aggregationsebene; derselbe Datensatz enthält mit Stadtteilen und statistischen Bezirken bereits die feineren Stufen.` },
+    karte: { t: 'Standortkarte', d: `Punktposition aus den UTM-Koordinaten des Schulverzeichnisses NRW (EPSG:25832, nach WGS84 umgerechnet). Farbe nach Deckungsgrad in der Stufe ${st.id}, Fläche des Punktes proportional zum Platzbedarf. Die Bezirksflächen sind die amtlichen Grenzen der Kleinräumigen Gebietsgliederung, für die Darstellung auf rund 30 m vereinfacht; die ausgewiesenen Flächenwerte stammen unverändert aus dem Datensatz und summieren sich auf 170,47 km².` },
     ampel_bezirk: { t: 'Standorte je Ampelstufe und Bezirk', d: `Verteilung der Standorte eines Bezirks auf grün (Deckungsgrad ab 100 %), gelb (ab 85 %) und rot. Gezählt werden Standorte, nicht Plätze — ein großer roter Standort wiegt hier so viel wie ein kleiner. Die Platzsicht steht in der Standorttabelle.` },
     bezirkstabelle: { t: 'Bezirksübersicht', d: `Bedarf, Kapazität und Lücke je Stadtbezirk, dazu der Ü3-Platzbestand der Kindertageseinrichtungen als Vorlaufindikator für die kommenden Einschulungsjahrgänge (Open Data NRW, ${DATA.bezirke.reduce((a, b) => a + b.kitas, 0)} Einrichtungen zugeordnet${DATA.meta.kitasOhneBezirk ? `, ${DATA.meta.kitasOhneBezirk} ohne Bezirkszuordnung wegen der vereinfachten Grenzen` : ''}). Der Ü3-Bestand ist ein Indikator, keine Prognose: Übergangsquoten zwischen Kita und Grundschule liegen nicht offen vor.` },
     raummodell: { t: 'Raumannahmen', d: `Die vier Regler bestimmen die Kapazität je Standort. Klassenraum-Äquivalente werden als Schülerzahl ÷ mittlere Klassengröße (${nf1.format(K.klassengroesse)}; ${DATA.zeitreihe[DATA.zeitreihe.length - 1].schueler.toLocaleString('de-DE')} Schülerinnen und Schüler in ${DATA.zeitreihe[DATA.zeitreihe.length - 1].klassen} Klassen, MSB NRW) berechnet. Alle fünf Kennwerte sind ${demo} Die Voreinstellungen sind auf die öffentlich genannte Größenordnung für 2026/27 kalibriert. Der fünfte Regler bildet ab, dass der Raumbestand real nicht der Schülerzahl folgt — siehe die eigene Erläuterung dort.` },
@@ -355,6 +356,7 @@ function buildMetricInfo() {
     kohorte: { t: 'Jahrgangsstärke', d: `Schülerzahl des Standorts geteilt durch vier Jahrgänge, fortgeschrieben mit ${fmtPct(state.trend)} p. a. Bei Schulen im Aufbau wird durch die Zahl der bereits geführten Jahrgänge geteilt. Eine jahrgangsscharfe Schülerstatistik je Schule liegt nicht offen vor; § 120 SchulG NRW schließt personenbezogene Schülerdaten beim Schulträger ohnehin aus.` },
     sozialindex: { t: 'Sozialindexstufe', d: `Stufe 1 bis 9 nach dem Sozialindex des Landes NRW (Schulliste Schuljahr 2025/26, MSB NRW); Stufe 9 steht für die größte Belastung. Für neu errichtete Standorte ist keine Stufe ausgewiesen („ohne“). Der Index geht in diese Rechnung nicht ein — er ist als Priorisierungshinweis mitgeführt.` },
     raeume: { t: 'Klassenraum-Äquivalente', d: `Schülerzahl geteilt durch die mittlere Klassengröße in Mönchengladbach (${nf1.format(K.klassengroesse)}, MSB NRW), aufgerundet, anschließend mit der eingestellten Streuung von ${fmtPct(state.raum.raumStreuung)} verschoben. Ein Ersatz für das nicht offen verfügbare Raumbuch: die tatsächliche Raumzahl, Raumgrößen und Fachraumanteile je Standort sind ${demo}` },
+    backtest: { t: 'Rückrechnung der Trendfortschreibung', d: `Prüfung des Verfahrens an der Vergangenheit: Das Modell wird auf die Jahre ${bt.fitVon}–${bt.fitBis} angepasst und sagt anschließend ${bt.jahre[0].jahr}–${bt.jahre[bt.jahre.length - 1].jahr} voraus, ohne diese Jahre gesehen zu haben. Ergebnis: mittlere absolute Abweichung ${fmtPct(bt.mape)}, für ${BASISJAHR} ${fmtPct(bt.endAbwPct)}. Die Fortschreibung unterschätzt, weil sie den Zuzug ab 2022 nicht kennen kann. Sie taugt damit als Größenordnung, nicht als Planungsgrundlage für einzelne Jahrgänge — dafür braucht es die Geburtsjahrgänge und Wanderungssalden des Fachbereichs, die für die Einschulungen bis 2029/30 bereits vorliegen.` },
     streuung: { t: 'Streuung des Raumbestands', d: `Der Raumbestand einer Grundschule folgt real nicht ihrer Schülerzahl: Baujahr, spätere Erweiterungen, Fachraum- und Mensaanteil unterscheiden sich erheblich. Diese Streuung ist planungsrelevant, liegt aber nicht offen vor — sie wird hier deterministisch aus der Schulnummer erzeugt und stadtweit auf null zentriert, verschiebt also Kapazität zwischen Standorten, ohne welche zu schaffen. Auf 0 % gestellt rechnet das Modell strikt proportional zur Schülerzahl; dann liegen fast alle Standorte beim selben Deckungsgrad — das wäre ein Artefakt des Modells und keine Aussage über die Stadt. ${demo}` }
   };
 }
@@ -512,6 +514,19 @@ function renderOverview() {
     height: 260, labelEvery: 2
   });
 
+  /* Rückrechnung: was die reine Trendfortschreibung in der Vergangenheit wert war */
+  const bt = K.backtest;
+  const letzte_bt = bt.jahre[bt.jahre.length - 1];
+  $('#backtest-note').innerHTML =
+    `<b>Rückrechnung${infoIcon('backtest')}:</b> Auf die Jahre ${bt.fitVon}–${bt.fitBis} angepasst
+     (${fmtPct(bt.cagrFit * 100)} p. a.) hätte dieselbe Fortschreibung für ${letzte_bt.jahr}
+     ${fmtInt(letzte_bt.modell)} Grundschülerinnen und Grundschüler ergeben — tatsächlich waren es
+     ${fmtInt(letzte_bt.ist)} (${nf1.format(letzte_bt.abwPct)} %). Über die vier Jahre
+     ${bt.jahre[0].jahr}–${letzte_bt.jahr} liegt die mittlere absolute Abweichung bei
+     ${fmtPct(bt.mape)}. Eine Trendfortschreibung liefert also die Größenordnung, nicht den
+     einzelnen Jahrgang: Wer 2029/30 eingeschult wird, ist längst geboren — im Projekt ersetzen
+     Geburtsjahrgänge und Wanderungssalden diesen Regler.`;
+
   /* Lücke je Bezirk */
   barChart($('#chart-bezirke'), DATA.bezirke.map(b => {
     const sub = summe(rows.filter(r => r.schule.bezirk === b.name));
@@ -565,10 +580,10 @@ function renderMap() {
 function drawMap(rows) {
   const W = 620, H = 560, pad = 14;
   let minLon = 180, maxLon = -180, minLat = 90, maxLat = -90;
-  DATA.stadtRinge.forEach(r => r.forEach(p => {
+  DATA.bezirke.forEach(b => b.ringe.forEach(r => r.forEach(p => {
     minLon = Math.min(minLon, p[0]); maxLon = Math.max(maxLon, p[0]);
     minLat = Math.min(minLat, p[1]); maxLat = Math.max(maxLat, p[1]);
-  }));
+  })));
   const midLat = (minLat + maxLat) / 2, kx = Math.cos(midLat * Math.PI / 180);
   const spanX = (maxLon - minLon) * kx, spanY = maxLat - minLat;
   const scale = Math.min((W - 2 * pad) / spanX, (H - 2 * pad) / spanY);
@@ -587,7 +602,8 @@ function drawMap(rows) {
     const p = svgEl('path', { d: path(b.ringe), class: 'map-bezirk' });
     p.addEventListener('mousemove', e => {
       const sub = summe(rows.filter(r => r.schule.bezirk === b.name));
-      showTip(`<b>Stadtbezirk ${b.name}</b>
+      showTip(`<b>Stadtbezirk ${b.nummer} · ${b.name}</b>
+        <div class="row"><span>Fläche</span><span>${nf1.format(b.flaecheKm2)} km²</span></div>
         <div class="row"><span>Standorte</span><span>${fmtInt(b.schulen)}</span></div>
         <div class="row"><span>offene Plätze</span><span>${fmtInt(sub.luecke)}</span></div>
         <div class="row"><span>Deckungsgrad</span><span>${fmtPct0(sub.deckung * 100)}</span></div>`, e.clientX, e.clientY);
@@ -603,7 +619,6 @@ function drawMap(rows) {
       t: b.name
     });
   });
-  svg.appendChild(svgEl('path', { d: path(DATA.stadtRinge), class: 'map-stadt' }));
 
   const maxBedarf = Math.max.apply(null, rows.map(r => r.bedarf)) || 1;
   rows.slice().sort((a, b) => b.bedarf - a.bedarf).forEach(r => {
@@ -798,7 +813,7 @@ const NACHFRAGE_SLIDER = [
   { k: 'bestandsquote', t: 'Bestandsquote der übrigen Jahrgänge', min: 20, max: 100, step: 1, dec: 0, unit: ' %',
     hint: 'Teilnahme am Ganztag in den Jahrgängen ohne Rechtsanspruch. Demo-Annahme.' },
   { k: 'trend', t: 'Jahrgangstrend', min: -2, max: 5, step: 0.1, dec: 1, unit: ' % p. a.',
-    hint: 'Jährliche Veränderung der Jahrgangsstärke. Voreinstellung: beobachtete Entwicklung der letzten drei Jahre (MSB NRW).' }
+    hint: 'Jährliche Veränderung der Jahrgangsstärke. Voreinstellung: beobachtete Entwicklung der letzten drei Jahre (MSB NRW). Wie treffsicher eine reine Trendfortschreibung ist, zeigt die Rückrechnung im Überblick.', info: 'backtest' }
 ];
 
 function sliderHtml(defs, quelle) {
@@ -1028,7 +1043,7 @@ function renderSheet() {
       <p class="note">Quelle der Bestandsdaten:
         <a href="${SRC_LABEL.msb.u}" target="_blank" rel="noopener">${esc(SRC_LABEL.msb.t)}</a>,
         Schuljahr ${DATA.meta.schuljahrBasis}, Abruf ${DATA.meta.stand}. Bezirkszuordnung:
-        <a href="${SRC_LABEL.osm.u}" target="_blank" rel="noopener">${esc(SRC_LABEL.osm.t)}</a>.
+        <a href="${SRC_LABEL.bezirke.u}" target="_blank" rel="noopener">${esc(SRC_LABEL.bezirke.t)}</a>.
         Klassenraum-Äquivalente, Kapazität und Maßnahmen sind <span class="assumption">Demo-Annahme</span> —
         im Projekt durch Daten des Fachbereichs zu ersetzen.</p>
     </div>

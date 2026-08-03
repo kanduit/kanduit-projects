@@ -36,7 +36,8 @@ from geo import point_in_polygon  # noqa: E402
 HEADER = (
     "/* Kanduit Ganztags-Platzmonitor Mönchengladbach — aggregierte öffentliche Daten.\n"
     "   Quellen: MSB NRW Open Data (Schulverzeichnis, Schülerzahlen, Sozialindex),\n"
-    "   Open Data NRW (Kindertageseinrichtungen), OpenStreetMap (Stadtbezirksgrenzen, ODbL).\n"
+    "   Open Data NRW (Kindertageseinrichtungen), Stadt Mönchengladbach (Kleinräumige\n"
+    "   Gebietsgliederung — amtliche Stadtbezirke).\n"
     "   Raumkennwerte, Bestandsquote und Maßnahmenliste sind gekennzeichnete Demo-Annahmen.\n"
     "   Erzeugt von scripts/generate.py — Abruf siehe meta.stand.\n"
     "   Keine personenbezogenen Daten.\n*/\n"
@@ -143,7 +144,7 @@ def main():
     schulen_raw = load("msb_grundschulen_mg.json")
     zeitreihe_raw = load("msb_zeitreihe_mg.json")
     kitas_raw = load("kitas_mg.json")
-    geo_raw = load("osm_bezirke_mg.json")
+    geo_raw = load("mg_stadtbezirke.json")
 
     stand_iso = max(schulen_raw["meta"]["abruf"], zeitreihe_raw["meta"]["abruf"],
                     kitas_raw["meta"]["abruf"], geo_raw["meta"]["abruf"])
@@ -172,6 +173,34 @@ def main():
 
     trend = {"j1": cagr(1), "j3": cagr(3), "j5": cagr(5), "j8": cagr(8)}
     trend_default = trend["j3"]
+
+    # Rueckrechnung: Wie gut haette dieselbe Trendfortschreibung die letzten
+    # vier Jahre getroffen? Anpassung auf 2012 bis BASISJAHR-4, Vorhersage der
+    # vier folgenden Jahre gegen die tatsaechlichen Werte. Das ist die
+    # ehrlichste verfuegbare Aussage darueber, was die Fortschreibung wert ist.
+    fit_bis = BASISJAHR - 4
+    fit_von = min(jahre)
+    basis = jahre[fit_bis]["schueler"]
+    weite = fit_bis - fit_von
+    cagr_fit = (basis / jahre[fit_von]["schueler"]) ** (1.0 / weite) - 1.0
+    bt_jahre = []
+    for j in range(fit_bis + 1, BASISJAHR + 1):
+        modell = basis * (1 + cagr_fit) ** (j - fit_bis)
+        ist = jahre[j]["schueler"]
+        bt_jahre.append({
+            "jahr": j,
+            "ist": ist,
+            "modell": int(round(modell)),
+            "abwPct": round((modell - ist) / ist * 100, 1),
+        })
+    backtest = {
+        "fitVon": fit_von,
+        "fitBis": fit_bis,
+        "cagrFit": round(cagr_fit, 4),
+        "jahre": bt_jahre,
+        "mape": round(sum(abs(x["abwPct"]) for x in bt_jahre) / len(bt_jahre), 1),
+        "endAbwPct": bt_jahre[-1]["abwPct"],
+    }
 
     # ---------------------------------------------------------- Bezirke
     bezirke_geo = geo_raw["bezirke"]
@@ -262,11 +291,13 @@ def main():
 
     # ---------------------------------------------------------- Bezirksliste
     bezirke = []
-    for b in sorted(bezirke_geo, key=lambda b: b["name"]):
+    for b in sorted(bezirke_geo, key=lambda b: b["nummer"]):
         st = bezirk_stat[b["name"]]
         mine = [s for s in schulen if s["bezirk"] == b["name"]]
         bezirke.append({
             "name": b["name"],
+            "nummer": b["nummer"],
+            "flaecheKm2": b["flaecheKm2"],
             "ringe": b["ringe"],
             "schulen": len(mine),
             "schueler": sum(s["schueler"] for s in mine),
@@ -290,8 +321,8 @@ def main():
                              "u": zeitreihe_raw["meta"]["quelle_url"]},
                 "kitas": {"t": "Kindertageseinrichtungen in NRW — Open Data NRW",
                           "u": kitas_raw["meta"]["quelle_url"]},
-                "osm": {"t": "Stadtbezirksgrenzen — OpenStreetMap-Mitwirkende (ODbL)",
-                        "u": geo_raw["meta"]["quelle_url"]},
+                "bezirke": {"t": "Stadt Mönchengladbach — Kleinräumige Gebietsgliederung (amtliche Stadtbezirke)",
+                            "u": geo_raw["meta"]["quelle_url"]},
                 "stadt": {"t": "Stadt Mönchengladbach — OGS-Ausbau, Umsetzung des Rechtsanspruchs ab 2026/27",
                           "u": ANKER["quelleUrl"]},
                 "ganztag": {"t": "Bildungsnetzwerk Mönchengladbach — Der offene Ganztag",
@@ -304,13 +335,13 @@ def main():
             "trendDefault": trend_default,
             "quoteBasis": quote_basis,
             "bestandsquote": BESTANDSQUOTE,
+            "backtest": backtest,
         },
         "raumDefaults": dict(RAUM_DEFAULTS, raumStreuung=RAUM_STREUUNG),
         "anker": ANKER,
         "stufen": STUFEN,
         "zeitreihe": zeitreihe,
         "bezirke": bezirke,
-        "stadtRinge": geo_raw["stadt"]["ringe"],
         "schulen": schulen,
         "massnahmen": massnahmen,
     }
@@ -323,6 +354,8 @@ def main():
     print("wrote", out, "(%.1f KB)" % (os.path.getsize(out) / 1024.0))
     print("  Standorte %d · Klassengröße %.2f · Trend %.1f %% · Basisquote %.1f %%"
           % (len(schulen), klassengroesse, trend_default * 100, quote_basis))
+    print("  Rückrechnung %d–%d → %d: mittlerer Fehler %.1f %%, %d zuletzt %.1f %%"
+          % (fit_von, fit_bis, BASISJAHR, backtest["mape"], BASISJAHR, backtest["endAbwPct"]))
     print("  Kapazität (Voreinstellung): %d Plätze · Maßnahmen: %d / %d Plätze"
           % (sum(raummodell_plaetze(raeume_effektiv(s, RAUM_STREUUNG), RAUM_DEFAULTS)
                  for s in schulen),

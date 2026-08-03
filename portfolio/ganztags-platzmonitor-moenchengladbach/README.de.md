@@ -18,7 +18,8 @@ Software für den öffentlichen Sektor in NRW. Eine englische Übersicht steht i
 > **Hinweis:** Dies ist ein **Demonstrator** und kein Produkt der Stadt Mönchengladbach.
 > Standorte, Schüler- und Klassenzahlen sowie Sozialindexstufen stammen aus dem
 > **Open-Data-Angebot des Schulministeriums NRW**, der Kita-Bestand aus **Open Data
-> NRW**, die Stadtbezirksgrenzen aus **OpenStreetMap** (ODbL). Die Raumkennwerte des
+> NRW**, die Stadtbezirksgrenzen aus der **amtlichen Kleinräumigen Gebietsgliederung
+> der Stadt Mönchengladbach**. Die Raumkennwerte des
 > Kapazitätsmodells, die Bestandsquote und die Maßnahmenliste sind **gekennzeichnete
 > Demo-Annahmen** und in der Oberfläche als solche ausgewiesen — im Projekt durch
 > Daten des Fachbereichs zu ersetzen.
@@ -31,7 +32,7 @@ Software für den öffentlichen Sektor in NRW. Eine englische Übersicht steht i
 
 | Ansicht | Kern | Datenlücke |
 |---|---|---|
-| **Überblick** | Platzbedarf, Kapazität und Lücke je Ausbaustufe; Plausibilitätsanker gegen die öffentlich genannten Zahlen für 2026/27 | Jahrgangsstärken je Schule nicht offen — Schülerzahl ÷ 4 |
+| **Überblick** | Platzbedarf, Kapazität und Lücke je Ausbaustufe; Plausibilitätsanker gegen die öffentlich genannten Zahlen für 2026/27; Rückrechnung der Trendfortschreibung | Jahrgangsstärken je Schule nicht offen — Schülerzahl ÷ 4 |
 | **Karte** | 38 Standorte, eingefärbt nach Deckungsgrad, Punktfläche ∝ Platzbedarf | Schuleinzugsbereiche liegen nicht offen vor |
 | **Standorte** | sortierbare Standort- und Bezirkstabelle mit CSV-Export | Kita-Ü3-Bestand ist Indikator, keine Übergangsquote |
 | **Kapazitätsmodell** | Kapazität aus Fläche und Nutzung; acht veränderbare Annahmen | Raumbücher je Standort liegen nicht offen vor |
@@ -49,17 +50,34 @@ Ansichten.
 | [MSB NRW — Open Data](https://www.schulministerium.nrw/open-data) | Schulverzeichnis (Anschrift, UTM-Koordinate, Trägerform), Schülerzahlen je Schule, Sozialindexstufen SJ 2025/26 | 03.08.2026 |
 | [MSB NRW — Open Data](https://www.schulministerium.nrw/open-data) | Schüler-, Klassen- und Schulzahlen für Mönchengladbach je Schuljahr 2012 ff. | 03.08.2026 |
 | [Open Data NRW — Kindertageseinrichtungen](https://www.opengeodata.nrw.de/produkte/bildung_wissenschaft/kitas/) | Ü3- und U3-Platzbestand je Einrichtung (nur Koordinate und Platzzahlen übernommen) | 03.08.2026 |
-| [OpenStreetMap via Overpass](https://www.openstreetmap.org/relation/62644) | Grenzen der vier Stadtbezirke und der Stadt (ODbL) | 03.08.2026 |
+| [Stadt Mönchengladbach — Kleinräumige Gebietsgliederung](https://open.nrw) | Amtliche Grenzen der vier Stadtbezirke (Datei enthält zusätzlich Stadtteile, statistische Bezirke und Baublöcke), EPSG:25832 | 03.08.2026 |
 | [Stadt Mönchengladbach — OGS-Ausbau](https://www.moenchengladbach.de/aktuell-aktiv/newsroom/ogs-ausbau-in-moenchengladbach-umsetzung-des-rechtsanspruchs-ab-2026-27) | Ankerwerte 2026/27: 2.000–2.100 benötigte Plätze, rund 1.380 frei, bis zu 720 zu schaffen | 03.08.2026 |
 | [Bildungsnetzwerk — Der offene Ganztag](https://www.moenchengladbach.de/bildungsnetzwerk-ogs/der-offene-ganztag) | Kontext offene und halboffene Modelle | 03.08.2026 |
 
-**Warum OpenStreetMap:** Weder das MSB-Open-Data noch opengeodata.nrw.de liefern
-Stadtbezirksgrenzen unterhalb der Gemeindeebene. OSM ist die einzige offen
-verfügbare Quelle dafür und wird in der Oberfläche mit Lizenzhinweis als eigene
-Quelle ausgewiesen.
+**Warum die städtische Gliederung:** Sie ist die amtliche Systematik des
+Schulträgers selbst, inklusive der Bezirksnummern, mit denen der Fachbereich
+arbeitet. Die Bezirksflächen summieren sich exakt auf die 170,47 km² des
+Stadtgebiets. Zur Kontrolle wurde die Zuordnung der 38 Standorte gegen die
+OpenStreetMap-Grenzen geprüft — sie stimmt in allen 38 Fällen überein.
 
-**Nicht verwendet:** Die Landesdatenbank NRW (IT.NRW) hat keine offen skriptbare
-Schnittstelle; an ihre Stelle tritt die MSB-Zeitreihe 2012–2025.
+**Landesdatenbank NRW (IT.NRW):** Sie hat sehr wohl eine Schnittstelle — eine
+GENESIS-2020-REST-API unter `landesdatenbank.nrw.de/ldbnrwws/rest/2020/`, per
+POST anzusprechen. Das öffentliche Konto `GAST` kommt allerdings nur durch
+`helloworld/logincheck`; die Datendienste (`catalogue/tables`, `find/find`,
+`data/table`) verlangen ein — kostenloses — registriertes Konto. Für einen
+Demonstrator, der ohne Zugangsdaten reproduzierbar bauen soll, scheidet sie
+damit aus; im Projekt ist die Registrierung eine Formalie. An ihrer Stelle
+steht hier die MSB-Zeitreihe 2012–2025.
+
+**Grenzen der Trendfortschreibung:** Ohne die Bevölkerungsdaten der
+Landesdatenbank bleibt nur die Fortschreibung des beobachteten Trends. Wie viel
+die wert ist, weist die Oberfläche selbst aus: Auf 2012–2021 angepasst hätte
+dieselbe Fortschreibung für 2025 rund 9.934 Grundschülerinnen und Grundschüler
+ergeben statt der tatsächlichen 11.022 — also 9,9 % zu wenig, bei einer
+mittleren absoluten Abweichung von 8,2 % über die vier Jahre 2022–2025. Der
+Zuzug ab 2022 ist einem Trendmodell nicht zugänglich. Wer 2029/30 eingeschult
+wird, ist dagegen längst geboren: Mit Geburtsjahrgängen und Wanderungssalden
+ist die Kohorte weitgehend bekannt statt geschätzt.
 
 ## Pipeline
 
@@ -72,7 +90,7 @@ python3 serve.py                   # lokale Vorschau → http://localhost:8123
 ```bash
 python3 scripts/fetch_msb.py       # Schulverzeichnis, Schülerzahlen, Sozialindex, Zeitreihe
 python3 scripts/fetch_kitas.py     # Kita-Ü3-Bestand (ohne Namen, Träger, Adressen)
-python3 scripts/fetch_bezirke.py   # Stadtbezirksgrenzen aus OSM (Overpass, mit Spiegeln)
+python3 scripts/fetch_gebietsgliederung.py  # amtliche Stadtbezirke (Shapefile, stdlib-Leser)
 ```
 
 Nur gefilterte Snapshots liegen im Repo (zusammen unter 40 KB) — `generate.py`
@@ -85,8 +103,13 @@ byte-identisches `data.js`. Besonderheiten:
 - **Ausgeschlossene Felder:** Aus dem Kita-Datensatz werden Einrichtungsname,
   Träger, Adresse und Telefonnummer bereits beim Abruf verworfen. Aus dem
   Schulverzeichnis werden Telefon, Fax und E-Mail nicht übernommen.
-- **Overpass:** freier Dienst — der Abruf probiert drei Spiegel mit Backoff und
-  wertet leere Antworten als Fehlschlag.
+- **Shapefile ohne Fremdbibliothek:** `fetch_gebietsgliederung.py` liest das
+  Shapefile und die zugehörige dBASE-Tabelle mit der Standardbibliothek; beide
+  Formate sind offen dokumentiert. Gegenläufig orientierte Ringe (Löcher) werden
+  verworfen, damit die Punkt-in-Polygon-Prüfung nicht danebengreift.
+- **User-Agent:** Sowohl das Geoportal der Stadt als auch open.nrw weisen die
+  Standard-User-Agents von urllib und curl ab; die Abrufe senden deshalb einen
+  expliziten UA.
 - **Zeichensatz:** Die Sozialindex-Liste des MSB ist CP850-kodiert.
 
 ## Veröffentlichen (GitHub Pages)

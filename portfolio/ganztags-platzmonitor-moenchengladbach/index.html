@@ -89,13 +89,14 @@
           <div class="card-title">Grundschülerinnen und Grundschüler in Mönchengladbach <span class="info-i" data-info="zeitreihe" tabindex="0" role="button" aria-label="Erklärung: Grundschülerzahlen im Zeitverlauf">ⓘ</span></div>
           <div class="card-sub">Schuljahre 2012/13 bis 2029/30 · Ist und Fortschreibung</div>
           <div id="chart-zeitreihe"></div>
+          <p class="note" id="backtest-note"></p>
           <p class="note src-note" data-src="msbReihe"></p>
         </div>
         <div class="card">
           <div class="card-title">Offene Plätze je Stadtbezirk <span class="info-i" data-info="luecke_bezirk" tabindex="0" role="button" aria-label="Erklärung: Offene Plätze je Stadtbezirk">ⓘ</span></div>
           <div class="card-sub">gewählte Ausbaustufe · Plätze</div>
           <div id="chart-bezirke"></div>
-          <p class="note src-note" data-src="osm"></p>
+          <p class="note src-note" data-src="bezirke"></p>
         </div>
       </div>
     </div>
@@ -109,8 +110,8 @@
         <h2>Karte: Deckungsgrad je Standort</h2>
         <p>Jeder Punkt ist ein Grundschulstandort, eingefärbt nach dem Deckungsgrad in der gewählten
           Ausbaustufe. Die Punktgröße folgt dem Platzbedarf. Koordinaten aus dem Schulverzeichnis NRW,
-          Bezirksgrenzen aus OpenStreetMap. Ein freier Platz im einen Bezirk deckt keinen Anspruch im
-          anderen — genau dafür ist diese Ansicht da.</p>
+          Bezirksgrenzen aus der amtlichen Kleinräumigen Gebietsgliederung der Stadt. Ein freier Platz
+          im einen Bezirk deckt keinen Anspruch im anderen — genau dafür ist diese Ansicht da.</p>
       </div>
 
       <div id="controls-map"></div>
@@ -123,7 +124,7 @@
           <div class="card-sub">Ampellogik nach Deckungsgrad</div>
           <div class="map-wrap" id="map-canvas"></div>
           <div class="legend" id="map-legend"></div>
-          <p class="note src-note" data-src="osm"></p>
+          <p class="note src-note" data-src="bezirke"></p>
         </div>
         <div class="card">
           <div class="card-title">Standorte je Ampelstufe und Bezirk <span class="info-i" data-info="ampel_bezirk" tabindex="0" role="button" aria-label="Erklärung: Standorte je Ampelstufe und Bezirk">ⓘ</span></div>
@@ -313,7 +314,7 @@
       <b style="color:#cbd5e1">Demonstrator der Kanduit UG</b> — alle Daten aus öffentlichen Quellen:
       <a style="color:var(--petrol-300)" href="https://www.schulministerium.nrw/open-data" target="_blank" rel="noopener">MSB NRW Open Data</a> (Schulverzeichnis, Schüler- und Klassenzahlen, Sozialindexstufen),
       <a style="color:var(--petrol-300)" href="https://www.opengeodata.nrw.de/produkte/bildung_wissenschaft/kitas/" target="_blank" rel="noopener">Open Data NRW</a> (Kindertageseinrichtungen),
-      <a style="color:var(--petrol-300)" href="https://www.openstreetmap.org/relation/62644" target="_blank" rel="noopener">OpenStreetMap</a> (Stadtbezirksgrenzen, ODbL — © OpenStreetMap-Mitwirkende),
+      <a style="color:var(--petrol-300)" href="https://open.nrw" target="_blank" rel="noopener">Stadt Mönchengladbach — Kleinräumige Gebietsgliederung</a> (amtliche Stadtbezirke, nachgewiesen über Open.NRW),
       <a style="color:var(--petrol-300)" href="https://www.moenchengladbach.de/aktuell-aktiv/newsroom/ogs-ausbau-in-moenchengladbach-umsetzung-des-rechtsanspruchs-ab-2026-27" target="_blank" rel="noopener">Stadt Mönchengladbach — OGS-Ausbau</a> und
       <a style="color:var(--petrol-300)" href="https://www.moenchengladbach.de/bildungsnetzwerk-ogs/der-offene-ganztag" target="_blank" rel="noopener">Bildungsnetzwerk — Der offene Ganztag</a>.
       Stand <span id="footer-stand">—</span>, ohne Gewähr; kein Produkt der Stadt Mönchengladbach.
