@@ -1,5 +1,43 @@
 # Changelog — Ganztags-Platzmonitor Mönchengladbach
 
+## 2026-08-03 · Amtliche Gebietsgliederung und Rückrechnung
+
+**Stadtbezirke jetzt aus amtlicher Quelle**
+
+- `fetch_bezirke.py` (OpenStreetMap über Overpass) ersetzt durch
+  `fetch_gebietsgliederung.py`: die Kleinräumige Gebietsgliederung der Stadt
+  Mönchengladbach aus deren Geoportal, nachgewiesen über open.nrw. Shapefile
+  in EPSG:25832, gelesen mit der Standardbibliothek (Shapefile- und
+  dBASE-Format sind offen dokumentiert).
+- Die vier Bezirke tragen jetzt ihre amtliche Nummer und Fläche; die Flächen
+  summieren sich exakt auf die 170,47 km² des Stadtgebiets. Die Zuordnung
+  aller 38 Standorte stimmt mit der bisherigen OSM-Zuordnung überein — beide
+  Quellen bestätigen sich gegenseitig.
+- Die separate Stadtgrenze entfällt: Die vier Bezirke kacheln das Stadtgebiet
+  vollständig.
+- Anlass: open.nrw war zuvor nur scheinbar nicht erreichbar — das Portal weist
+  den Standard-User-Agent von curl ab. Mit explizitem UA liefert es eine
+  CKAN-API, über die dieser Datensatz auffindbar ist.
+
+**Rückrechnung der Trendfortschreibung**
+
+- Neue Kennzahl im Überblick: Das Trendmodell wird auf 2012–2021 angepasst und
+  sagt 2022–2025 voraus, ohne diese Jahre gesehen zu haben. Ergebnis: für 2025
+  9.934 statt tatsächlich 11.022 Grundschülerinnen und Grundschüler (−9,9 %),
+  mittlere absolute Abweichung 8,2 % über vier Jahre.
+- Damit weist die Oberfläche selbst aus, was die Fortschreibung wert ist — und
+  warum die Geburtsjahrgänge des Fachbereichs sie im Projekt ersetzen sollten:
+  Wer 2029/30 eingeschult wird, ist längst geboren.
+
+**Korrektur zur Landesdatenbank NRW**
+
+- Die Aussage „keine offen skriptbare Schnittstelle" war falsch. Die
+  Landesdatenbank betreibt eine GENESIS-2020-REST-API; das öffentliche Konto
+  `GAST` kommt nur durch `helloworld/logincheck`, die Datendienste verlangen
+  ein kostenloses registriertes Konto. Für einen Demonstrator ohne
+  Zugangsdaten scheidet sie aus, im Projekt nicht. In beiden READMEs
+  richtiggestellt.
+
 ## 2026-08-03 · Erstveröffentlichung
 
 **Datenpipeline**
