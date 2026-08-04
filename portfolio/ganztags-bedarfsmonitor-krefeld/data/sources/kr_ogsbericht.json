@@ -1,0 +1,175 @@
+{
+ "ausbauplanung": [
+  {
+   "gruppen": 127.0,
+   "ist": true,
+   "plaetze": 3058,
+   "quote": 38.7,
+   "schueler": 7898,
+   "schuljahr": "2017/18"
+  },
+  {
+   "gruppen": 133.0,
+   "ist": true,
+   "plaetze": 3208,
+   "quote": 40.9,
+   "schueler": 7844,
+   "schuljahr": "2018/19"
+  },
+  {
+   "gruppen": 145.0,
+   "ist": true,
+   "plaetze": 3508,
+   "quote": 44.6,
+   "schueler": 7874,
+   "schuljahr": "2019/20"
+  },
+  {
+   "gruppen": 160.0,
+   "ist": true,
+   "plaetze": 3831,
+   "quote": 48.5,
+   "schueler": 7897,
+   "schuljahr": "2020/21"
+  },
+  {
+   "gruppen": 174.0,
+   "ist": true,
+   "plaetze": 4181,
+   "quote": 51.2,
+   "schueler": 8161,
+   "schuljahr": "2021/22"
+  },
+  {
+   "gruppen": 190.0,
+   "ist": true,
+   "plaetze": 4568,
+   "quote": 53.9,
+   "schueler": 8475,
+   "schuljahr": "2022/23"
+  },
+  {
+   "gruppen": 195.0,
+   "ist": true,
+   "plaetze": 4693,
+   "quote": 53.8,
+   "schueler": 8726,
+   "schuljahr": "2023/24"
+  },
+  {
+   "gruppen": 210.0,
+   "ist": true,
+   "plaetze": 5068,
+   "quote": 56.1,
+   "schueler": 9035,
+   "schuljahr": "2024/25"
+  },
+  {
+   "gruppen": 227.5,
+   "ist": false,
+   "plaetze": 5506,
+   "quote": 61.5,
+   "schueler": 8950,
+   "schuljahr": "2025/26"
+  },
+  {
+   "gruppen": 242.5,
+   "ist": false,
+   "plaetze": 5881,
+   "quote": 66.1,
+   "schueler": 8902,
+   "schuljahr": "2026/27"
+  },
+  {
+   "gruppen": 257.5,
+   "ist": false,
+   "plaetze": 6256,
+   "quote": 71.0,
+   "schueler": 8814,
+   "schuljahr": "2027/28"
+  }
+ ],
+ "befragung": {
+  "favorisiertGebunden": 12.0,
+  "favorisiertOffen": 42.0,
+  "geburtszeitraum": "Oktober 2018 bis Juni 2023",
+  "haushalte": 2849,
+  "randzeitenbedarf": 41.0,
+  "ruecklaufquote": 28.2,
+  "unentschieden": 41.0,
+  "wollenGanztagsplatz": 95.0
+ },
+ "eckwerte": {
+  "acht_bis_eins_plaetze": 833,
+  "acht_bis_eins_quote": 10.0,
+  "acht_bis_eins_schulen": 19,
+  "ausbautempoGruppen": 15,
+  "bedarfsquote2029": 100.0,
+  "plaetzeJeGruppe": 25,
+  "schulsozialarbeitStellen": 22.5,
+  "zielquote2027_28": 71.0
+ },
+ "mensaPakete": [
+  {
+   "frist": "bis Ende der Sommerferien 2025",
+   "paket": 1,
+   "standorte": [
+    "GGS am Stadtpark Fischeln – Standort Marienplatz",
+    "GGS Krähenfeld – Standort Kempener Allee",
+    "Regenbogenschule"
+   ],
+   "wirksamAb": 2025
+  },
+  {
+   "frist": "bis Ende der Sommerferien 2026 und 2027",
+   "paket": 2,
+   "standorte": [
+    "Astrid-Lindgren-Schule – Standort Bonhoefferstraße",
+    "Edith-Stein-Schule",
+    "Josefschule",
+    "KGS Königshof",
+    "Schule an Haus Rath",
+    "Südschule",
+    "Grundschule an der Burg",
+    "Heinrichsschule",
+    "Paul-Gerhardt-Schule",
+    "Pestalozzischule",
+    "Schönwasserschule"
+   ],
+   "wirksamAb": 2027
+  },
+  {
+   "frist": "bis Ende der Sommerferien 2028",
+   "paket": 3,
+   "standorte": [
+    "Astrid-Lindgren-Schule – Standort Amernerstraße",
+    "Brüder-Grimm-Schule",
+    "Grundschule am Stadtpark Fischeln – Standort Wimmersweg"
+   ],
+   "wirksamAb": 2028
+  }
+ ],
+ "meta": {
+  "abruf": "2026-08-04",
+  "bytes": 3386107,
+  "erschienen": "2026-01",
+  "fundstellen": {
+   "befragung": "S. 44",
+   "eckwerte": "S. 41–44",
+   "mensaPakete": "S. 43 (Vorlage 6283/24)",
+   "ogsQuoteJeGsi": "Abb. 4-1, S. 43",
+   "tabelle4_1": "Tabelle 4-1, S. 42"
+  },
+  "hinweis": "Aus einer veroeffentlichten PDF-Publikation abgeschrieben, nicht maschinell extrahiert. Jede Groesse ist mit Tabelle beziehungsweise Abbildung und Seite belegt; der SHA-256-Hash pinnt die Fassung des Dokuments.",
+  "quelle": "Stadt Krefeld — OGS-Bericht 2026 „Offener Ganztag in Krefeld: Entwicklungen, Herausforderungen, Perspektiven“",
+  "quelle_url": "https://www.krefeld.de/system/files/2026-01/OGS-Bericht-Krefeld-2026.pdf",
+  "sha256": "a46ba5ae521962f372a9b9599fdb898ef574037dac855f5431dc71dab1cb130d"
+ },
+ "ogsQuoteJeGsi": {
+  "1": 54.2,
+  "2": 56.4,
+  "3": 59.5,
+  "4": 56.0,
+  "5": 47.2
+ }
+}

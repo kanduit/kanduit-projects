@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanduit Ganztags-Bedarfsmonitor Krefeld</title>
+<meta name="description" content="Bedarf, Kapazität und Lücke der Ganztagsplätze je Grundschule und Bezirk bis zum Schuljahr 2029/30.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Reusable Kanduit logo symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <mask id="kmask" maskUnits="userSpaceOnUse" x="-125" y="-125" width="250" height="250">
+      <circle r="110" fill="#fff"/>
+      <rect x="-71" y="-125" width="29" height="250" fill="#000"/>
+      <g stroke="#000" stroke-width="32" stroke-linecap="butt">
+        <line x1="-42" y1="0" x2="66" y2="-122"/>
+        <line x1="-42" y1="0" x2="66" y2="122"/>
+      </g>
+    </mask>
+    <symbol id="k-mark" viewBox="-125 -125 250 250">
+      <circle r="110" fill="currentColor" mask="url(#kmask)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <span class="brand">
+    <svg width="22" height="22" style="color:var(--petrol-600)"><use href="#k-mark"/></svg>
+    Kanduit <span class="sub">Ganztags-Bedarfsmonitor</span>
+  </span>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-view="overview">Überblick</button>
+    <button class="tab" data-view="karte">Karte</button>
+    <button class="tab" data-view="bezirke">Bezirke</button>
+    <button class="tab" data-view="szenarien">Szenarien</button>
+    <button class="tab" data-view="rechner">Deckungsgradrechner</button>
+    <button class="tab" data-view="blatt">Kennzahlenblatt</button>
+  </nav>
+  <div class="right">
+    <span class="stand" id="standLabel">Stand —</span>
+    <span class="demo-pill">Demo · öffentliche Daten</span>
+    <button class="kbtn ghost" onclick="window.print()">Drucken / PDF</button>
+  </div>
+</header>
+
+<main>
+
+  <div class="wrap" style="padding-bottom:0">
+    <div class="banner info" id="legal-banner"></div>
+  </div>
+
+  <!-- ===================== ÜBERBLICK ===================== -->
+  <section class="view active" id="view-overview">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">§ 24 Abs. 4 SGB VIII · Melderegister der Stadt · OGS-Bericht 2026</p>
+        <h2>Überblick</h2>
+        <p>Wie viele Ganztagsplätze in den Ausbaustufen bis zum Schuljahr 2029/30 gebraucht
+           werden, wie viele nach der Ausbauplanung der Stadt zur Verfügung stehen und wie groß
+           die Lücke dazwischen ist. Die Nachfrageseite stammt aus den kleinräumigen
+           Bevölkerungsdaten der Stadt, die Angebotsseite aus Tabelle 4-1 des OGS-Berichts.</p>
+      </div>
+      <div id="controls-overview"></div>
+      <div class="grid g4" id="overview-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Stadtweite Bilanz je Ausbaustufe <span class="info-i" data-info="stufenbilanz" tabindex="0" role="button" aria-label="Erklärung: Stadtweite Bilanz je Ausbaustufe">ⓘ</span></div>
+        <div class="card-sub">gedeckter Platzbedarf und offene Plätze · Personen</div>
+        <div id="chart-stufen"></div>
+        <p class="note src-note" data-src="ogs"></p>
+      </div>
+
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Einschulungsjahrgänge sind bereits geboren <span class="info-i" data-info="jahrgaenge" tabindex="0" role="button" aria-label="Erklärung: Einschulungsjahrgänge">ⓘ</span></div>
+          <div class="card-sub">Jahrgangsstärke je Einschulungsjahr · Personen</div>
+          <div id="chart-jahrgaenge"></div>
+          <p class="note src-note" data-src="bev"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Ausbau des Offenen Ganztags seit 2017/18 <span class="info-i" data-info="ausbaureihe" tabindex="0" role="button" aria-label="Erklärung: Ausbau des Offenen Ganztags">ⓘ</span></div>
+          <div class="card-sub">Plätze im Ganztag · Ist und Ausbauplanung der Stadt</div>
+          <div id="chart-ausbau"></div>
+          <p class="note src-note" data-src="ogs"></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Prüfung des Verfahrens <span class="info-i" data-info="backtest" tabindex="0" role="button" aria-label="Erklärung: Prüfung des Verfahrens">ⓘ</span></div>
+        <div class="card-sub">Rückrechnung an der Vergangenheit und Abgleich mit der Schulstatistik</div>
+        <div id="anker-box"></div>
+        <p class="note src-note" data-src="bev"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== KARTE ===================== -->
+  <section class="view" id="view-karte">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Schulverzeichnis NRW · amtliche Gebietsgliederung der Stadt Krefeld</p>
+        <h2>Karte</h2>
+        <p>Alle Krefelder Grundschulstandorte, eingefärbt nach Deckungsgrad in der gewählten
+           Ausbaustufe. Die Punktfläche entspricht dem Platzbedarf des Standorts. Die
+           Bezirksflächen sind die amtlichen Grenzen der Stadt.</p>
+      </div>
+      <div id="controls-karte"></div>
+      <div class="grid g4" id="karte-kpis" style="margin-bottom:var(--sp-4)"></div>
+      <div class="card">
+        <div class="card-title">Grundschulstandorte nach Deckungsgrad <span class="info-i" data-info="karte" tabindex="0" role="button" aria-label="Erklärung: Standortkarte">ⓘ</span></div>
+        <div class="card-sub" id="karte-sub">Ampellogik: grün ab 100 %, gelb ab 85 %, rot darunter</div>
+        <div class="map-wrap" id="map-host"></div>
+        <div class="legend" id="map-legend"></div>
+        <p class="note src-note" data-src="msb"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BEZIRKE ===================== -->
+  <section class="view" id="view-bezirke">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Kleinräumige Bevölkerungsdaten · FB 312 Statistik und Wahlen</p>
+        <h2>Bezirke</h2>
+        <p>Bedarf, Kapazität, Lücke und Deckungsgrad je Gebiet — wahlweise auf den fünf
+           politischen Stadtbezirken oder den neunzehn statistischen Stadtteilen, auf die sich
+           die amtlichen Statistiken der Stadt beziehen. Sortierbar und als CSV exportierbar.</p>
+      </div>
+      <div id="controls-bezirke"></div>
+      <div class="toolbar">
+        <div class="ctrl-group">
+          <span class="lbl">Gebietsebene</span>
+          <div class="segmented" id="ebene-switch"></div>
+        </div>
+        <button class="kbtn solid" id="csv-btn">CSV exportieren</button>
+      </div>
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Offene Plätze je Gebiet <span class="info-i" data-info="luecke_bezirk" tabindex="0" role="button" aria-label="Erklärung: Offene Plätze je Gebiet">ⓘ</span></div>
+        <div class="card-sub" id="bezirke-chart-sub">Personen</div>
+        <div id="chart-bezirke"></div>
+        <p class="note src-note" data-src="gebiete"></p>
+      </div>
+      <div class="table-wrap">
+        <table id="bezirke-table"><thead></thead><tbody></tbody></table>
+      </div>
+      <p class="note" id="bezirke-note"></p>
+    </div>
+  </section>
+
+  <!-- ===================== SZENARIEN ===================== -->
+  <section class="view" id="view-szenarien">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Drei benannte Szenarien · alle Rechnung im Browser</p>
+        <h2>Szenarien</h2>
+        <p>Die drei Szenarien nebeneinander: der Stufenplan bei konstanten Quoten, der
+           Ausbaupfad im Vergleich der Tempi, und der Effekt einer höheren Inanspruchnahme.
+           Für jeden Ausbaupfad wird das Jahr der Zielerreichung ausgewiesen.</p>
+      </div>
+      <div class="banner warn" id="szenarien-banner"></div>
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Szenario 1 — Stufenplan bis 2029/30 <span class="info-i" data-info="sz_stufenplan" tabindex="0" role="button" aria-label="Erklärung: Szenario Stufenplan">ⓘ</span></div>
+        <div class="card-sub">Deckungsgrad je Ausbaustufe bei konstanten Quoten · Prozent</div>
+        <div id="chart-sz1"></div>
+        <p class="note src-note" data-src="gafoeg"></p>
+      </div>
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Szenario 2 — Ausbaupfad <span class="info-i" data-info="sz_ausbaupfad" tabindex="0" role="button" aria-label="Erklärung: Szenario Ausbaupfad">ⓘ</span></div>
+        <div class="card-sub">Zielerreichung bei unterschiedlichem Ausbautempo</div>
+        <div class="table-wrap"><table id="pfad-table"><thead></thead><tbody></tbody></table></div>
+        <div id="chart-sz2" style="margin-top:var(--sp-4)"></div>
+        <p class="note src-note" data-src="ogs"></p>
+      </div>
+      <div class="card">
+        <div class="card-title">Szenario 3 — Hohe Inanspruchnahme <span class="info-i" data-info="sz_nachfrage" tabindex="0" role="button" aria-label="Erklärung: Szenario Hohe Inanspruchnahme">ⓘ</span></div>
+        <div class="card-sub" id="sz3-sub">Platzbedarf bei Aufschlag auf die Quoten · Personen</div>
+        <div id="chart-sz3"></div>
+        <p class="note src-note" data-src="ogs"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DECKUNGSGRADRECHNER ===================== -->
+  <section class="view" id="view-rechner">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Alle Annahmen offen und veränderbar</p>
+        <h2>Deckungsgradrechner</h2>
+        <p>Der stadtweite Deckungsgrad heute und nach den gewählten Ausbauschritten. Jede
+           Annahme lässt sich verstellen; die Voreinstellungen sind die veröffentlichten Werte
+           der Stadt. Der Rechner zeigt außerdem, was ein einzelner Ausbauschritt von
+           <span id="schritt-inline">375</span> Plätzen am Deckungsgrad ändert.</p>
+      </div>
+      <div id="controls-rechner"></div>
+      <div class="grid g4" id="rechner-kpis" style="margin-bottom:var(--sp-4)"></div>
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Annahmen <span class="info-i" data-info="annahmen" tabindex="0" role="button" aria-label="Erklärung: Annahmen">ⓘ</span></div>
+          <div class="card-sub">Voreinstellung = veröffentlichter Wert der Stadt</div>
+          <div id="sliders"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Wirkung der Ausbauschritte <span class="info-i" data-info="wirkung" tabindex="0" role="button" aria-label="Erklärung: Wirkung der Ausbauschritte">ⓘ</span></div>
+          <div class="card-sub">stadtweiter Deckungsgrad je zusätzlichem Ausbauschritt · Prozent</div>
+          <div id="chart-wirkung"></div>
+          <p class="note src-note" data-src="ogs"></p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Küchen- und Mensa-Maßnahmen der Stadt <span class="info-i" data-info="mensa" tabindex="0" role="button" aria-label="Erklärung: Mensa-Maßnahmen">ⓘ</span></div>
+        <div class="card-sub">Voraussetzung für höhere Ganztagsquoten je Standort · aus dem OGS-Bericht</div>
+        <div class="table-wrap"><table id="mensa-table"><thead></thead><tbody></tbody></table></div>
+        <p class="note src-note" data-src="ogs"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== KENNZAHLENBLATT ===================== -->
+  <section class="view" id="view-blatt">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Anlage zur Fortschreibung des OGS-Berichts</p>
+        <h2>Kennzahlenblatt</h2>
+        <p>Ein Blatt je Grundschule mit allen Kennzahlen, dem vollständigen Rechenweg und dem
+           Herkunftsnachweis je Zahl. Über „Drucken / PDF“ als Anlage verwendbar.</p>
+      </div>
+      <div id="controls-blatt"></div>
+      <div class="toolbar">
+        <div class="ctrl-group" style="flex:1 1 260px">
+          <span class="lbl">Grundschule</span>
+          <select class="field" id="schul-select" style="width:100%"></select>
+        </div>
+        <button class="kbtn solid" onclick="window.print()">Drucken / PDF</button>
+      </div>
+      <div id="blatt-host"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div style="display:flex; align-items:center; gap:12px">
+      <svg width="30" height="30" style="color:#fff"><use href="#k-mark"/></svg>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:1.2rem; color:#fff">Kanduit</div>
+        <div class="mono">Ganztags-Bedarfsmonitor · Demonstrator</div>
+      </div>
+    </div>
+    <p class="src" id="footer-src">
+      <b style="color:#cbd5e1">Demonstrator der Kanduit UG</b> — alle Daten aus öffentlichen Quellen:
+      <a href="https://www.offenesdatenportal.de/organization/stadt-krefeld" style="color:var(--petrol-300)">Stadt Krefeld (kleinräumige Bevölkerungsdaten, Gebietsgliederung)</a>,
+      <a href="https://www.krefeld.de/system/files/2026-01/OGS-Bericht-Krefeld-2026.pdf" style="color:var(--petrol-300)">OGS-Bericht der Stadt Krefeld 2026</a>,
+      <a href="https://www.schulministerium.nrw/open-data" style="color:var(--petrol-300)">Schulministerium NRW (Open Data)</a>,
+      <a href="https://www.opengeodata.nrw.de/produkte/bildung_wissenschaft/kitas/" style="color:var(--petrol-300)">Open Data NRW (Kindertageseinrichtungen)</a>.
+      Stand <span id="footer-stand">—</span>, ohne Gewähr; kein Produkt der Stadt Krefeld.
+      Keine personenbezogenen Daten — Aggregationsstufe Schule, Bezirk und Jahrgang.
+      Verarbeitung vollständig im Browser · betriebsbereit für Hosting in Deutschland.
+    </p>
+  </div>
+</footer>
+
+<!-- Tooltip -->
+<div class="tt" id="tooltip"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
