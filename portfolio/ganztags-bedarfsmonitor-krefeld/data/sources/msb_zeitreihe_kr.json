@@ -1,0 +1,209 @@
+{
+ "meta": {
+  "abruf": "2026-08-04",
+  "dateien": [
+   "https://www.schulministerium.nrw/system/files/media/document/file/opendata2025-26.csv"
+  ],
+  "filter": "Kreis 114 (Krfr. Stadt Krefeld), Schulform Grundschule",
+  "quelle": "Ministerium fuer Schule und Bildung NRW — Open Data, Schuelerzahlen nach Kreis und Schulform",
+  "quelle_url": "https://www.schulministerium.nrw/open-data"
+ },
+ "reihe": [
+  {
+   "jahr": 2012,
+   "klassen": 309,
+   "rechtsform": "oeffentlich",
+   "schueler": 7638,
+   "schulen": 30
+  },
+  {
+   "jahr": 2012,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 451,
+   "schulen": 1
+  },
+  {
+   "jahr": 2013,
+   "klassen": 315,
+   "rechtsform": "oeffentlich",
+   "schueler": 7536,
+   "schulen": 30
+  },
+  {
+   "jahr": 2013,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 467,
+   "schulen": 1
+  },
+  {
+   "jahr": 2014,
+   "klassen": 307,
+   "rechtsform": "oeffentlich",
+   "schueler": 7458,
+   "schulen": 29
+  },
+  {
+   "jahr": 2014,
+   "klassen": 48,
+   "rechtsform": "privat",
+   "schueler": 461,
+   "schulen": 1
+  },
+  {
+   "jahr": 2015,
+   "klassen": 310,
+   "rechtsform": "oeffentlich",
+   "schueler": 7430,
+   "schulen": 28
+  },
+  {
+   "jahr": 2015,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 451,
+   "schulen": 1
+  },
+  {
+   "jahr": 2016,
+   "klassen": 314,
+   "rechtsform": "oeffentlich",
+   "schueler": 7608,
+   "schulen": 28
+  },
+  {
+   "jahr": 2016,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 445,
+   "schulen": 1
+  },
+  {
+   "jahr": 2017,
+   "klassen": 308,
+   "rechtsform": "oeffentlich",
+   "schueler": 7564,
+   "schulen": 28
+  },
+  {
+   "jahr": 2017,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 439,
+   "schulen": 1
+  },
+  {
+   "jahr": 2018,
+   "klassen": 310,
+   "rechtsform": "oeffentlich",
+   "schueler": 7530,
+   "schulen": 28
+  },
+  {
+   "jahr": 2018,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 431,
+   "schulen": 1
+  },
+  {
+   "jahr": 2019,
+   "klassen": 309,
+   "rechtsform": "oeffentlich",
+   "schueler": 7536,
+   "schulen": 28
+  },
+  {
+   "jahr": 2019,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 436,
+   "schulen": 1
+  },
+  {
+   "jahr": 2020,
+   "klassen": 306,
+   "rechtsform": "oeffentlich",
+   "schueler": 7531,
+   "schulen": 28
+  },
+  {
+   "jahr": 2020,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 424,
+   "schulen": 1
+  },
+  {
+   "jahr": 2021,
+   "klassen": 314,
+   "rechtsform": "oeffentlich",
+   "schueler": 7615,
+   "schulen": 29
+  },
+  {
+   "jahr": 2021,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 427,
+   "schulen": 1
+  },
+  {
+   "jahr": 2022,
+   "klassen": 322,
+   "rechtsform": "oeffentlich",
+   "schueler": 8076,
+   "schulen": 30
+  },
+  {
+   "jahr": 2022,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 420,
+   "schulen": 1
+  },
+  {
+   "jahr": 2023,
+   "klassen": 335,
+   "rechtsform": "oeffentlich",
+   "schueler": 8371,
+   "schulen": 31
+  },
+  {
+   "jahr": 2023,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 420,
+   "schulen": 1
+  },
+  {
+   "jahr": 2024,
+   "klassen": 344,
+   "rechtsform": "oeffentlich",
+   "schueler": 8674,
+   "schulen": 31
+  },
+  {
+   "jahr": 2024,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 417,
+   "schulen": 1
+  },
+  {
+   "jahr": 2025,
+   "klassen": 343,
+   "rechtsform": "oeffentlich",
+   "schueler": 8641,
+   "schulen": 31
+  },
+  {
+   "jahr": 2025,
+   "klassen": 16,
+   "rechtsform": "privat",
+   "schueler": 421,
+   "schulen": 1
+  }
+ ]
+}
