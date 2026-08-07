@@ -114,6 +114,44 @@ def ringe_aus(geom):
     return [ring for teil in geom["coordinates"] for ring in teil]
 
 
+def nachbarschaft(rohgeometrien):
+    """Nachbarschaftsgraph der Bezirke aus gemeinsamen Grenzstuetzpunkten.
+
+    Zwei Bezirke gelten als benachbart, wenn ihre Umringe mindestens zwei
+    Stuetzpunkte teilen — also ein gemeinsames Grenzstueck haben und nicht bloss
+    eine Ecke beruehren. Gerechnet wird auf der UNVEREINFACHTEN Geometrie: In
+    der Quelle sind die Grenzen topologisch sauber, angrenzende Flaechen teilen
+    dieselben Punkte. Nach der Douglas-Peucker-Vereinfachung waere das nicht
+    mehr zuverlaessig.
+
+    Der Graph beschraenkt im Szenario „Umverteilung statt Ausbau“ die
+    Verlagerung von Plaetzen auf angrenzende Bezirke — ohne ihn schlaegt das
+    Modell Wege quer durch die Stadt vor, die keine Familie mitgeht.
+    """
+    punkte = {}
+    for nr, ringe in rohgeometrien.items():
+        menge = set()
+        for r in ringe:
+            for p in r:
+                menge.add((round(p[0], 6), round(p[1], 6)))
+        punkte[nr] = menge
+    nrs = sorted(punkte)
+    kanten = []
+    for i, a in enumerate(nrs):
+        for b in nrs[i + 1:]:
+            if len(punkte[a] & punkte[b]) >= 2:
+                kanten.append([a, b])
+    grade = {n: 0 for n in nrs}
+    for a, b in kanten:
+        grade[a] += 1
+        grade[b] += 1
+    allein = [n for n, g in grade.items() if g == 0]
+    if allein:
+        raise SystemExit("Bezirke ohne Nachbarn: %s — Geometrie pruefen"
+                         % ", ".join(allein))
+    return kanten, grade
+
+
 def num(v):
     return None if v is None else int(v)
 
@@ -138,10 +176,12 @@ def main():
     tol_grad = TOLERANZ_M / (111320.0 * math.cos(math.radians(mid_lat)))
 
     grenzen = {}
+    rohgeometrien = {}
     roh_punkte = fein_punkte = 0
     for f in geo:
         nr = str(f["properties"]["SCHULNR"]).strip()
         ringe = ringe_aus(f["geometry"])
+        rohgeometrien[nr] = ringe
         roh_punkte += sum(len(r) for r in ringe)
         vereinfacht = [ring_vereinfachen(r, tol_grad) for r in ringe]
         # Splitter (Restflaechen von wenigen Metern) tragen nichts zur Karte bei.
@@ -225,6 +265,37 @@ def main():
                   separators=(",", ":"))
         fh.write("\n")
     print("wrote", path, "(%d B)" % os.path.getsize(path))
+
+    # Der Nachbarschaftsgraph liegt bewusst als eigene, lesbare Datei im Repo —
+    # er ist eine Modellannahme und muss von Hand nachpruefbar sein.
+    kanten, grade = nachbarschaft(rohgeometrien)
+    namen = {s["nr"]: s["name"] for s in schulen}
+    graph_path = os.path.join(OUT, "bo_nachbarschaft.json")
+    with open(graph_path, "w", encoding="utf-8") as fh:
+        json.dump({
+            "meta": {
+                "quelle": "abgeleitet aus den Bezirksgrenzen desselben "
+                          "Kartendienstes (unvereinfachte Geometrie)",
+                "quelle_url": BASE,
+                "regel": "benachbart, wenn die Umringe mindestens zwei "
+                         "Stuetzpunkte teilen (gemeinsames Grenzstueck, nicht "
+                         "nur eine beruehrende Ecke)",
+                "abruf": stand,
+                "kanten": len(kanten),
+                "grad_min": min(grade.values()),
+                "grad_max": max(grade.values()),
+                "hinweis": "Beschraenkt im Szenario „Umverteilung statt Ausbau“ "
+                           "die Verlagerung von Plaetzen auf angrenzende "
+                           "Bezirke. Von Hand pruefbar: jede Kante nennt beide "
+                           "Bezirksnamen.",
+            },
+            "kanten": [{"a": a, "b": b, "a_name": namen.get(a, a),
+                        "b_name": namen.get(b, b)} for a, b in kanten],
+        }, fh, ensure_ascii=False, sort_keys=True, indent=1)
+        fh.write("\n")
+    print("wrote", graph_path, "(%d B)" % os.path.getsize(graph_path))
+    print("   Nachbarschaft: %d Kanten, Grad %d bis %d"
+          % (len(kanten), min(grade.values()), max(grade.values())))
     print("   %d Grundschulbezirke, davon %d Teilstandorte"
           % (len(schulen), sum(1 for s in schulen if s["teilstandort"])))
     print("   Stuetzpunkte %d -> %d" % (roh_punkte, fein_punkte))

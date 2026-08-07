@@ -70,6 +70,58 @@ def lade(name):
         return json.load(fh)
 
 
+def inanspruchnahme(ogs, msb_reihe):
+    """Zwei belegte Stuetzpunkte der OGS-Inanspruchnahme und ihre Steigung.
+
+    Oeffentlich belegt sind fuer Bochum genau zwei Schuljahre: 2022/23 und
+    2026/27, jeweils mit Plaetzen UND Ablehnungen. Die angemeldete Nachfrage
+    ist ihre Summe — versorgte plus abgewiesene Kinder.
+
+    Der Nenner ist der heikle Teil. Damit die Steigung nicht aus zwei
+    verschiedenen Grundgesamtheiten entsteht, wird fuer BEIDE Punkte dieselbe
+    Reihe verwendet: die Grundschuelerzahl Bochums aus dem amtlichen
+    Verzeichnis des Landes. Fuer 2026/27 reicht diese Reihe noch nicht, dort
+    steht der juengste amtliche Wert (Schuljahr 2025/26). Dieser Versatz von
+    einem Jahr ist klein — Bochum ging von 13.103 auf 13.110 Kinder — und wird
+    im UI benannt, statt ihn durch eine Hochrechnung zu kaschieren.
+
+    Zwei Punkte sind kein Trend im statistischen Sinn. Die Steigung ist ein
+    Differenzenquotient und deshalb im UI als Regler ausgelegt.
+    """
+    e = ogs["eckwerte"]
+    punkte = []
+    for sj, jahr, plaetze, abl in (
+            ("2022/2023", 2022, e["plaetze_2022_23"], e["ablehnungen_2022_23"]),
+            ("2026/2027", 2026, e["plaetze_2026_27"], e["ablehnungen_2026_27"])):
+        # juengstes verfuegbares Jahr der amtlichen Reihe, hoechstens das Zieljahr
+        nenner_jahr = max(j for j in (int(k) for k in msb_reihe) if j <= jahr)
+        nenner = msb_reihe[str(nenner_jahr)]["schueler"]
+        nachfrage = plaetze + abl
+        punkte.append({
+            "sj": sj, "jahr": jahr, "plaetze": plaetze, "ablehnungen": abl,
+            "nachfrage": nachfrage,
+            "nennerJahr": nenner_jahr, "nenner": nenner,
+            "versatz": jahr - nenner_jahr,
+            "quote": round(nachfrage / nenner, 4),
+        })
+    spanne = punkte[1]["jahr"] - punkte[0]["jahr"]
+    steigung = (punkte[1]["quote"] - punkte[0]["quote"]) / spanne
+    return {
+        "punkte": punkte,
+        "spanneJahre": spanne,
+        "steigungProJahr": round(steigung, 5),
+        # Diese beiden Texte erscheinen im UI und stehen deshalb in
+        # ordentlichem Deutsch — anders als die Snapshot-Metadaten, die als
+        # Maschinendaten in ASCII gehalten sind.
+        "nenner": "Grundschülerinnen und Grundschüler in Bochum, amtliches "
+                  "Schulverzeichnis des Landes (alle Grundschulen, "
+                  "einschließlich Ersatzschulen)",
+        "hinweis": "Zwei belegte Stützpunkte, kein statistischer Trend. Die "
+                   "Steigung ist der Differenzenquotient zwischen ihnen und im "
+                   "Monitor frei einstellbar.",
+    }
+
+
 def de_datum(iso):
     return iso[8:10] + "." + iso[5:7] + "." + iso[0:4]
 
@@ -89,6 +141,8 @@ def main():
     msb = lade("msb_grundschulen_bo.json")
     reihe = lade("msb_zeitreihe_bo.json")
     ogs = lade("bo_ogs_eckwerte.json")
+    nachbarn = lade("bo_nachbarschaft.json")
+    bass = lade("bass_ogs_foerderung.json")
 
     schuljahre = bezirke["meta"]["schuljahre"]
     quellen = {
@@ -98,16 +152,19 @@ def main():
         "msb": msb["meta"],
         "reihe": reihe["meta"],
         "ogs": ogs["meta"],
+        "nachbarn": nachbarn["meta"],
+        "bass": bass["meta"],
     }
     stand = max(q["abruf"] for q in quellen.values())
 
     # ---------------------------------------------------- Kohorten je Standort
     msb_nach_nr = {s["nr"]: s for s in msb["schulen"]}
-    schulen, abweichungen = [], 0
+    schulen, abweichungen, geprueft = [], 0, 0
     for s in bezirke["schulen"]:
         jg = {}
         for i, sj in enumerate(schuljahre):
             stufen = [jahrgang(s, i, k) for k in range(1, 5)]
+            geprueft += 1
             if sum(stufen) != s["beleg"][i]:
                 abweichungen += 1
                 print("  ABWEICHUNG %s %s: %d rekonstruiert, %d veroeffentlicht"
@@ -205,6 +262,21 @@ def main():
         for k in ("schulen", "schueler", "klassen"):
             e[k] += r[k]
 
+    # Nachbarschaftsgraph als Nachschlagetabelle Bezirk -> angrenzende Bezirke
+    graph = {s["nr"]: [] for s in schulen}
+    for k in nachbarn["kanten"]:
+        graph[k["a"]].append(k["b"])
+        graph[k["b"]].append(k["a"])
+    for nr in graph:
+        graph[nr].sort()
+
+    quote_reihe = inanspruchnahme(ogs, msb_reihe)
+
+    # Sozialindexstufen fuer die zweite Allokation. Ohne Stufe bleibt ein
+    # Standort auf dem neutralen Mittelwert — er wird dadurch weder bevorzugt
+    # noch benachteiligt.
+    ohne_index = sorted(s["name"] for s in schulen if not s["sozialindex"].isdigit())
+
     payload = {
         "meta": {
             "stand": de_datum(stand),
@@ -217,10 +289,21 @@ def main():
             "quoteBasis": quote_basis,
             "schuelerStart": schueler_start,
             "labelsKorrigiert": bezirke["meta"]["labels_korrigiert"],
-            "vereinfachung": bezirke["meta"]["vereinfachung"],
+            # Die Snapshot-Metadaten sind ASCII; fuer die Anzeige wird der Satz
+            # hier in ordentlichem Deutsch neu gesetzt.
+            "vereinfachung": bezirke["meta"]["vereinfachung"]
+                             .replace("Stuetzpunkten", "Stützpunkten"),
+            "pruefung": {"werte": geprueft, "abweichungen": abweichungen},
+            "ohneSozialindex": ohne_index,
             "quellen": quellen,
         },
         "eckwerte": ogs["eckwerte"],
+        "bass": bass["saetze"],
+        "bassMeta": {k: bass["meta"][k] for k in
+                     ("fassung", "gueltig_ab", "steigerung_jaehrlich",
+                      "steigerung_regel", "quelle", "quelle_url", "hinweis")},
+        "quoteReihe": quote_reihe,
+        "nachbarn": graph,
         "schulen": schulen,
         "stadtbezirke": stadtbezirke,
         "geburten": {"jahre": geb_jahre, "stadt": geb_stadt,
@@ -244,6 +327,14 @@ def main():
         n = sum(sum(s["jg"][sj][:STUFENPLAN[sj]]) for s in schulen)
         print("   %s  anspruchsberechtigt %6d  (Klassen 1–%d)"
               % (sj, n, STUFENPLAN[sj]))
+    print("   Nachbarschaft: %d Kanten" % (sum(len(v) for v in graph.values()) // 2))
+    for p in quote_reihe["punkte"]:
+        print("   Inanspruchnahme %s: %5d von %5d (Stand %d) = %.1f %%"
+              % (p["sj"], p["nachfrage"], p["nenner"], p["nennerJahr"],
+                 p["quote"] * 100))
+    print("   Steigung %+.2f Punkte je Jahr" % (quote_reihe["steigungProJahr"] * 100))
+    if ohne_index:
+        print("   ohne Sozialindexstufe: %s" % ", ".join(ohne_index))
 
 
 if __name__ == "__main__":

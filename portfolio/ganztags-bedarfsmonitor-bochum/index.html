@@ -53,6 +53,9 @@
   <!-- ===================== ÜBERBLICK ===================== -->
   <section class="view active" id="view-overview">
     <div class="wrap">
+      <div class="pruef-badge" id="pruef-badge"></div>
+      <div class="kipppunkt-hero" id="kipppunkt-hero"></div>
+
       <div class="view-head">
         <p class="eyebrow">§ 24 Abs. 4 SGB VIII · Stufenplan 2026/27 bis 2029/30 · Stadt Bochum</p>
         <h2>Überblick</h2>
@@ -102,6 +105,16 @@
         <div class="map-wrap" id="map-host"></div>
         <div class="legend" id="map-legend"></div>
         <p class="note src-note" data-src="bezirke"></p>
+      </div>
+
+      <div class="card" style="margin-top:var(--sp-4)">
+        <div class="card-title">Was die zweite Verteilungsannahme ändert <span class="info-i" data-info="allokation" tabindex="0" role="button" aria-label="Erklärung: Platzverteilung">ⓘ</span></div>
+        <div class="card-sub">Differenz sozialindexgewichtete minus flache Verteilung, je Bezirk — die zehn größten Ausschläge in beide Richtungen</div>
+        <div id="chart-karte-allokation"></div>
+        <p class="note">Beide Verteilungen summieren sich exakt auf die stadtweit belegten
+        Plätze. Der Abstand zwischen ihnen ist die Spanne, die eine Platzliste des Amtes
+        auflösen würde — er ist die ehrliche Größe der Datenlücke, nicht ihre Verdeckung.</p>
+        <p class="note src-note" data-src="msb"></p>
       </div>
     </div>
   </section>
@@ -216,6 +229,22 @@
         <div class="card-sub">Ein Szenario setzt beide Regler; danach lässt sich jeder Wert einzeln verstellen</div>
         <div id="szenarien-slider" style="margin-top:8px"></div>
         <p class="note src-note" data-src="ogs"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Elternquote als Zeitachse <span class="info-i" data-info="steigung" tabindex="0" role="button" aria-label="Erklärung: Steigung der Elternquote">ⓘ</span></div>
+        <div class="card-sub" id="szenarien-quote-sub"></div>
+        <div id="chart-szenarien-quote"></div>
+        <p class="note" id="szenarien-nenner"></p>
+        <p class="note src-note" data-src="ogs"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Kostenbild in Euro <span class="info-i" data-info="kosten" tabindex="0" role="button" aria-label="Erklärung: Kostenbild">ⓘ</span></div>
+        <div class="card-sub" id="szenarien-kosten-sub"></div>
+        <div id="chart-szenarien-kosten"></div>
+        <div class="table-wrap" id="szenarien-kosten-tab" style="margin-top:var(--sp-4)"></div>
+        <p class="note" id="szenarien-saetze"></p>
       </div>
 
       <div class="card">

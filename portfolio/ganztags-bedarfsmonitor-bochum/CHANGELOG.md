@@ -1,5 +1,65 @@
 # Changelog — Ganztags-Bedarfsmonitor Bochum
 
+## 2026-08-08 · Ausbaustufe 2
+
+Fünf Erweiterungen aus der Build-Spec, dazu zwei bewusst nicht gebaute.
+
+**Kipppunkt als Leitzahl + Datenstand-Badge.** Über der Navigation stehen jetzt zwei
+Elemente, die im Ausschuss hängen bleiben sollen: das Badge „Datenstand geprüft:
+07.08.2026 — 329 von 329 städtischen Belegungswerten reproduziert“ (bei Abweichung rot,
+mit Anzahl, verlinkt auf den Rechenweg) und die Kipppunkt-Leitzahl mit heutiger Quote,
+Schwellwert und Abstand gleichzeitig — auch bei 375 px ohne Scrollen sichtbar.
+
+**Adjazenz-Beschränkung für die Umverteilung.** Neuer Nachbarschaftsgraph der 47
+Grundschulbezirke, berechnet auf der *unvereinfachten* Geometrie (gemeinsames Grenzstück
+= mindestens zwei geteilte Stützpunkte): 115 Kanten, kein Bezirk ohne Nachbarn, sonst
+bricht der Abruf ab. Liegt als eigene, von Hand prüfbare Datei
+`data/sources/bo_nachbarschaft.json` im Repo. Verlagerungen sind auf angrenzende Bezirke
+beschränkt (Tiefe 1, per Regler 2) und werden in der Karte als Pfeile gezeichnet.
+Verifiziert: 86 gezeichnete Pfade bei Tiefe 1 und 2, **null** Verstöße gegen die
+Nachbarschaftsbedingung.
+
+**Elternquote als Zeitachse.** Öffentlich belegt sind für Bochum genau zwei Schuljahre
+mit Plätzen *und* Ablehnungen. Auf gleichem Nenner — der amtlichen Grundschülerzahl des
+Landes — ergibt das 61,0 % (2022/23) und 66,3 % (2026/27), also **+1,33 Punkte je Jahr**.
+Damit ist der Abstand von 1,7 Punkten kein Puffer, sondern gut ein Jahr: Der Kipppunkt
+fällt ins Schuljahr **2029/30**, genau in das Jahr des vollen Rechtsanspruchs. Die
+Nennerdefinition steht an der Grafik, nicht nur im README; der Versatz von einem Jahr im
+Nenner des zweiten Punktes ist benannt statt weggerechnet. Die Steigung ist als Regler
+ausgelegt — zwei Punkte sind kein statistischer Trend.
+
+**Kostenachse in Euro.** Alle Sätze aus der Förderrichtlinie selbst (BASS 11-02 Nr. 19,
+Fassung BASS 2026/2027, ab 01.08.2026), nicht aus Pressemitteilungen: Landeszuschuss
+1.138 € je Kind und Schuljahr, kommunaler Eigenanteil 603 € je Platz und Jahr,
+Elternbeitrag höchstens 242 € je Kind und Monat, jährlich +3 % zum 1. August. Jedes
+Szenario zusätzlich in Euro je Schuljahr, getrennt nach Land / Kommune / Eltern und
+ausdrücklich **nicht saldiert**. Jeder Betrag ist im UI auf Satz, Fundstelle und Fassung
+rückführbar. Der Kipppunkt erscheint zusätzlich als jährliche Mehrbelastung des
+kommunalen Haushalts.
+
+**Sozialindex-gewichtete Allokation als Umschalter.** Zweite Verteilung derselben
+belegten Gesamtzahl, gewichtet mit einem Take-up-Faktor aus der schulscharfen
+Sozialindexstufe des Landes — genau ein freier Parameter, Summe bleibt bei 8.397 Plätzen.
+Steht **neben** der flachen Verteilung, nicht an deren Stelle; Standard bleibt flach, der
+Zustand ist aus jeder Ansicht am Umschalter erkennbar. Eigene Ansicht: Differenz beider
+Allokationen je Bezirk. Damit wird die Datenlücke vom Schwachpunkt zur messbaren Größe.
+
+**Szenarien umbenannt** auf „Stufenplan Regelfall“, „Kipppunkt Elternquote“,
+„Umverteilung statt Ausbau“. Die Ausbaurate bleibt als Regler erhalten. Fünf Regler
+insgesamt: Quote, Steigung, Ausbau, Umverteilungstiefe, Sozialindex-Gewicht.
+
+**Nicht gebaut, mit Begründung im README:** Der Peer-Städte-Benchmark und die landesweite
+Ganztagsquote entfallen — die Gemeindewerte liegen in der Landesdatenbank NRW hinter
+einer Anmeldung, ein anonymer reproduzierbarer Abruf ist nicht möglich. Ohne
+reproduzierbare Quelle keine Kennzahl. Ebenfalls nicht gebaut, wie in der Spec
+festgelegt: das Kapazitäts-Vorhersagemodell aus Fremdstädten.
+
+**Unangetastet:** Das Abbruchverhalten bei Abweichung von den 329 städtischen Werten.
+
+Verifiziert auf Desktop und 375 px: alle sechs Ansichten, alle Szenarien und Regler,
+keine Konsolen-Fehler, kein horizontaler Seiten-Overflow, `data.js` deterministisch
+(86 KB).
+
 ## 2026-08-07 · Erstveröffentlichung
 
 **Datenpipeline** — vier Fetch-Skripte, stdlib-only, Snapshots zusammen rund 100 KB:
@@ -25,7 +85,7 @@
 Planungsdaten zurück (Klasse *k* im Prognosejahr *i* stammt aus Einschulungsjahrgang
 *i − k + 1*) und prüft sie gegen die veröffentlichte Belegung: 47 Bezirke × 7
 Prognosejahre = 329 Werte, keine Abweichung. Bei Abweichung bricht der Lauf ab.
-Deterministisch; zwei Läufe erzeugen ein byteidentisches `data.js` (80 KB).
+Deterministisch; zwei Läufe erzeugen ein byteidentisches `data.js`.
 
 **Ansichten** — sechs Reiter:
 
@@ -39,11 +99,10 @@ Deterministisch; zwei Läufe erzeugen ein byteidentisches `data.js` (80 KB).
    Standorte mit Lücke und CSV-Export inklusive Annahmen-Kopfzeilen.
 4. **Standorte** — Jahrgangsverlauf, Kohortenherkunft nach Altersjahr, freie
    Grundschulkapazität laut Stadt, Tabelle je Schuljahr.
-5. **Szenarien** — „Stufenplan Regelfall“, „Ausbaupfad 400“, „Elternquote 90“, dazu
-   Regler für Inanspruchnahmequote und Ausbaurate.
+5. **Szenarien** — drei benannte Szenarien mit Reglern für Inanspruchnahmequote und
+   Ausbaurate.
 6. **Daten & Methode** — Registerabgleich 49/47/46, Quellenliste mit Status
-   (belegt / Sekundärquelle / Datenlieferung Amt erforderlich), Rechenweg in sieben
-   Schritten.
+   (belegt / Sekundärquelle / Datenlieferung Amt erforderlich), Rechenweg.
 
 **Ehrlich benannte Datenlücken** — es gibt keinen offenen Datensatz mit OGS-Plätzen je
 Grundschule; die Standortkapazität ist eine Verteilungsannahme aus der stadtweit

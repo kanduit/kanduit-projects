@@ -18,6 +18,11 @@ const fmtPct0 = v => v == null ? '—' : nf.format(Math.round(v)) + ' %';
 const fmtPct1 = v => v == null ? '—' : nf1.format(v) + ' %';
 const fmtSigned = v => (v > 0 ? '+' : '') + fmtInt(v);
 const sjKurz = sj => sj.slice(2, 4) + '/' + sj.slice(-2);
+const fmtDate = iso => iso ? iso.slice(8, 10) + '.' + iso.slice(5, 7) + '.' + iso.slice(0, 4) : '—';
+const fmtEuro = v => v == null ? '—'
+  : v >= 1e6 ? nf1.format(v / 1e6) + ' Mio. €'
+  : v >= 1e4 ? nf.format(Math.round(v / 1000)) + ' T€'
+  : nf.format(Math.round(v)) + ' €';
 
 /* ====================================================================
    MODELL
@@ -46,23 +51,34 @@ const SCHUELER_START = DATA.meta.schuelerStart;
 const AMPEL_FARBE = { gruen: 'var(--ok)', gelb: 'var(--warn)', rot: 'var(--error)' };
 const AMPEL_TEXT = { gruen: 'gedeckt', gelb: 'knapp', rot: 'Lücke' };
 
+const KANTEN = Object.values(DATA.nachbarn).reduce((a, v) => a + v.length, 0) / 2;
+const TREND = DATA.quoteReihe;
+const BASS = DATA.bass;
+const BASS_META = DATA.bassMeta;
+const JAHR_START = 2026;                       // Startjahr des Schuljahres 2026/27
+const sjJahr = sj => parseInt(sj.slice(0, 4), 10);
+
 const SZENARIEN = [
   { id: 'regel', name: 'Stufenplan Regelfall',
-    kurz: 'Anspruch nach Gesetz, Platzangebot bleibt auf dem Stand 2026/27',
-    quote: null, ausbau: 0 },
-  { id: 'ausbau', name: 'Ausbaupfad 400',
-    kurz: '400 zusätzliche Plätze je Schuljahr, verteilt nach Lückengröße',
-    quote: null, ausbau: 400 },
-  { id: 'quote90', name: 'Elternquote 90',
-    kurz: 'Inanspruchnahme steigt auf 90 % der Jahrgangsstärke',
-    quote: 0.90, ausbau: 0 }
+    kurz: 'Anspruch nach Gesetz, Platzangebot und Elternquote bleiben auf dem Stand 2026/27',
+    quote: null, steigung: 0, ausbau: 0, umverteilung: 0 },
+  { id: 'kipppunkt', name: 'Kipppunkt Elternquote',
+    kurz: 'Die Inanspruchnahme steigt mit der belegten Steigung weiter — wann reißt der Bestand?',
+    quote: null, steigung: TREND.steigungProJahr, ausbau: 0, umverteilung: 0 },
+  { id: 'umverteilung', name: 'Umverteilung statt Ausbau',
+    kurz: 'Keine neuen Plätze; Überhänge wandern in angrenzende Bezirke mit Lücke',
+    quote: null, steigung: 0, ausbau: 0, umverteilung: 1 }
 ];
 
 const state = {
   sj: '2029/2030',
   szenario: 'regel',
   quote: DATA.meta.quoteBasis,
+  steigung: 0,
   ausbau: 0,
+  umverteilung: 0,
+  allokation: 'flach',
+  sozialGewicht: 0.15,
   sortKey: 'luecke',
   sortDir: -1,
   standortNr: null,
@@ -71,10 +87,28 @@ const state = {
 
 function szenarioById(id) { return SZENARIEN.find(s => s.id === id) || SZENARIEN[0]; }
 
+/** Annahmen eines Szenarios in seiner Reinform — für den Vergleich der drei. */
+function szenarioAnnahmen(sz) {
+  return {
+    quote: sz.quote != null ? sz.quote : DATA.meta.quoteBasis,
+    steigung: sz.steigung, ausbau: sz.ausbau, umverteilung: sz.umverteilung,
+    allokation: state.allokation, sozialGewicht: state.sozialGewicht,
+    szenario: sz
+  };
+}
+
 /** Regler-Werte des aktiven Szenarios (Szenario setzt, Regler überschreiben). */
 function annahmen() {
-  const s = szenarioById(state.szenario);
-  return { quote: state.quote, ausbau: state.ausbau, szenario: s };
+  return {
+    quote: state.quote, steigung: state.steigung, ausbau: state.ausbau,
+    umverteilung: state.umverteilung, allokation: state.allokation,
+    sozialGewicht: state.sozialGewicht, szenario: szenarioById(state.szenario)
+  };
+}
+
+/** Inanspruchnahmequote im Schuljahr sj — Ausgangswert plus Trend. */
+function quoteIn(sj, a) {
+  return Math.min(1, Math.max(0, a.quote + a.steigung * (sjJahr(sj) - JAHR_START)));
 }
 
 /** Anspruchsberechtigte einer Schule im Schuljahr sj. */
@@ -88,9 +122,125 @@ function schueler(schule, sj) {
   return schule.jg[sj].reduce((a, b) => a + b, 0);
 }
 
-/** Grundverteilung der belegten stadtweiten Plätze auf die Standorte. */
-function grundKapazitaet(schule) {
-  return PLAETZE * schueler(schule, SJ_START) / SCHUELER_START;
+/* ---------------------------------------------------------- Allokationen ---
+   Zwei begründbare Verteilungen derselben belegten Gesamtzahl. Beide summieren
+   sich exakt auf die stadtweit veröffentlichten Plätze; keine erfindet eine
+   Standortkapazität hinzu. Der Abstand zwischen ihnen ist genau das, was eine
+   Platzliste des Amtes auflösen würde.
+   -------------------------------------------------------------------------- */
+
+/** Take-up-Faktor aus der Sozialindexstufe des Landes (1 bis 9, 5 = neutral). */
+function sozialFaktor(schule, gewicht) {
+  const stufe = parseInt(schule.sozialindex, 10);
+  if (!Number.isFinite(stufe)) return 1;      // ohne Stufe: neutral, nie benachteiligt
+  return 1 + gewicht * (stufe - 5) / 4;
+}
+
+/** Verteilung der belegten Gesamtplatzzahl auf die Standorte, Summe = PLAETZE. */
+const kapCache = new Map();
+function grundKapazitaeten(a) {
+  const key = a.allokation === 'sozial' ? 'sozial:' + a.sozialGewicht : 'flach';
+  if (kapCache.has(key)) return kapCache.get(key);
+  const gewicht = k => schueler(k, SJ_START) *
+    (a.allokation === 'sozial' ? sozialFaktor(k, a.sozialGewicht) : 1);
+  const summe = DATA.schulen.reduce((s, k) => s + gewicht(k), 0);
+  const aus = {};
+  DATA.schulen.forEach(k => { aus[k.nr] = PLAETZE * gewicht(k) / summe; });
+  kapCache.set(key, aus);
+  return aus;
+}
+
+function grundKapazitaet(schule, a) {
+  return grundKapazitaeten(a || annahmen())[schule.nr];
+}
+
+/* ------------------------------------------------- Umverteilung (Adjazenz) --
+   Plätze dürfen nur in angrenzende Bezirke wandern. Ohne diese Schranke schlägt
+   das Modell Verlagerungen quer durch die Stadt vor, die keine Familie mitgeht.
+   Der Nachbarschaftsgraph liegt als prüfbare Datei im Repo
+   (data/sources/bo_nachbarschaft.json).
+   -------------------------------------------------------------------------- */
+
+/** Bezirke im Umkreis von `tiefe` Kanten (ohne den Ausgangsbezirk). */
+function umkreis(nr, tiefe) {
+  const gesehen = new Set([nr]);
+  let rand = [nr];
+  for (let t = 0; t < tiefe; t++) {
+    const naechste = [];
+    rand.forEach(x => (DATA.nachbarn[x] || []).forEach(y => {
+      if (!gesehen.has(y)) { gesehen.add(y); naechste.push(y); }
+    }));
+    rand = naechste;
+  }
+  gesehen.delete(nr);
+  return Array.from(gesehen);
+}
+
+/**
+ * Verlagert Überhänge in angrenzende Bezirke mit Lücke.
+ * Liefert {zusatz: {nr: ±Plätze}, pfade: [{von, nach, n}]}.
+ */
+function umverteilen(sj, a, basis) {
+  const zusatz = {}, pfade = [];
+  DATA.schulen.forEach(s => { zusatz[s.nr] = 0; });
+  if (!a.umverteilung) return { zusatz: zusatz, pfade: pfade };
+
+  const q = quoteIn(sj, a);
+  const bedarf = {}, frei = {}, fehlt = {};
+  DATA.schulen.forEach(s => {
+    bedarf[s.nr] = q * anspruch(s, sj);
+    const k = basis[s.nr];
+    frei[s.nr] = Math.max(0, k - bedarf[s.nr]);
+    fehlt[s.nr] = Math.max(0, bedarf[s.nr] - k);
+  });
+
+  // Gebende Bezirke der Reihe nach; jeder verteilt seinen Überhang auf die
+  // erreichbaren Nachbarn im Verhältnis von deren offenem Bedarf.
+  DATA.schulen.slice()
+    .sort((x, y) => frei[y.nr] - frei[x.nr])
+    .forEach(geber => {
+      let uebrig = frei[geber.nr];
+      if (uebrig <= 0.5) return;
+      const nachbarn = umkreis(geber.nr, a.umverteilung)
+        .filter(n => fehlt[n] > 0.5);
+      const offen = nachbarn.reduce((s, n) => s + fehlt[n], 0);
+      if (offen <= 0) return;
+      const menge = Math.min(uebrig, offen);
+      nachbarn.forEach(n => {
+        const anteil = menge * fehlt[n] / offen;
+        if (anteil < 0.5) return;
+        zusatz[geber.nr] -= anteil;
+        zusatz[n] += anteil;
+        fehlt[n] -= anteil;
+        pfade.push({ von: geber.nr, nach: n, n: anteil });
+      });
+      frei[geber.nr] -= menge;
+    });
+  return { zusatz: zusatz, pfade: pfade };
+}
+
+/* ------------------------------------------------------------- Kostenachse --
+   Alle Sätze aus BASS 11-02 Nr. 19 in der Fassung BASS 2026/2027, gültig ab
+   01.08.2026, jährlich +3 % zum 1. August. Land, Kommune und Eltern werden
+   getrennt ausgewiesen und nicht saldiert.
+   -------------------------------------------------------------------------- */
+function satzIn(betrag, sj) {
+  const jahre = sjJahr(sj) - JAHR_START;
+  return Math.round(betrag * Math.pow(1 + BASS_META.steigerung_jaehrlich, jahre));
+}
+
+/** Kostenbild eines Schuljahres. versorgt = tatsächlich betreute Kinder. */
+function kosten(sj, versorgt, plaetze, luecke) {
+  const land = satzIn(BASS.land_grundbetrag.betrag, sj);
+  const eigen = satzIn(BASS.kommunaler_eigenanteil.betrag, sj);
+  const eltern = satzIn(BASS.elternbeitrag_hoechstgrenze.betrag, sj);
+  return {
+    satzLand: land, satzEigen: eigen, satzEltern: eltern,
+    land: land * versorgt,
+    kommune: eigen * plaetze,
+    elternMax: eltern * 12 * versorgt,
+    mehrbelastung: eigen * luecke
+  };
 }
 
 /**
@@ -99,19 +249,32 @@ function grundKapazitaet(schule) {
  * Liefert eine Zuordnung Schulnummer -> zusätzliche Plätze.
  */
 function ausbauVerteilung(sjZiel, a) {
+  const basis = grundKapazitaeten(a);
   const zusatz = {};
   DATA.schulen.forEach(s => { zusatz[s.nr] = 0; });
   if (!a.ausbau) return zusatz;
   const bis = SJ.indexOf(sjZiel), start = SJ.indexOf(SJ_START);
   for (let i = start + 1; i <= bis; i++) {
-    const vorjahr = SJ[i - 1];
+    const vorjahr = SJ[i - 1], q = quoteIn(vorjahr, a);
     const luecken = DATA.schulen.map(s => Math.max(
-      0, a.quote * anspruch(s, vorjahr) - (grundKapazitaet(s) + zusatz[s.nr])));
+      0, q * anspruch(s, vorjahr) - (basis[s.nr] + zusatz[s.nr])));
     const summe = luecken.reduce((x, y) => x + y, 0);
     if (summe <= 0) continue;
     DATA.schulen.forEach((s, k) => { zusatz[s.nr] += a.ausbau * luecken[k] / summe; });
   }
   return zusatz;
+}
+
+/** Plätze je Standort im Schuljahr sj: Grundverteilung + Ausbau + Umverteilung. */
+function kapazitaeten(sj, a) {
+  const basis = grundKapazitaeten(a);
+  const ausbau = ausbauVerteilung(sj, a);
+  const mit = {};
+  DATA.schulen.forEach(s => { mit[s.nr] = basis[s.nr] + ausbau[s.nr]; });
+  const um = umverteilen(sj, a, mit);
+  const aus = {};
+  DATA.schulen.forEach(s => { aus[s.nr] = mit[s.nr] + um.zusatz[s.nr]; });
+  return { kap: aus, pfade: um.pfade };
 }
 
 function ampelStufe(deckung) {
@@ -123,49 +286,68 @@ function ampelStufe(deckung) {
 /** Kennzahlen aller Standorte für ein Schuljahr. */
 function standorte(sj, a) {
   a = a || annahmen();
-  const zusatz = ausbauVerteilung(sj, a);
-  return DATA.schulen.map(s => {
+  const { kap, pfade } = kapazitaeten(sj, a);
+  const q = quoteIn(sj, a);
+  const eintritte = eintrittsjahre(a);
+  const rows = DATA.schulen.map(s => {
     const berechtigt = anspruch(s, sj);
-    const bedarf = a.quote * berechtigt;
-    const kap = grundKapazitaet(s) + zusatz[s.nr];
-    const luecke = Math.max(0, bedarf - kap);
-    const deckung = bedarf > 0 ? Math.min(kap / bedarf, 9.99) : null;
+    const bedarf = q * berechtigt;
+    const k = kap[s.nr];
+    const luecke = Math.max(0, bedarf - k);
+    const deckung = bedarf > 0 ? Math.min(k / bedarf, 9.99) : null;
     return {
-      schule: s, sj: sj,
+      schule: s, sj: sj, quote: q,
       schueler: schueler(s, sj), berechtigt: berechtigt,
       // Nachfrage aller vier Jahrgangsstufen — auch der noch nicht
       // anspruchsberechtigten. Sie belegen dieselben Plätze.
-      gesamtbedarf: a.quote * schueler(s, sj),
-      bedarf: bedarf, kap: kap, luecke: luecke, deckung: deckung,
+      gesamtbedarf: q * schueler(s, sj),
+      bedarf: bedarf, kap: k, luecke: luecke, deckung: deckung,
+      versorgt: Math.min(bedarf, k),
       ampel: deckung == null ? 'gruen' : ampelStufe(deckung),
-      eintritt: eintrittsjahr(s, a)
+      eintritt: eintritte[s.nr]
     };
   });
+  rows.pfade = pfade;
+  return rows;
 }
 
-/** Erstes Schuljahr, in dem an diesem Standort eine Lücke entsteht. */
-function eintrittsjahr(s, a) {
-  for (const sj of SJ) {
-    if (!STUFE[sj]) continue;
-    const zusatz = ausbauVerteilung(sj, a)[s.nr];
-    if (a.quote * anspruch(s, sj) - (grundKapazitaet(s) + zusatz) > 0.5) return sj;
-  }
-  return null;
+/** Erstes Schuljahr je Standort, in dem eine Lücke entsteht. */
+const eintrittCache = new Map();
+function eintrittsjahre(a) {
+  const key = [a.quote, a.steigung, a.ausbau, a.umverteilung, a.allokation,
+               a.sozialGewicht].join('|');
+  if (eintrittCache.has(key)) return eintrittCache.get(key);
+  const aus = {};
+  DATA.schulen.forEach(s => { aus[s.nr] = null; });
+  SJ.forEach(sj => {
+    if (!STUFE[sj]) return;
+    const { kap } = kapazitaeten(sj, a);
+    const q = quoteIn(sj, a);
+    DATA.schulen.forEach(s => {
+      if (aus[s.nr]) return;
+      if (q * anspruch(s, sj) - kap[s.nr] > 0.5) aus[s.nr] = sj;
+    });
+  });
+  eintrittCache.set(key, aus);
+  return aus;
 }
 
 function summe(rows) {
-  const t = { schueler: 0, berechtigt: 0, gesamtbedarf: 0, bedarf: 0, kap: 0, luecke: 0 };
+  const t = { schueler: 0, berechtigt: 0, gesamtbedarf: 0, bedarf: 0, kap: 0,
+              luecke: 0, versorgt: 0 };
   rows.forEach(r => { for (const k in t) t[k] += r[k]; });
   t.deckung = t.bedarf > 0 ? t.kap / t.bedarf : null;
   return t;
 }
 
-/** Stadtweite Reihe über alle Schuljahre. */
+/** Stadtweite Reihe über alle Schuljahre, inklusive Kostenbild. */
 function stadtReihe(a) {
   a = a || annahmen();
   return SJ.map(sj => {
     const t = summe(standorte(sj, a));
-    return { sj: sj, kurz: sjKurz(sj), stufen: STUFE[sj], ...t };
+    return { sj: sj, kurz: sjKurz(sj), stufen: STUFE[sj],
+             quote: quoteIn(sj, a),
+             kosten: kosten(sj, t.versorgt, t.kap, t.luecke), ...t };
   });
 }
 
@@ -173,6 +355,22 @@ function stadtReihe(a) {
 function kritischeQuote(sj) {
   const berechtigt = DATA.schulen.reduce((a, s) => a + anspruch(s, sj), 0);
   return berechtigt > 0 ? PLAETZE / berechtigt : null;
+}
+
+/**
+ * Erstes Schuljahr, in dem die fortgeschriebene Elternquote die kritische
+ * Quote überschreitet — die Antwort auf „wann kippt es“ statt nur „ab wieviel“.
+ */
+function kipppunktJahr(a) {
+  a = a || annahmen();
+  for (const sj of SJ) {
+    if (!STUFE[sj]) continue;
+    const krit = kritischeQuote(sj);
+    if (krit != null && quoteIn(sj, a) > krit) {
+      return { sj: sj, quote: quoteIn(sj, a), krit: krit };
+    }
+  }
+  return null;
 }
 
 const schuleByNr = nr => DATA.schulen.find(s => s.nr === nr);
@@ -187,6 +385,11 @@ function showView(name) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) showView(b.dataset.view); });
+// Querverweise aus dem Fließtext (z. B. das Datenstand-Badge auf den Rechenweg)
+document.addEventListener('click', e => {
+  const a = e.target.closest && e.target.closest('[data-goto]');
+  if (a) { e.preventDefault(); showView(a.dataset.goto); }
+});
 
 /* ====================================================================
    TOOLTIP
@@ -302,6 +505,56 @@ const METRIC_INFO = {
     sie fehlen. Das ist eine Rechenannahme, keine Aussage über tatsächliche
     Bau-, Personal- oder Trägerkapazitäten. Was ein Platz kostet, ist in Bochum
     nicht öffentlich; Kostenfolgen gehören in die Fachabstimmung mit dem Amt.` },
+  steigung: { t: 'Steigung der Elternquote', d: `Öffentlich belegt sind für Bochum
+    genau zwei Schuljahre mit Plätzen <i>und</i> Ablehnungen: 2022/23 und 2026/27. Die
+    angemeldete Nachfrage ist ihre Summe. Damit die Steigung nicht aus zwei
+    Grundgesamtheiten entsteht, steht in beiden Fällen derselbe Nenner: die
+    Grundschülerzahl Bochums aus dem amtlichen Landesverzeichnis. Ergebnis:
+    ${fmtPct1(TREND.punkte[0].quote * 100)} → ${fmtPct1(TREND.punkte[1].quote * 100)},
+    also ${nf1.format(TREND.steigungProJahr * 100)} Punkte je Jahr.
+    <b>Zwei Punkte sind kein Trend im statistischen Sinn</b> — die Steigung ist ein
+    Differenzenquotient und deshalb als Regler ausgelegt, nicht als Prognose.
+    Datenlücke: Für 2026/27 reicht die amtliche Reihe noch nicht; dort steht der
+    jüngste Wert (${TREND.punkte[1].nennerJahr}). Der Versatz von einem Jahr ist
+    benannt statt weggerechnet. Eine landesweite Ganztagsquote wird bewusst nicht
+    danebengelegt: Sie hat einen anderen Nenner, und ohne belastbare Angleichung
+    gehören beide Größen nicht in dieselbe Kurve.` },
+  allokation: { t: 'Platzverteilung — zwei Annahmen', d: `Die stadtweite Platzzahl ist
+    belegt, ihre Verteilung auf die Standorte nicht. Der Monitor bietet deshalb zwei
+    begründbare Verteilungen derselben Gesamtzahl an. <b>Flach:</b> proportional zur
+    Schülerzahl. <b>Sozialgewichtet:</b> zusätzlich mit einem Take-up-Faktor aus der
+    neunstufigen Sozialindexstufe des Landes, die das Land schulscharf veröffentlicht —
+    ein einziger freier Parameter, die Summe bleibt bei ${fmtInt(PLAETZE)} Plätzen.
+    Standard ist die flache Verteilung. Der Abstand zwischen beiden ist genau das, was
+    eine Platzliste des Amtes auflösen würde. Datenlücke: Für
+    ${DATA.meta.ohneSozialindex.length
+      ? esc(DATA.meta.ohneSozialindex.join(', '))
+      : 'keinen Standort'} liegt keine Sozialindexstufe vor — dieser Standort bleibt
+    neutral gewichtet. Teilstandorte erben die Stufe ihrer Stammschule.` },
+  umverteilung: { t: 'Umverteilung in Nachbarbezirke', d: `Im Szenario „Umverteilung
+    statt Ausbau“ wandern Überhänge in Bezirke mit Lücke — aber nur in
+    <b>angrenzende</b>. Grundlage ist ein Nachbarschaftsgraph aus den Bezirksgrenzen:
+    zwei Bezirke gelten als benachbart, wenn ihre Umringe mindestens zwei Stützpunkte
+    teilen, also ein gemeinsames Grenzstück haben. ${fmtInt(KANTEN)} Kanten, jede von
+    Hand prüfbar in <span class="mono">data/sources/bo_nachbarschaft.json</span>.
+    Ohne diese Schranke schlägt ein Umverteilungsmodell Wege quer durch die Stadt vor,
+    die keine Familie mitgeht. Was die Schranke <i>nicht</i> kann: Sie kennt keine
+    Schulwege, keine Verkehrsverbindungen und keine Elternwünsche — sie ist die
+    schwächste plausible Annahme, nicht die richtige.` },
+  kosten: { t: 'Kostenbild in Euro', d: `Alle Sätze stammen aus der Förderrichtlinie
+    selbst — BASS 11-02 Nr. 19, Fassung ${esc(BASS_META.fassung)}, gültig ab
+    ${fmtDate(BASS_META.gueltig_ab)} — nicht aus Pressemitteilungen.
+    <b>Land:</b> ${fmtInt(BASS.land_grundbetrag.betrag)} € Grundfestbetrag je Kind und
+    Schuljahr (Nr. 5.4.1). <b>Kommune:</b> ${fmtInt(BASS.kommunaler_eigenanteil.betrag)} €
+    Eigenanteil je Platz und Jahr (Nr. 5.5). <b>Eltern:</b> bis
+    ${fmtInt(BASS.elternbeitrag_hoechstgrenze.betrag)} € je Kind und Monat — das ist die
+    <i>Höchstgrenze</i> der Richtlinie, nicht der Bochumer Satzungssatz. Alle Sätze
+    steigen laut Richtlinie jährlich zum 1. August um drei Prozent.
+    Datenlücken: Die Bochumer Elternbeitragssatzung ist sozial gestaffelt und liegt nicht
+    offen vor — Elternbeiträge werden deshalb getrennt ausgewiesen und nicht mit dem
+    Eigenanteil saldiert, obwohl die Richtlinie eine Anrechnung zulässt. Nicht enthalten
+    sind Investitions-, Raum- und Trägerkosten sowie der Lehrerstellenanteil, für den die
+    Richtlinie ein Wahlrecht vorsieht.` },
   register: { t: 'Registerabgleich', d: `Gegenüberstellung des Bezirksdatensatzes
     der Stadt und des amtlichen Schulverzeichnisses des Landes. Sie erklärt die
     Differenz der Schülerzahlen: Der Bezirksdatensatz zählt
@@ -479,10 +732,17 @@ function controlsHtml() {
         ${ANSPRUCHS_SJ.map(sj => `<button data-v="${sj}">${sjKurz(sj)}<span class="sm">Kl. 1–${STUFE[sj]}</span></button>`).join('')}
       </div>
     </div>
-    <div class="ctrl-group" style="flex:1 1 340px">
+    <div class="ctrl-group" style="flex:1 1 320px">
       <span class="lbl">Szenario</span>
       <div class="segmented" data-ctrl="szenario">
         ${SZENARIEN.map(s => `<button data-v="${s.id}">${esc(s.name)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="ctrl-group">
+      <span class="lbl">Platzverteilung <span class="info-i" data-info="allokation" tabindex="0" role="button" aria-label="Erklärung: Platzverteilung">ⓘ</span></span>
+      <div class="segmented" data-ctrl="allokation">
+        <button data-v="flach">flach<span class="sm">nach Schülerzahl</span></button>
+        <button data-v="sozial">sozialgewichtet<span class="sm">nach Sozialindex</span></button>
       </div>
     </div>`;
 }
@@ -498,7 +758,9 @@ function mountControls(host) {
         if (key === 'szenario') {
           const s = szenarioById(b.dataset.v);
           state.quote = s.quote != null ? s.quote : DATA.meta.quoteBasis;
+          state.steigung = s.steigung;
           state.ausbau = s.ausbau;
+          state.umverteilung = s.umverteilung;
         }
         renderAll();
       });
@@ -510,14 +772,30 @@ function mountSliders(host) {
   const a = annahmen();
   host.innerHTML = '';
   [
-    { k: 'quote', nm: 'Inanspruchnahmequote', min: 50, max: 100, step: 1,
+    { k: 'quote', nm: 'Inanspruchnahmequote 2026/27', min: 50, max: 100, step: 0.5,
       val: Math.round(a.quote * 1000) / 10, einheit: ' %',
       hint: `Ausgangswert ${fmtPct1(DATA.meta.quoteBasis * 100)} — beobachtet 2026/27 aus vergebenen und abgelehnten Plätzen.`,
       set: v => { state.quote = v / 100; } },
+    { k: 'steigung', nm: 'Steigung der Elternquote', min: 0, max: 4, step: 0.1,
+      val: Math.round(a.steigung * 1000) / 10, einheit: ' Punkte/Jahr',
+      hint: `Belegt sind zwei Stützpunkte: ${fmtPct1(TREND.punkte[0].quote * 100)} (2022/23) und `
+        + `${fmtPct1(TREND.punkte[1].quote * 100)} (2026/27) auf gleichem Nenner — `
+        + `${nf1.format(TREND.steigungProJahr * 100)} Punkte je Jahr. Zwei Punkte sind kein Trend; deshalb ein Regler.`,
+      set: v => { state.steigung = v / 100; } },
     { k: 'ausbau', nm: 'Zusätzliche Plätze je Schuljahr', min: 0, max: 1200, step: 50,
       val: Math.round(a.ausbau), einheit: '',
       hint: 'Verteilt proportional zur Lücke des Vorjahres. Reine Rechenannahme — Bau-, Personal- und Trägerkapazitäten sind nicht öffentlich.',
-      set: v => { state.ausbau = v; } }
+      set: v => { state.ausbau = v; } },
+    { k: 'umverteilung', nm: 'Umverteilung in Nachbarbezirke', min: 0, max: 2, step: 1,
+      val: a.umverteilung, einheit: ' Ebene(n)',
+      hint: '0 = keine Verlagerung. 1 = nur direkt angrenzende Bezirke, 2 = auch deren Nachbarn. '
+        + `Grundlage ist der Nachbarschaftsgraph mit ${fmtInt(KANTEN)} Kanten aus den Bezirksgrenzen.`,
+      set: v => { state.umverteilung = v; } },
+    { k: 'sozialGewicht', nm: 'Sozialindex-Gewicht der Allokation', min: 0, max: 40, step: 5,
+      val: Math.round(a.sozialGewicht * 100), einheit: ' %',
+      hint: 'Nur wirksam bei sozialindexgewichteter Allokation. Der einzige freie Parameter: '
+        + 'Spannweite des Take-up-Faktors zwischen Sozialindexstufe 1 und 9. Die Gesamtzahl der Plätze bleibt unverändert.',
+      set: v => { state.sozialGewicht = v / 100; } }
   ].forEach(s => {
     const row = el('div', 'slider-row');
     row.innerHTML = `<div class="head"><span class="nm">${s.nm}</span>
@@ -540,6 +818,51 @@ function renderOverview() {
   const reihe = stadtReihe(a);
   const voll = reihe.find(r => r.sj === DATA.meta.sjVoll);
   const krit = kritischeQuote(DATA.meta.sjVoll);
+
+  /* ---- Leitzahl: Kipppunkt. Heute, Schwelle und Abstand gleichzeitig ---- */
+  const heute = DATA.meta.quoteBasis;
+  const abstand = (krit - heute) * 100;
+  const trendJahre = TREND.steigungProJahr > 0 ? abstand / (TREND.steigungProJahr * 100) : null;
+  const trefferMitTrend = kipppunktJahr({ quote: heute, steigung: TREND.steigungProJahr,
+    ausbau: 0, umverteilung: 0, allokation: 'flach', sozialGewicht: 0 });
+  $('#kipppunkt-hero').innerHTML = `
+    <div class="hero-zahl">
+      <div class="hero-lbl">Elternquote heute</div>
+      <div class="hero-v">${fmtPct1(heute * 100)}</div>
+      <div class="hero-d">beobachtet 2026/27</div>
+    </div>
+    <div class="hero-pfeil" aria-hidden="true">→</div>
+    <div class="hero-zahl kipp">
+      <div class="hero-lbl">Kipppunkt 2029/30${infoIcon('kritQuote')}</div>
+      <div class="hero-v">${fmtPct1(krit * 100)}</div>
+      <div class="hero-d">ab hier reichen die ${fmtInt(PLAETZE)} Plätze nicht mehr</div>
+    </div>
+    <div class="hero-zahl abstand">
+      <div class="hero-lbl">Abstand</div>
+      <div class="hero-v">${nf1.format(abstand)}<span class="ein"> Punkte</span></div>
+      <div class="hero-d">${trendJahre != null
+        ? `bei belegter Steigung von ${nf1.format(TREND.steigungProJahr * 100)} Punkten je Jahr: rund ${nf1.format(trendJahre)} Jahre`
+        : 'ohne Trendannahme'}</div>
+    </div>
+    <div class="hero-fazit">
+      ${trefferMitTrend
+        ? `<b>Mit der belegten Steigung ist der Puffer im Schuljahr ${trefferMitTrend.sj} aufgebraucht</b>
+           — genau in dem Jahr, in dem der Rechtsanspruch erstmals alle vier Jahrgangsstufen erfasst.`
+        : `<b>Mit der belegten Steigung bleibt der Bestand im gesamten Prognosezeitraum ausreichend.</b>`}
+      <span class="note" style="display:block; margin-top:4px">Die Steigung stammt aus zwei
+      belegten Stützpunkten auf gleichem Nenner und ist im Reiter „Szenarien“ frei
+      einstellbar.${infoIcon('steigung')}</span>
+    </div>`;
+
+  /* ---- Datenstand-Badge ---- */
+  const p = DATA.meta.pruefung;
+  const ok = p.abweichungen === 0;
+  $('#pruef-badge').className = 'pruef-badge' + (ok ? '' : ' fehler');
+  $('#pruef-badge').innerHTML = `<span class="dot ${ok ? 'gruen' : 'rot'}"></span>
+    <span>Datenstand geprüft: <b>${DATA.meta.stand}</b> — ${ok
+      ? `${fmtInt(p.werte)} von ${fmtInt(p.werte)} städtischen Belegungswerten reproduziert`
+      : `<b>${fmtInt(p.abweichungen)} von ${fmtInt(p.werte)} Werten weichen ab</b>`}</span>
+    <a href="#" data-goto="daten">Rechenweg ansehen</a>`;
 
   const kpis = $('#overview-kpis'); kpis.innerHTML = '';
   [
@@ -629,13 +952,40 @@ function renderKarte() {
 
   $('#karte-sub').textContent =
     `Schuljahr ${state.sj} · Klassen 1–${STUFE[state.sj]} · ${szenarioById(state.szenario).name} · `
-    + `Quote ${fmtPct1(a.quote * 100)}`;
+    + `Quote ${fmtPct1(quoteIn(state.sj, a) * 100)}`;
   drawMap(rows);
 
   const lg = $('#map-legend'); lg.innerHTML = '';
   [['gruen', 'gedeckt'], ['gelb', 'knapp'], ['rot', 'Lücke']].forEach(([k, txt]) =>
     lg.appendChild(el('div', 'item', `<span class="sw" style="background:${AMPEL_FARBE[k]}"></span>${txt}`)));
   lg.appendChild(el('div', 'item', '<span class="sw" style="background:var(--neutral-400)"></span>Punktfläche ∝ anspruchsberechtigte Kinder'));
+  if (rows.pfade && rows.pfade.length) {
+    lg.appendChild(el('div', 'item',
+      '<span class="sw" style="background:var(--dv-violet)"></span>Verlagerung in Nachbarbezirke'));
+  }
+  renderAllokationsdiff();
+}
+
+/** Differenz beider Verteilungsannahmen je Bezirk — die Größe der Datenlücke. */
+function renderAllokationsdiff() {
+  const flach = grundKapazitaeten({ allokation: 'flach', sozialGewicht: 0 });
+  const sozial = grundKapazitaeten({ allokation: 'sozial',
+    sozialGewicht: state.sozialGewicht });
+  const diffs = DATA.schulen.map(s => ({
+    s: s, d: sozial[s.nr] - flach[s.nr], flach: flach[s.nr], sozial: sozial[s.nr]
+  })).sort((x, y) => y.d - x.d);
+  const zeigen = diffs.slice(0, 5).concat(diffs.slice(-5));
+  barChart($('#chart-karte-allokation'), zeigen.map(x => ({
+    label: x.s.name.length > 26 ? x.s.name.slice(0, 25) + '…' : x.s.name,
+    value: Math.abs(x.d),
+    valLabel: fmtSigned(Math.round(x.d)) + ' Plätze',
+    color: x.d >= 0 ? 'var(--dv-violet)' : 'var(--neutral-400)',
+    tip: `<b>${esc(x.s.name)}</b>
+      <div class="row"><span>Sozialindexstufe</span><span>${esc(x.s.sozialindex)}</span></div>
+      <div class="row"><span>flache Verteilung</span><span>${fmtInt(x.flach)}</span></div>
+      <div class="row"><span>sozialgewichtet</span><span>${fmtInt(x.sozial)}</span></div>
+      <div class="row"><span>Differenz</span><span>${fmtSigned(Math.round(x.d))}</span></div>`
+  })), { padL: 200, rowH: 26 });
 }
 
 function drawMap(rows) {
@@ -669,6 +1019,37 @@ function drawMap(rows) {
     p.addEventListener('click', () => oeffneStandort(r.schule.nr));
     svg.appendChild(p);
   });
+
+  /* Tatsächlich genutzte Verlagerungspfade — nur zwischen Nachbarbezirken. */
+  const pfade = rows.pfade || [];
+  if (pfade.length) {
+    const defs = svgEl('defs', {});
+    const mk = svgEl('marker', { id: 'pfeil', viewBox: '0 0 10 10', refX: '9', refY: '5',
+      markerWidth: '5', markerHeight: '5', orient: 'auto-start-reverse' });
+    mk.appendChild(svgEl('path', { d: 'M0,0 L10,5 L0,10 z', fill: 'var(--dv-violet)' }));
+    defs.appendChild(mk); svg.appendChild(defs);
+    const maxN = Math.max.apply(null, pfade.map(p => p.n)) || 1;
+    pfade.slice().sort((a, b) => a.n - b.n).forEach(p => {
+      const von = schuleByNr(p.von), nach = schuleByNr(p.nach);
+      if (!von || !nach || von.lat == null || nach.lat == null) return;
+      const l = svgEl('line', {
+        x1: px(von.lon).toFixed(1), y1: py(von.lat).toFixed(1),
+        x2: px(nach.lon).toFixed(1), y2: py(nach.lat).toFixed(1),
+        stroke: 'var(--dv-violet)', 'stroke-opacity': .75,
+        'stroke-width': (1 + 3 * p.n / maxN).toFixed(1),
+        'marker-end': 'url(#pfeil)', class: 'map-pfad'
+      });
+      l.addEventListener('mousemove', e => showTip(
+        `<b>Verlagerung</b>
+         <div class="row"><span>von</span><span>${esc(von.name)}</span></div>
+         <div class="row"><span>nach</span><span>${esc(nach.name)}</span></div>
+         <div class="row"><span>Plätze</span><span>${fmtInt(p.n)}</span></div>
+         <div class="def">Nur zwischen angrenzenden Bezirken — Rechenannahme, keine Schulwegbetrachtung.</div>`,
+        e.clientX, e.clientY));
+      l.addEventListener('mouseleave', hideTip);
+      svg.appendChild(l);
+    });
+  }
 
   const maxB = Math.max.apply(null, rows.map(r => r.berechtigt)) || 1;
   rows.slice().sort((x, y) => y.berechtigt - x.berechtigt).forEach(r => {
@@ -763,7 +1144,7 @@ function renderAmpel() {
     { k: 'Größte Einzellücke', v: fmtInt(groesste.luecke),
       d: esc(groesste.name), info: 'deckung' },
     { k: 'Platzbedarf gesamt', v: fmtInt(t.bedarf),
-      d: `bei Quote ${fmtPct1(a.quote * 100)}`, cls: 'petrol', info: 'bedarf' }
+      d: `bei Quote ${fmtPct1(quoteIn(state.sj, a) * 100)}`, cls: 'petrol', info: 'bedarf' }
   ].forEach(c => kpis.appendChild(statCard(c)));
 
   if (state.nurLuecke) rows = rows.filter(r => r.luecke > 0.5);
@@ -817,7 +1198,10 @@ function csvExport() {
   const kopfzeilen = [
     ['Kanduit Ganztags-Bedarfsmonitor Bochum — Demonstrator, kein Produkt der Stadt Bochum'],
     ['Schuljahr', state.sj], ['Szenario', szenarioById(state.szenario).name],
-    ['Inanspruchnahmequote Prozent', nf1.format(a.quote * 100)],
+    ['Inanspruchnahmequote Prozent', nf1.format(quoteIn(state.sj, a) * 100)],
+    ['Steigung Punkte je Jahr', nf1.format(a.steigung * 100)],
+    ['Allokation', a.allokation === 'sozial' ? 'sozialindexgewichtet' : 'flach'],
+    ['Umverteilungstiefe', a.umverteilung ? a.umverteilung + ' Nachbarschaftsebene(n)' : 'keine'],
     ['Zusaetzliche Plaetze je Schuljahr', Math.round(a.ausbau)],
     ['Datenstand', DATA.meta.stand],
     ['Hinweis', 'Ganztagsplaetze je Standort sind eine Verteilungsannahme aus der '
@@ -855,13 +1239,13 @@ function renderStandort() {
     }).join('')}</optgroup>`).join('');
 
   const je = SJ.map(sj => {
-    const zusatz = ausbauVerteilung(sj, a)[s.nr];
+    const q = quoteIn(sj, a);
+    const kap = kapazitaeten(sj, a).kap[s.nr];
     const berechtigt = anspruch(s, sj);
-    const bedarf = a.quote * berechtigt;
-    const kap = grundKapazitaet(s) + zusatz;
-    return { sj: sj, berechtigt: berechtigt, bedarf: bedarf, kap: kap,
+    const bedarf = q * berechtigt;
+    return { sj: sj, quote: q, berechtigt: berechtigt, bedarf: bedarf, kap: kap,
              luecke: Math.max(0, bedarf - kap), schueler: schueler(s, sj),
-             gesamtbedarf: a.quote * schueler(s, sj) };
+             gesamtbedarf: q * schueler(s, sj) };
   });
   const jetzt = je[SJ.indexOf(state.sj)];
   const deckung = jetzt.bedarf > 0 ? jetzt.kap / jetzt.bedarf : null;
@@ -870,7 +1254,7 @@ function renderStandort() {
   [
     { k: `Anspruchsberechtigt ${sjKurz(state.sj)}`, v: fmtInt(jetzt.berechtigt),
       d: `Klassen 1–${STUFE[state.sj]} von ${fmtInt(jetzt.schueler)} Kindern`, cls: 'ink', info: 'berechtigt' },
-    { k: 'Platzbedarf', v: fmtInt(jetzt.bedarf), d: `Quote ${fmtPct1(a.quote * 100)}`, info: 'bedarf' },
+    { k: 'Platzbedarf', v: fmtInt(jetzt.bedarf), d: `Quote ${fmtPct1(jetzt.quote * 100)}`, info: 'bedarf' },
     { k: 'Plätze (Annahme)', v: fmtInt(jetzt.kap),
       d: jetzt.luecke > 0.5 ? `${fmtInt(jetzt.luecke)} offene Plätze` : 'rechnerisch gedeckt', info: 'kapazitaet' },
     { k: 'Deckungsgrad', v: deckung == null ? '—' : fmtPct0(deckung * 100),
@@ -946,10 +1330,10 @@ function renderSzenarien() {
 
   const karten = $('#szenarien-karten'); karten.innerHTML = '';
   SZENARIEN.forEach(sz => {
-    const b = { quote: sz.quote != null ? sz.quote : DATA.meta.quoteBasis,
-                ausbau: sz.ausbau, szenario: sz };
-    const t = summe(standorte(DATA.meta.sjVoll, b));
-    const offen = standorte(DATA.meta.sjVoll, b).filter(r => r.luecke > 0.5).length;
+    const b = szenarioAnnahmen(sz);
+    const rows = standorte(DATA.meta.sjVoll, b);
+    const t = summe(rows);
+    const offen = rows.filter(r => r.luecke > 0.5).length;
     const c = el('div', 'card' + (sz.id === state.szenario ? '' : ''));
     c.innerHTML = `<div class="card-title">${esc(sz.name)}
         ${sz.id === state.szenario ? '<span class="pill ok">aktiv</span>' : ''}</div>
@@ -965,8 +1349,7 @@ function renderSzenarien() {
   });
 
   const serien = SZENARIEN.map(sz => {
-    const b = { quote: sz.quote != null ? sz.quote : DATA.meta.quoteBasis,
-                ausbau: sz.ausbau, szenario: sz };
+    const b = szenarioAnnahmen(sz);
     return { sz: sz, reihe: ANSPRUCHS_SJ.map(sj => summe(standorte(sj, b))) };
   });
   const farben = ['var(--dv-petrol)', 'var(--ok)', 'var(--error)'];
@@ -981,16 +1364,131 @@ function renderSzenarien() {
         <div class="row"><span>Deckungsgrad</span><span>${fmtPct0(r.deckung * 100)}</span></div>`
     }))), { padL: 200, rowH: 26 });
 
+  renderQuoteTrend(a);
+  renderKosten(a);
+
   const aktuell = summe(standorte(DATA.meta.sjVoll, a));
   const krit = kritischeQuote(DATA.meta.sjVoll);
   $('#szenarien-banner').innerHTML = `<b>Aktuelle Einstellung:</b>
-    ${esc(szenarioById(state.szenario).name)}, Quote ${fmtPct1(a.quote * 100)},
-    ${fmtInt(a.ausbau)} zusätzliche Plätze je Schuljahr. Ergebnis 2029/30:
+    ${esc(szenarioById(state.szenario).name)}, Quote ${fmtPct1(a.quote * 100)} im
+    Ausgangsjahr${a.steigung ? ` und ${fmtPct1(quoteIn(DATA.meta.sjVoll, a) * 100)} in 2029/30
+    (${nf1.format(a.steigung * 100)} Punkte je Jahr)` : ' und unverändert fortgeschrieben'},
+    ${fmtInt(a.ausbau)} zusätzliche Plätze je Schuljahr,
+    ${a.umverteilung ? `Umverteilung über ${a.umverteilung} Nachbarschaftsebene(n)` : 'keine Umverteilung'},
+    ${a.allokation === 'sozial' ? 'sozialindexgewichtete' : 'flache'} Platzverteilung.
+    Ergebnis 2029/30:
     Platzbedarf ${fmtInt(aktuell.bedarf)}, Plätze ${fmtInt(aktuell.kap)},
     ${aktuell.luecke > 0.5 ? `<b>${fmtInt(aktuell.luecke)} offene Plätze</b>` : '<b>rechnerisch gedeckt</b>'}.
     Der Kipppunkt liegt bei einer Inanspruchnahme von ${fmtPct1(krit * 100)} —
     darüber reichen die ${fmtInt(PLAETZE)} belegten Plätze stadtweit nicht mehr,
     unabhängig von jeder Verteilungsannahme.`;
+}
+
+/**
+ * Elternquote als Zeitachse: zwei belegte Stützpunkte, die eingestellte
+ * Fortschreibung und die kritische Quote je Schuljahr. Der Schnittpunkt beider
+ * Linien ist die Antwort auf „wann“, nicht nur auf „ab wieviel“.
+ */
+function renderQuoteTrend(a) {
+  const treffer = kipppunktJahr(a);
+  const cols = ANSPRUCHS_SJ.map(sj => {
+    const q = quoteIn(sj, a) * 100;
+    const krit = kritischeQuote(sj) * 100;
+    const kippt = q > krit;
+    return {
+      id: sj, label: sjKurz(sj), n: q,
+      color: kippt ? 'var(--error)' : 'var(--dv-petrol)',
+      tip: `<b>Schuljahr ${sj}</b>
+        <div class="row"><span>Elternquote (fortgeschrieben)</span><span>${fmtPct1(q)}</span></div>
+        <div class="row"><span>kritische Quote</span><span>${fmtPct1(krit)}</span></div>
+        <div class="row"><span>Stufenplan</span><span>Klassen 1–${STUFE[sj]}</span></div>
+        <div class="def">${kippt ? 'Der Bestand reicht in diesem Jahr nicht mehr.'
+          : 'Der Bestand reicht in diesem Jahr noch.'}</div>`
+    };
+  });
+  columnChart($('#chart-szenarien-quote'), cols, {
+    height: 230, showTotals: false,
+    rule: { value: kritischeQuote(DATA.meta.sjVoll) * 100,
+            label: `kritische Quote 2029/30: ${fmtPct1(kritischeQuote(DATA.meta.sjVoll) * 100)}`,
+            color: 'var(--warn)' },
+    legend: [
+      { label: 'Elternquote reicht', color: 'var(--dv-petrol)' },
+      { label: 'Elternquote über dem Kipppunkt', color: 'var(--error)' },
+      { label: 'kritische Quote 2029/30', color: 'var(--warn)' }
+    ]
+  });
+
+  $('#szenarien-quote-sub').textContent =
+    `Ausgangswert ${fmtPct1(a.quote * 100)} · Steigung ${nf1.format(a.steigung * 100)} Punkte je Jahr · `
+    + (treffer ? `Kipppunkt erreicht im Schuljahr ${treffer.sj}`
+               : 'Kipppunkt im Prognosezeitraum nicht erreicht');
+
+  const p0 = TREND.punkte[0], p1 = TREND.punkte[1];
+  $('#szenarien-nenner').innerHTML = `<b>Nenner, ausdrücklich benannt:</b>
+    ${esc(TREND.nenner)}. Belegte Stützpunkte: ${p0.sj} —
+    ${fmtInt(p0.plaetze)} Plätze + ${fmtInt(p0.ablehnungen)} Ablehnungen =
+    ${fmtInt(p0.nachfrage)} angemeldete Kinder auf ${fmtInt(p0.nenner)} Grundschulkinder
+    (${fmtPct1(p0.quote * 100)}); ${p1.sj} — ${fmtInt(p1.plaetze)} + ${fmtInt(p1.ablehnungen)}
+    = ${fmtInt(p1.nachfrage)} auf ${fmtInt(p1.nenner)} (${fmtPct1(p1.quote * 100)}, Nenner
+    Stand ${p1.nennerJahr}, ein Jahr Versatz). Daraus
+    ${nf1.format(TREND.steigungProJahr * 100)} Punkte je Jahr.
+    Die Modellquote von ${fmtPct1(DATA.meta.quoteBasis * 100)} hat einen anderen Nenner
+    (Kinder in den ${DATA.abgleich.gisBezirke} Grundschulbezirken) — übernommen wird
+    deshalb nur die <i>Steigung</i>, nicht das Niveau. Eine landesweite Ganztagsquote wird
+    bewusst nicht danebengelegt: anderer Nenner, keine belastbare Angleichung.`;
+}
+
+/** Kostenbild je Schuljahr, getrennt nach Land, Kommune und Eltern. */
+function renderKosten(a) {
+  const reihe = stadtReihe(a).filter(r => STUFE[r.sj] > 0);
+  columnChart($('#chart-szenarien-kosten'), reihe.map(r => ({
+    id: r.sj, label: sjKurz(r.sj),
+    land: r.kosten.land / 1e6, kommune: r.kosten.kommune / 1e6,
+    tip: `<b>Schuljahr ${r.sj}</b>
+      <div class="row"><span>versorgte Kinder</span><span>${fmtInt(r.versorgt)}</span></div>
+      <div class="row"><span>Landeszuschuss</span><span>${fmtEuro(r.kosten.land)}</span></div>
+      <div class="row"><span>kommunaler Eigenanteil</span><span>${fmtEuro(r.kosten.kommune)}</span></div>
+      <div class="row"><span>Elternbeiträge, Höchstgrenze</span><span>${fmtEuro(r.kosten.elternMax)}</span></div>
+      <div class="row"><span>Lückenschluss würde kosten</span><span>${fmtEuro(r.kosten.mehrbelastung)}</span></div>`
+  })), {
+    keys: [{ key: 'land', color: 'var(--dv-petrol)' }, { key: 'kommune', color: 'var(--dv-amber)' }],
+    legend: [{ label: 'Landeszuschuss', color: 'var(--dv-petrol)' },
+             { label: 'kommunaler Eigenanteil', color: 'var(--dv-amber)' }],
+    height: 220
+  });
+  $('#szenarien-kosten-sub').textContent =
+    'Mio. € je Schuljahr · Land und Kommune gestapelt · Elternbeiträge in der Tabelle, getrennt und nicht saldiert';
+
+  $('#szenarien-kosten-tab').innerHTML = `<table><thead><tr>
+      <th>Schuljahr</th><th class="num">versorgte Kinder</th><th class="num">Plätze</th>
+      <th class="num">Land</th><th class="num">Kommune</th>
+      <th class="num">Eltern (Höchstgrenze)</th><th class="num">Lückenschluss</th>
+    </tr></thead><tbody>${reihe.map(r => `<tr>
+      <td>${r.sj}</td>
+      <td class="num">${fmtInt(r.versorgt)}</td>
+      <td class="num">${fmtInt(r.kap)}</td>
+      <td class="num">${fmtEuro(r.kosten.land)}</td>
+      <td class="num">${fmtEuro(r.kosten.kommune)}</td>
+      <td class="num">${fmtEuro(r.kosten.elternMax)}</td>
+      <td class="num">${r.kosten.mehrbelastung > 0 ? fmtEuro(r.kosten.mehrbelastung) : '—'}</td>
+    </tr>`).join('')}</tbody></table>`;
+
+  const voll = reihe.find(r => r.sj === DATA.meta.sjVoll);
+  $('#szenarien-saetze').innerHTML = `<b>Sätze:</b>
+    Land ${fmtInt(BASS.land_grundbetrag.betrag)} € je Kind und Schuljahr (${esc(BASS.land_grundbetrag.fundstelle)}),
+    kommunaler Eigenanteil ${fmtInt(BASS.kommunaler_eigenanteil.betrag)} € je Platz und Jahr
+    (${esc(BASS.kommunaler_eigenanteil.fundstelle)}), Elternbeitrag höchstens
+    ${fmtInt(BASS.elternbeitrag_hoechstgrenze.betrag)} € je Kind und Monat
+    (${esc(BASS.elternbeitrag_hoechstgrenze.fundstelle)}) — jeweils ab
+    ${fmtDate(BASS_META.gueltig_ab)}, jährlich +3 % zum 1. August.
+    Quelle: <a href="${BASS_META.quelle_url}" target="_blank" rel="noopener">BASS 11-02 Nr. 19, Fassung ${esc(BASS_META.fassung)}</a>.
+    ${voll && voll.kosten.mehrbelastung > 0
+      ? `<br><b>Für den Haushalt:</b> Die Lücke im Schuljahr ${DATA.meta.sjVoll} zu schließen,
+         kostet die Stadt rechnerisch ${fmtEuro(voll.kosten.mehrbelastung)} im Jahr an
+         zusätzlichem Eigenanteil — ohne Investitions- und Raumkosten, die nicht öffentlich sind.`
+      : ''}
+    <br><span class="assumption wrap">Elternbeiträge = Höchstgrenze der Richtlinie, nicht die
+    sozial gestaffelte Bochumer Satzung</span>`;
 }
 
 /* ---------------------------------------------------- Daten & Methode ---- */

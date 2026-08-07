@@ -45,10 +45,18 @@ the school authority's own cohort arithmetic.
 - At today's observed take-up of **69.8 %** the 8,397 places suffice city-wide. **Above
   71.6 % they do not.** That is 1.7 percentage points of headroom — the phase-in alone
   does not break the stock, the parental take-up rate does.
+- **And take-up is rising.** Between the two documented reference points, 2022/23 and
+  2026/27, registered demand grew by **1.33 points per year**. At that slope the buffer is
+  gone in school year **2029/30** — precisely the year the claim first covers all four year
+  groups. 1.7 points is not a buffer, it is about one year.
 - Even with a sufficient balance, **21 of 47 locations** show a gap: the places sit where
-  the children are becoming fewer.
+  the children are becoming fewer. **Moving places only into adjacent catchments** cuts
+  that to 8 locations and the shortfall from 568 to 130 — without a single new place.
 - Births fell from 3,457 (2018) to 2,759 (2025) — the leading indicator for every intake
   projection through 2031/32.
+- In euros: the municipal own-share runs at about **€5.5 m** a year in 2029/30, the state
+  grant at **€9.5 m**. Closing the gap costs the city a further **€374 k** annually —
+  excluding investment and room costs, which are not public.
 
 ## Views
 
@@ -58,10 +66,10 @@ the school authority's own cohort arithmetic.
 | **Karte** (Map) | 47 catchments shaded by coverage ratio, switchable by school year and scenario | coverage differences come from cohorts, not from location capacities |
 | **Lückenampel** (Gap traffic light) | all locations, sortable, with the year the gap opens; CSV export shaped for a committee paper | the "places" column is the model's single distribution assumption |
 | **Standorte** (Locations) | year-group trajectory, cohort origin by age year, free primary-school capacity per the city | social index only per main school, not per satellite site |
-| **Szenarien** (Scenarios) | "Stufenplan Regelfall", "Ausbaupfad 400", "Elternquote 90", plus free sliders | cost per place, provider and staffing capacity are not public |
+| **Szenarien** (Scenarios) | "Stufenplan Regelfall", "Kipppunkt Elternquote", "Umverteilung statt Ausbau", plus five sliders, take-up as a time axis and the cost picture in euros | provider, staffing and room capacity as well as investment costs are not public |
 | **Daten & Methode** (Data & method) | register reconciliation 49/47/46, source list with status, step-by-step calculation | states explicitly what requires a data delivery from the authority |
 
-## The single assumption — stated openly
+## The single assumption — stated openly, in two versions
 
 **No public dataset lists all-day places per primary school.** Only the city-wide figure
 of 8,397 places for 2026/27 is documented. It is distributed across locations in the base
@@ -69,6 +77,23 @@ year in proportion to pupil numbers and then held fixed. It follows that every d
 in coverage between locations arises from the city's cohorts, not from invented location
 figures. If the authority supplies its numbers, they replace exactly one line in the
 model — the method is unchanged. The column is flagged as an assumption throughout the UI.
+
+Rather than hiding the gap, the monitor makes it measurable: it offers **two defensible
+distributions of the same documented total**, switchable in every view. Alongside the flat
+per-pupil distribution there is a **social-index-weighted** one, using the state's
+school-level social index as a take-up factor — exactly one free parameter, the total stays
+at 8,397. A dedicated view shows the difference between the two per catchment. That is the
+line for the meeting: *"here are two defensible distribution assumptions; the distance
+between them is exactly what your own place list would resolve."* The flat distribution
+remains the default.
+
+**What was deliberately not built:** a capacity prediction model trained on other NRW
+cities. The training data does not exist (no state dataset lists all-day places per
+school), the target is path-dependent administrative history rather than a natural
+phenomenon, and such a model would devalue the 329 reproduced values. Every number in the
+monitor falls into exactly one of three classes — **measured**, **reconstructed** or
+**assumed** — and the class is visible in the UI. There is no fourth class of estimated
+figures presented as measured.
 
 **Reading the phase-in years:** from 2026/27 to 2028/29 only one to three year groups hold
 a claim, yet all four occupy the same places. There the traffic light measures how much of
@@ -100,7 +125,9 @@ smoothing it over.
 | [Stadt Bochum, BOStatIS](https://bostatis.bochum.de/) | births and deaths per statistical district 2017–2025 | catalogue endpoint `POST /service/app/search/all` → CSV |
 | [Stadt Bochum, BOStatIS (open data)](https://bostatis.bochum.de/) | residents by single age year per statistical district, 31 Dec 2022, rounded to 5 | same endpoint → CSV |
 | [NRW Ministry of Education, open data](https://www.schulministerium.nrw/open-data) | school register, pupil numbers, social index levels, time series from 2012 | CSV |
-| [Press report of city figures, 18 May 2026](https://www.radiobochum.de/artikel/mehr-ogs-plaetze-an-grundschulen-in-bochum-2651761) | city-wide all-day figures 2026/27: 8,397 places, 292 rejections, 27 of 49 schools fully served | HTML; every value is verified in the source text at fetch time |
+| [Press report of city figures, 18 May 2026](https://www.radiobochum.de/artikel/mehr-ogs-plaetze-an-grundschulen-in-bochum-2651761) | city-wide all-day figures for 2022/23 and 2026/27: places and rejections | HTML; every value is verified in the source text at fetch time |
+| [BASS 11-02 no. 19, edition BASS 2026/2027](https://bass.schule.nrw/4938.htm) | all-day funding rates from 1 Aug 2026: state grant, municipal own-share, parental fee ceiling, annual uplift | HTML; every amount is verified in the directive at fetch time |
+| derived from the catchment boundaries | adjacency graph of the 47 catchments, 115 edges | own file `data/sources/bo_nachbarschaft.json`, checkable by hand |
 
 Two caveats on robustness: the map service is publicly reachable and embedded in the
 city's geoportal, but it is **not listed as a licensed open-data dataset in the portal** —
@@ -111,10 +138,11 @@ against the youth welfare committee paper.
 ## Pipeline
 
 ```bash
-python3 scripts/fetch_grundschulbezirke.py  # map service → bo_grundschulbezirke.json
+python3 scripts/fetch_grundschulbezirke.py  # map service → bo_grundschulbezirke.json + bo_nachbarschaft.json
 python3 scripts/fetch_bostatis.py           # BOStatIS → bo_geburten.json, bo_altersjahrgaenge.json
 python3 scripts/fetch_msb.py                # ministry → msb_*.json
 python3 scripts/fetch_ogs_eckwerte.py       # city-wide figures → bo_ogs_eckwerte.json
+python3 scripts/fetch_bass.py               # funding directive → bass_ogs_foerderung.json
 python3 scripts/generate.py                 # snapshots → data.js (aggregated, deterministic)
 python3 serve.py                            # local preview → http://localhost:8126
 ```
@@ -132,6 +160,25 @@ notes:
   school year 2029/2030 and the correction is documented in `data.js` and in the UI.
 - Age cohorts are rounded to 5 for data-protection reasons (the city's "D5" method) —
   good for orders of magnitude, not for individual place decisions.
+- The **adjacency graph** is computed on the *unsimplified* geometry: two catchments count
+  as adjacent when their rings share at least two vertices. After simplification that would
+  no longer be reliable. Result: 115 edges, no catchment without neighbours — otherwise the
+  fetch aborts.
+- The **take-up slope** comes from two documented reference points on the same denominator;
+  the official pupil series does not yet reach 2026/27, so the latest value (2025/26) stands
+  there. That one-year offset is named in the UI rather than calculated away.
+
+## What was not built — and why
+
+**No peer-city benchmark.** Municipal-level all-day rates sit in the NRW state database
+(GENESIS-Online), whose table retrieval requires a login; there is no anonymous,
+reproducible fetch. No reproducible source, no metric — typing the numbers in by hand would
+break a pipeline that otherwise runs offline and traceably throughout.
+
+**No state-wide all-day rate beside the Bochum curve.** It uses a different denominator
+(all primary pupils versus an all-day take-up) and could not be sourced reliably for the
+same reason. Two quantities with different denominators do not belong in one chart, so the
+monitor shows the Bochum series alone and names its denominator at the chart.
 
 ## Deployment (GitHub Pages)
 
