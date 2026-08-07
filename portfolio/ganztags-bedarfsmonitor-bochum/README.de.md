@@ -47,11 +47,18 @@ die Kohortenrechnung des Schulträgers.
 - Bei der heute beobachteten Inanspruchnahme von **69,8 %** reichen die 8.397 Plätze
   stadtweit rechnerisch aus. **Ab 71,6 % nicht mehr.** Das sind 1,7 Prozentpunkte
   Abstand — der Stufenplan allein sprengt den Bestand nicht, die Elternquote tut es.
-- **Und die Elternquote steigt.** Zwischen den beiden belegten Stützpunkten 2022/23 und
-  2026/27 hat die angemeldete Nachfrage um **1,33 Punkte je Jahr** zugelegt. Bei dieser
-  Steigung ist der Puffer im Schuljahr **2029/30** aufgebraucht — genau in dem Jahr, in
-  dem der Rechtsanspruch erstmals alle vier Jahrgangsstufen erfasst. 1,7 Punkte sind
-  kein Puffer, sondern gut ein Jahr.
+- **Zwei Effekte treffen 2029/30 zusammen, und sie tun Verschiedenes.** Das *Jahr*
+  bestimmt der Stufenplan: Vorher kann der Bestand rechnerisch gar nicht reißen — 2027/28
+  wären dafür 137 % Inanspruchnahme nötig, 2028/29 noch 94 %. Erst ab 2028/29 liegt die
+  Schwelle unter 100 %, und sie erreicht ihren Tiefstwert von 71,6 % in 2029/30: voller
+  Anspruch bei noch fast maximalem Jahrgang. Danach steigt sie wieder auf 78 %, weil die
+  Jahrgänge schrumpfen — **das Problem ist ein Buckel, keine Rampe.**
+  *Ob* es reißt, bestimmt die Elternquote: Bei unveränderten 69,8 % reicht der Bestand im
+  gesamten Zeitraum. Zwischen den beiden belegten Stützpunkten 2022/23 und 2026/27 hat die
+  angemeldete Nachfrage aber um **1,33 Punkte je Jahr** zugelegt — und für ein Kippen in
+  2029/30 **genügen 0,58 Punkte je Jahr.** Der Abstand zwischen beiden ist die eigentliche
+  Aussage: Selbst wenn 56 % des beobachteten Anstiegs ein einmaliger Anmeldeeffekt des
+  neuen Rechtsanspruchs wären und gar kein Trend, bliebe es beim Kippen in 2029/30.
 - Trotz auskömmlicher Bilanz haben **21 der 47 Standorte** eine Lücke: Die Plätze liegen
   dort, wo die Kinder weniger werden. **Verlagerung allein in angrenzende Bezirke** senkt
   die Zahl auf 8 Standorte und die offenen Plätze von 568 auf 130 — ohne einen einzigen
@@ -112,6 +119,21 @@ Jahrgangsstufen einen Anspruch, die Plätze belegen aber weiterhin alle vier. Di
 misst dort, wie viel des Bestandes rechtlich gebunden ist — nicht die tatsächliche
 Nachfrage. Dass es real schon eng ist, zeigt die Stadt selbst: 292 Ablehnungen zum
 Schuljahr 2026/27. Die Standortansicht führt beide Größen nebeneinander.
+
+## Wie die Trendaussage zu lesen ist
+
+Die **1,33 Punkte je Jahr sind keine Trendgerade, sondern eine Verbindungslinie zwischen
+zwei belegten Jahren** — im UI deshalb durchgehend „durchschnittliche Veränderung zwischen
+zwei belegten Jahren“ und nie „Trend“. Der Vorbehalt, der im Termin kommen wird, steht im
+Monitor selbst: Der Endpunkt 2026/27 ist ausgerechnet das Jahr, in dem der Rechtsanspruch
+in Kraft trat; dass allein die neue Rechtslage Anmeldungen ausgelöst hat, die vorher
+unterblieben, erklärt plausibel einen Teil des Anstiegs. Ein Niveausprung, vier Jahre
+linear fortgeschrieben, wäre genau die Art Zahl, die ein Fachplaner auseinandernimmt.
+
+Deshalb ruht die Aussage nicht auf der **Höhe** der Veränderung, sondern auf ihrem
+**Abstand zur nötigen**: 0,58 gegenüber 1,33 Punkten je Jahr. Und der Abstand von
+1,7 Punkten lässt sich ausdrücklich **nicht** in eine Restlaufzeit umrechnen — diese
+Division unterstellt, die Schwelle von 2029/30 gälte schon heute. Sie gilt nicht.
 
 ## Was nicht gebaut wurde — und warum
 

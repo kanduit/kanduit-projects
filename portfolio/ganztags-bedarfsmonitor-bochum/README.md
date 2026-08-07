@@ -45,10 +45,17 @@ the school authority's own cohort arithmetic.
 - At today's observed take-up of **69.8 %** the 8,397 places suffice city-wide. **Above
   71.6 % they do not.** That is 1.7 percentage points of headroom — the phase-in alone
   does not break the stock, the parental take-up rate does.
-- **And take-up is rising.** Between the two documented reference points, 2022/23 and
-  2026/27, registered demand grew by **1.33 points per year**. At that slope the buffer is
-  gone in school year **2029/30** — precisely the year the claim first covers all four year
-  groups. 1.7 points is not a buffer, it is about one year.
+- **Two effects meet in 2029/30, and they do different jobs.** The *year* is set by the
+  statutory phase-in: before it, the stock cannot break arithmetically — 2027/28 would
+  require 137 % take-up, 2028/29 still 94 %. Only from 2028/29 does the threshold fall
+  below 100 %, reaching its minimum of 71.6 % in 2029/30: full entitlement while the cohort
+  is still near peak. It then rises again to 78 % as cohorts shrink — **the problem is a
+  hump, not a ramp.** *Whether* it breaks is set by take-up: at an unchanged 69.8 % the
+  stock suffices throughout. Between the two documented reference points registered demand
+  grew by **1.33 points per year** — and a crossing in 2029/30 needs only **0.58 points per
+  year.** That margin is the actual finding: even if 56 % of the observed rise were a
+  one-off registration effect of the new entitlement rather than a trend, the crossing in
+  2029/30 would still hold.
 - Even with a sufficient balance, **21 of 47 locations** show a gap: the places sit where
   the children are becoming fewer. **Moving places only into adjacent catchments** cuts
   that to 8 locations and the shortfall from 568 to 130 — without a single new place.
@@ -167,6 +174,21 @@ notes:
 - The **take-up slope** comes from two documented reference points on the same denominator;
   the official pupil series does not yet reach 2026/27, so the latest value (2025/26) stands
   there. That one-year offset is named in the UI rather than calculated away.
+
+## How to read the trend figure
+
+The **1.33 points per year is not a regression line but a line connecting two documented
+years** — the UI therefore calls it "average change between two documented years"
+throughout, never "trend". The objection that will come up in the meeting is stated in the
+monitor itself: the endpoint 2026/27 is precisely the year the entitlement took effect, so
+the new legal situation plausibly triggered registrations that previously did not happen.
+A level shift extrapolated linearly over four years is exactly the kind of number a
+planning officer takes apart.
+
+The claim therefore does not rest on the **size** of the change but on its **margin over
+what is required**: 0.58 versus 1.33 points per year. And the 1.7-point gap explicitly
+**cannot** be converted into a remaining runtime — that division assumes the 2029/30
+threshold already applies today. It does not.
 
 ## What was not built — and why
 

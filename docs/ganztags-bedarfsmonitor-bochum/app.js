@@ -18,6 +18,7 @@ const fmtPct0 = v => v == null ? '—' : nf.format(Math.round(v)) + ' %';
 const fmtPct1 = v => v == null ? '—' : nf1.format(v) + ' %';
 const fmtSigned = v => (v > 0 ? '+' : '') + fmtInt(v);
 const sjKurz = sj => sj.slice(2, 4) + '/' + sj.slice(-2);
+const sjLang = sj => sj.slice(0, 4) + '/' + sj.slice(-2);
 const fmtDate = iso => iso ? iso.slice(8, 10) + '.' + iso.slice(5, 7) + '.' + iso.slice(0, 4) : '—';
 const fmtEuro = v => v == null ? '—'
   : v >= 1e6 ? nf1.format(v / 1e6) + ' Mio. €'
@@ -63,7 +64,7 @@ const SZENARIEN = [
     kurz: 'Anspruch nach Gesetz, Platzangebot und Elternquote bleiben auf dem Stand 2026/27',
     quote: null, steigung: 0, ausbau: 0, umverteilung: 0 },
   { id: 'kipppunkt', name: 'Kipppunkt Elternquote',
-    kurz: 'Die Inanspruchnahme steigt mit der belegten Steigung weiter — wann reißt der Bestand?',
+    kurz: 'Die Inanspruchnahme verändert sich weiter wie zwischen 2022/23 und 2026/27 — wann reißt der Bestand?',
     quote: null, steigung: TREND.steigungProJahr, ausbau: 0, umverteilung: 0 },
   { id: 'umverteilung', name: 'Umverteilung statt Ausbau',
     kurz: 'Keine neuen Plätze; Überhänge wandern in angrenzende Bezirke mit Lücke',
@@ -373,6 +374,35 @@ function kipppunktJahr(a) {
   return null;
 }
 
+/**
+ * Jährliche Veränderung der Elternquote, die ein Kippen im Schuljahr sj gerade
+ * auslösen würde. Sie trennt die beiden Treiber: Ein Wert über 100 Prozentpunkten
+ * heißt, dass in diesem Jahr gar nicht gekippt werden KANN — dann bestimmt der
+ * Stufenplan das Jahr, nicht die Elternquote.
+ */
+function noetigeVeraenderung(sj, basisQuote) {
+  const jahre = sjJahr(sj) - JAHR_START;
+  const krit = kritischeQuote(sj);
+  if (krit == null || jahre <= 0) return null;
+  return (krit - basisQuote) / jahre;
+}
+
+/** Engster Punkt der Projektion: das Schuljahr mit der niedrigsten Schwelle. */
+function engstesJahr() {
+  let best = null;
+  SJ.forEach(sj => {
+    if (!STUFE[sj]) return;
+    const k = kritischeQuote(sj);
+    if (k != null && (best == null || k < best.krit)) best = { sj: sj, krit: k };
+  });
+  return best;
+}
+
+/** Erstes Schuljahr, in dem ein Kippen arithmetisch überhaupt möglich ist. */
+function erstesMoeglichesJahr() {
+  return SJ.find(sj => STUFE[sj] && kritischeQuote(sj) <= 1) || null;
+}
+
 const schuleByNr = nr => DATA.schulen.find(s => s.nr === nr);
 
 /* ====================================================================
@@ -505,20 +535,40 @@ const METRIC_INFO = {
     sie fehlen. Das ist eine Rechenannahme, keine Aussage über tatsächliche
     Bau-, Personal- oder Trägerkapazitäten. Was ein Platz kostet, ist in Bochum
     nicht öffentlich; Kostenfolgen gehören in die Fachabstimmung mit dem Amt.` },
-  steigung: { t: 'Steigung der Elternquote', d: `Öffentlich belegt sind für Bochum
-    genau zwei Schuljahre mit Plätzen <i>und</i> Ablehnungen: 2022/23 und 2026/27. Die
-    angemeldete Nachfrage ist ihre Summe. Damit die Steigung nicht aus zwei
+  steigung: { t: 'Durchschnittliche Veränderung der Elternquote', d: `Öffentlich belegt
+    sind für Bochum genau zwei Schuljahre mit Plätzen <i>und</i> Ablehnungen: 2022/23 und
+    2026/27. Die angemeldete Nachfrage ist ihre Summe. Damit die Größe nicht aus zwei
     Grundgesamtheiten entsteht, steht in beiden Fällen derselbe Nenner: die
     Grundschülerzahl Bochums aus dem amtlichen Landesverzeichnis. Ergebnis:
     ${fmtPct1(TREND.punkte[0].quote * 100)} → ${fmtPct1(TREND.punkte[1].quote * 100)},
     also ${nf1.format(TREND.steigungProJahr * 100)} Punkte je Jahr.
-    <b>Zwei Punkte sind kein Trend im statistischen Sinn</b> — die Steigung ist ein
-    Differenzenquotient und deshalb als Regler ausgelegt, nicht als Prognose.
-    Datenlücke: Für 2026/27 reicht die amtliche Reihe noch nicht; dort steht der
+    <b>Das ist keine Trendgerade, sondern eine Verbindungslinie zwischen zwei Punkten</b> —
+    im Monitor deshalb durchgehend „durchschnittliche Veränderung zwischen zwei belegten
+    Jahren“ und nicht „Trend“, und als Regler ausgelegt statt als Prognose.
+    <b>Der wichtigste Vorbehalt:</b> Der Endpunkt 2026/27 ist ausgerechnet das Jahr, in dem
+    der Rechtsanspruch in Kraft trat. Dass die neue Rechtslage Anmeldungen ausgelöst hat,
+    die vorher unterblieben, ist die naheliegendste Erklärung für einen Teil des Anstiegs —
+    ein Niveausprung also, kein fortschreibbarer Trend. Deshalb steht die Aussage nicht auf
+    der Höhe der Veränderung, sondern auf ihrem Abstand zur nötigen: Für ein Kippen in
+    2029/30 genügen ${nf1.format(noetigeVeraenderung('2029/2030', DATA.meta.quoteBasis) * 100)}
+    Punkte je Jahr. Selbst wenn der größere Teil des beobachteten Anstiegs ein einmaliger
+    Anmeldeeffekt wäre, bliebe der Befund bestehen.
+    Datenlücke: Für 2026/27 reicht die amtliche Schülerreihe noch nicht; dort steht der
     jüngste Wert (${TREND.punkte[1].nennerJahr}). Der Versatz von einem Jahr ist
     benannt statt weggerechnet. Eine landesweite Ganztagsquote wird bewusst nicht
     danebengelegt: Sie hat einen anderen Nenner, und ohne belastbare Angleichung
     gehören beide Größen nicht in dieselbe Kurve.` },
+  abstand: { t: 'Abstand zum Kipppunkt', d: `Differenz zwischen der heute beobachteten
+    Elternquote und der kritischen Quote des engsten Prognosejahres.
+    <b>Der Abstand lässt sich nicht in Jahre umrechnen</b>, indem man ihn durch die
+    jährliche Veränderung teilt — diese Rechnung unterstellt, die Schwelle von 2029/30
+    gälte bereits heute. Sie gilt nicht: In den Aufwachsjahren liegt sie bei
+    ${fmtPct0(kritischeQuote('2026/2027') * 100)} (2026/27),
+    ${fmtPct0(kritischeQuote('2027/2028') * 100)} (2027/28) und
+    ${fmtPct0(kritischeQuote('2028/2029') * 100)} (2028/29), weil erst ein bis drei
+    Jahrgangsstufen einen Anspruch halten. Vor ${sjLang(erstesMoeglichesJahr())} kann der
+    Bestand rechnerisch gar nicht reißen. Aussagekräftig ist deshalb die <i>nötige
+    jährliche Veränderung</i> im engsten Jahr, nicht eine Restlaufzeit in Jahren.` },
   allokation: { t: 'Platzverteilung — zwei Annahmen', d: `Die stadtweite Platzzahl ist
     belegt, ihre Verteilung auf die Standorte nicht. Der Monitor bietet deshalb zwei
     begründbare Verteilungen derselben Gesamtzahl an. <b>Flach:</b> proportional zur
@@ -776,11 +826,11 @@ function mountSliders(host) {
       val: Math.round(a.quote * 1000) / 10, einheit: ' %',
       hint: `Ausgangswert ${fmtPct1(DATA.meta.quoteBasis * 100)} — beobachtet 2026/27 aus vergebenen und abgelehnten Plätzen.`,
       set: v => { state.quote = v / 100; } },
-    { k: 'steigung', nm: 'Steigung der Elternquote', min: 0, max: 4, step: 0.1,
+    { k: 'steigung', nm: 'Veränderung der Elternquote je Jahr', min: 0, max: 4, step: 0.1,
       val: Math.round(a.steigung * 1000) / 10, einheit: ' Punkte/Jahr',
       hint: `Belegt sind zwei Stützpunkte: ${fmtPct1(TREND.punkte[0].quote * 100)} (2022/23) und `
         + `${fmtPct1(TREND.punkte[1].quote * 100)} (2026/27) auf gleichem Nenner — `
-        + `${nf1.format(TREND.steigungProJahr * 100)} Punkte je Jahr. Zwei Punkte sind kein Trend; deshalb ein Regler.`,
+        + `durchschnittlich ${nf1.format(TREND.steigungProJahr * 100)} Punkte je Jahr. Eine Verbindungslinie zwischen zwei Jahren, keine Trendgerade — und der Endpunkt ist das Jahr des Inkrafttretens. Deshalb ein Regler.`,
       set: v => { state.steigung = v / 100; } },
     { k: 'ausbau', nm: 'Zusätzliche Plätze je Schuljahr', min: 0, max: 1200, step: 50,
       val: Math.round(a.ausbau), einheit: '',
@@ -819,11 +869,22 @@ function renderOverview() {
   const voll = reihe.find(r => r.sj === DATA.meta.sjVoll);
   const krit = kritischeQuote(DATA.meta.sjVoll);
 
-  /* ---- Leitzahl: Kipppunkt. Heute, Schwelle und Abstand gleichzeitig ---- */
+  /* ---- Leitzahl: Kipppunkt. Heute, Schwelle und Abstand gleichzeitig ----
+     Bewusst NICHT „Abstand geteilt durch Veränderung = X Jahre“: Diese Rechnung
+     unterstellt, die Schwelle von 2029/30 gälte schon heute. Sie gilt nicht —
+     in den Aufwachsjahren liegt sie bei 278 %, 137 % und 94 %. Statt einer
+     erfundenen Jahreszahl steht hier, welche jährliche Veränderung ein Kippen
+     im engsten Jahr überhaupt auslösen würde. */
   const heute = DATA.meta.quoteBasis;
   const abstand = (krit - heute) * 100;
-  const trendJahre = TREND.steigungProJahr > 0 ? abstand / (TREND.steigungProJahr * 100) : null;
-  const trefferMitTrend = kipppunktJahr({ quote: heute, steigung: TREND.steigungProJahr,
+  const eng = engstesJahr();
+  const moeglichAb = erstesMoeglichesJahr();
+  const noetig = noetigeVeraenderung(eng.sj, heute);
+  const belegt = TREND.steigungProJahr;
+  const puffer = noetig > 0 ? belegt / noetig : null;
+  const trefferMitTrend = kipppunktJahr({ quote: heute, steigung: belegt,
+    ausbau: 0, umverteilung: 0, allokation: 'flach', sozialGewicht: 0 });
+  const trefferOhne = kipppunktJahr({ quote: heute, steigung: 0,
     ausbau: 0, umverteilung: 0, allokation: 'flach', sozialGewicht: 0 });
   $('#kipppunkt-hero').innerHTML = `
     <div class="hero-zahl">
@@ -833,25 +894,36 @@ function renderOverview() {
     </div>
     <div class="hero-pfeil" aria-hidden="true">→</div>
     <div class="hero-zahl kipp">
-      <div class="hero-lbl">Kipppunkt 2029/30${infoIcon('kritQuote')}</div>
+      <div class="hero-lbl">Kipppunkt ${sjLang(eng.sj)}${infoIcon('kritQuote')}</div>
       <div class="hero-v">${fmtPct1(krit * 100)}</div>
-      <div class="hero-d">ab hier reichen die ${fmtInt(PLAETZE)} Plätze nicht mehr</div>
+      <div class="hero-d">engstes Jahr der Projektion — ab hier reichen die
+        ${fmtInt(PLAETZE)} Plätze nicht mehr</div>
     </div>
     <div class="hero-zahl abstand">
-      <div class="hero-lbl">Abstand</div>
+      <div class="hero-lbl">Abstand${infoIcon('abstand')}</div>
       <div class="hero-v">${nf1.format(abstand)}<span class="ein"> Punkte</span></div>
-      <div class="hero-d">${trendJahre != null
-        ? `bei belegter Steigung von ${nf1.format(TREND.steigungProJahr * 100)} Punkten je Jahr: rund ${nf1.format(trendJahre)} Jahre`
-        : 'ohne Trendannahme'}</div>
+      <div class="hero-d">dafür genügen
+        <b>${nf1.format(noetig * 100)} Punkte je Jahr</b> — belegt sind
+        ${nf1.format(belegt * 100)}</div>
     </div>
     <div class="hero-fazit">
       ${trefferMitTrend
-        ? `<b>Mit der belegten Steigung ist der Puffer im Schuljahr ${trefferMitTrend.sj} aufgebraucht</b>
-           — genau in dem Jahr, in dem der Rechtsanspruch erstmals alle vier Jahrgangsstufen erfasst.`
-        : `<b>Mit der belegten Steigung bleibt der Bestand im gesamten Prognosezeitraum ausreichend.</b>`}
-      <span class="note" style="display:block; margin-top:4px">Die Steigung stammt aus zwei
-      belegten Stützpunkten auf gleichem Nenner und ist im Reiter „Szenarien“ frei
-      einstellbar.${infoIcon('steigung')}</span>
+        ? `<b>Zwei Effekte treffen im Schuljahr ${sjLang(trefferMitTrend.sj)} zusammen.</b>
+           Das <i>Jahr</i> bestimmt der Stufenplan: Vorher kann der Bestand rechnerisch gar
+           nicht reißen — 2027/28 wäre dafür eine Inanspruchnahme von
+           ${fmtPct0(kritischeQuote('2027/2028') * 100)} nötig, 2028/29 noch
+           ${fmtPct0(kritischeQuote('2028/2029') * 100)}. Erst ab ${sjLang(moeglichAb)} liegt
+           die Schwelle unter 100 %. <i>Ob</i> es reißt, entscheidet die Elternquote:
+           ${trefferOhne ? '' : `bei unveränderten ${fmtPct1(heute * 100)} bleibt der Bestand
+           im gesamten Zeitraum ausreichend`}.`
+        : `<b>Bei den aktuellen Annahmen bleibt der Bestand im gesamten Prognosezeitraum
+           ausreichend.</b>`}
+      <span class="note" style="display:block; margin-top:6px">Belastbar ist der Befund,
+      weil die nötige Veränderung mit ${nf1.format(noetig * 100)} Punkten je Jahr weit unter
+      der belegten von ${nf1.format(belegt * 100)} liegt: Selbst wenn
+      ${puffer ? fmtPct0((1 - noetig / belegt) * 100) : '—'} des Anstiegs zwischen 2022/23 und
+      2026/27 ein einmaliger Anmeldeeffekt des neuen Rechtsanspruchs wären und gar kein
+      Trend, bliebe es beim Kippen in ${sjLang(eng.sj)}.${infoIcon('steigung')}</span>
     </div>`;
 
   /* ---- Datenstand-Badge ---- */
@@ -1199,7 +1271,7 @@ function csvExport() {
     ['Kanduit Ganztags-Bedarfsmonitor Bochum — Demonstrator, kein Produkt der Stadt Bochum'],
     ['Schuljahr', state.sj], ['Szenario', szenarioById(state.szenario).name],
     ['Inanspruchnahmequote Prozent', nf1.format(quoteIn(state.sj, a) * 100)],
-    ['Steigung Punkte je Jahr', nf1.format(a.steigung * 100)],
+    ['Veraenderung der Elternquote Punkte je Jahr', nf1.format(a.steigung * 100)],
     ['Allokation', a.allokation === 'sozial' ? 'sozialindexgewichtet' : 'flach'],
     ['Umverteilungstiefe', a.umverteilung ? a.umverteilung + ' Nachbarschaftsebene(n)' : 'keine'],
     ['Zusaetzliche Plaetze je Schuljahr', Math.round(a.ausbau)],
@@ -1372,7 +1444,7 @@ function renderSzenarien() {
   $('#szenarien-banner').innerHTML = `<b>Aktuelle Einstellung:</b>
     ${esc(szenarioById(state.szenario).name)}, Quote ${fmtPct1(a.quote * 100)} im
     Ausgangsjahr${a.steigung ? ` und ${fmtPct1(quoteIn(DATA.meta.sjVoll, a) * 100)} in 2029/30
-    (${nf1.format(a.steigung * 100)} Punkte je Jahr)` : ' und unverändert fortgeschrieben'},
+    (${nf1.format(a.steigung * 100)} Punkte je Jahr Veränderung)` : ' und unverändert fortgeschrieben'},
     ${fmtInt(a.ausbau)} zusätzliche Plätze je Schuljahr,
     ${a.umverteilung ? `Umverteilung über ${a.umverteilung} Nachbarschaftsebene(n)` : 'keine Umverteilung'},
     ${a.allokation === 'sozial' ? 'sozialindexgewichtete' : 'flache'} Platzverteilung.
@@ -1419,12 +1491,28 @@ function renderQuoteTrend(a) {
   });
 
   $('#szenarien-quote-sub').textContent =
-    `Ausgangswert ${fmtPct1(a.quote * 100)} · Steigung ${nf1.format(a.steigung * 100)} Punkte je Jahr · `
+    `Ausgangswert ${fmtPct1(a.quote * 100)} · Veränderung ${nf1.format(a.steigung * 100)} Punkte je Jahr · `
     + (treffer ? `Kipppunkt erreicht im Schuljahr ${treffer.sj}`
                : 'Kipppunkt im Prognosezeitraum nicht erreicht');
 
   const p0 = TREND.punkte[0], p1 = TREND.punkte[1];
-  $('#szenarien-nenner').innerHTML = `<b>Nenner, ausdrücklich benannt:</b>
+  const eng = engstesJahr();
+  const noetig = noetigeVeraenderung(eng.sj, DATA.meta.quoteBasis);
+  $('#szenarien-nenner').innerHTML = `<b>Warum das Jahr nicht an der Veränderung der Elternquote hängt:</b>
+    Die kritische Quote ist keine Konstante — sie fällt mit dem Stufenplan von
+    ${fmtPct0(kritischeQuote('2026/2027') * 100)} (2026/27, nur Klasse 1 hat Anspruch) über
+    ${fmtPct0(kritischeQuote('2027/2028') * 100)} und
+    ${fmtPct0(kritischeQuote('2028/2029') * 100)} auf ihren Tiefstwert
+    ${fmtPct1(eng.krit * 100)} in ${sjLang(eng.sj)} und steigt danach wieder auf
+    ${fmtPct0(kritischeQuote('2031/2032') * 100)}, weil die Jahrgänge schrumpfen. Vor
+    ${sjLang(erstesMoeglichesJahr())} liegt sie über 100 % — dort <i>kann</i> der Bestand
+    rechnerisch nicht reißen, unabhängig von jeder Elternquote.
+    <b>Das Jahr bestimmt also der Stufenplan — ob es reißt, die Elternquote.</b>
+    ${sjLang(eng.sj)} ist das Nadelöhr der gesamten Projektion: voller Anspruch bei noch
+    fast maximalem Jahrgang. Nötig für ein Kippen dort sind
+    ${nf1.format(noetig * 100)} Punkte je Jahr — belegt sind
+    ${nf1.format(TREND.steigungProJahr * 100)}.
+    <br><br><b>Nenner, ausdrücklich benannt:</b>
     ${esc(TREND.nenner)}. Belegte Stützpunkte: ${p0.sj} —
     ${fmtInt(p0.plaetze)} Plätze + ${fmtInt(p0.ablehnungen)} Ablehnungen =
     ${fmtInt(p0.nachfrage)} angemeldete Kinder auf ${fmtInt(p0.nenner)} Grundschulkinder
@@ -1585,16 +1673,34 @@ function renderDaten() {
     selbst: ${fmtInt(DATA.eckwerte.ablehnungen_2026_27)} Ablehnungen zum Schuljahr
     2026/27. Die Standortansicht führt beide Größen nebeneinander. Ab 2029/30 fallen
     Anspruch und Nachfrage zusammen.</p>
-    <p><b>5 · Die eine Annahme.</b> Ganztagsplätze je Standort sind nicht öffentlich. Belegt
+    <p><b>5 · Kipppunkt — zwei Treiber, sauber getrennt.</b> Die kritische Quote
+    (Plätze geteilt durch Anspruchsberechtigte) ist keine Konstante. Sie fällt mit dem
+    Stufenplan von ${fmtPct0(kritischeQuote('2026/2027') * 100)} über
+    ${fmtPct0(kritischeQuote('2027/2028') * 100)} und
+    ${fmtPct0(kritischeQuote('2028/2029') * 100)} auf
+    ${fmtPct1(kritischeQuote(DATA.meta.sjVoll) * 100)} in ${DATA.meta.sjVoll} und steigt
+    danach wieder auf ${fmtPct0(kritischeQuote('2031/2032') * 100)}, weil die Jahrgänge
+    schrumpfen. Daraus folgt eine Trennung, die im Gespräch trägt: <b>Das Jahr bestimmt
+    der Stufenplan</b> — vor ${sjLang(erstesMoeglichesJahr())} liegt die Schwelle über
+    100 %, dort kann rechnerisch nichts reißen. <b>Ob es reißt, bestimmt die
+    Elternquote</b> — bei unveränderten ${fmtPct1(DATA.meta.quoteBasis * 100)} bleibt der
+    Bestand im gesamten Zeitraum ausreichend. Der Abstand von
+    ${nf1.format((kritischeQuote(DATA.meta.sjVoll) - DATA.meta.quoteBasis) * 100)} Punkten
+    lässt sich deshalb <i>nicht</i> in eine Restlaufzeit umrechnen; die belastbare Größe
+    ist die nötige jährliche Veränderung von
+    ${nf1.format(noetigeVeraenderung(DATA.meta.sjVoll, DATA.meta.quoteBasis) * 100)}
+    Punkten gegenüber den belegten
+    ${nf1.format(TREND.steigungProJahr * 100)}.</p>
+    <p><b>6 · Die eine Annahme.</b> Ganztagsplätze je Standort sind nicht öffentlich. Belegt
     ist allein die stadtweite Zahl. Sie wird im Ausgangsjahr 2026/27 proportional zur
     Schülerzahl verteilt und danach festgehalten. Alle Unterschiede im Deckungsgrad
     entstehen deshalb aus den Kohorten der Stadt, nicht aus erfundenen Standortwerten.
     Liefert das Amt seine Standortzahlen, ersetzen sie genau eine Zeile im Modell.</p>
-    <p><b>6 · Was der Monitor nicht kann.</b> Er kennt keine Trägerverträge, keine
+    <p><b>7 · Was der Monitor nicht kann.</b> Er kennt keine Trägerverträge, keine
     Personalschlüssel, keine Raumgrößen und keine Kosten je Platz — nichts davon ist
     öffentlich. Er ersetzt kein Fachverfahren, sondern legt eine Auswertungsschicht über
     Daten, die die Stadt bereits selbst veröffentlicht.</p>
-    <p><b>7 · Datenschutz.</b> Verarbeitet werden ausschließlich Jahrgangs- und
+    <p><b>8 · Datenschutz.</b> Verarbeitet werden ausschließlich Jahrgangs- und
     Bezirkssummen. Keine Einzelfalldaten, keine Sozialdaten nach §§ 61 ff. SGB VIII in
     Verbindung mit SGB X, kein Zugriff auf ein Fachverfahren. Die Seite lädt Daten nur aus
     der mitgelieferten Datei; die gesamte Rechnung läuft im Browser.</p>

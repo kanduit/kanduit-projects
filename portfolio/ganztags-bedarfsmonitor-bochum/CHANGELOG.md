@@ -19,14 +19,28 @@ beschränkt (Tiefe 1, per Regler 2) und werden in der Karte als Pfeile gezeichne
 Verifiziert: 86 gezeichnete Pfade bei Tiefe 1 und 2, **null** Verstöße gegen die
 Nachbarschaftsbedingung.
 
-**Elternquote als Zeitachse.** Öffentlich belegt sind für Bochum genau zwei Schuljahre
-mit Plätzen *und* Ablehnungen. Auf gleichem Nenner — der amtlichen Grundschülerzahl des
-Landes — ergibt das 61,0 % (2022/23) und 66,3 % (2026/27), also **+1,33 Punkte je Jahr**.
-Damit ist der Abstand von 1,7 Punkten kein Puffer, sondern gut ein Jahr: Der Kipppunkt
-fällt ins Schuljahr **2029/30**, genau in das Jahr des vollen Rechtsanspruchs. Die
-Nennerdefinition steht an der Grafik, nicht nur im README; der Versatz von einem Jahr im
-Nenner des zweiten Punktes ist benannt statt weggerechnet. Die Steigung ist als Regler
-ausgelegt — zwei Punkte sind kein statistischer Trend.
+**Elternquote als Zeitachse — mit sauberer Zerlegung der beiden Treiber.** Öffentlich
+belegt sind für Bochum genau zwei Schuljahre mit Plätzen *und* Ablehnungen. Auf gleichem
+Nenner — der amtlichen Grundschülerzahl des Landes — ergibt das 61,0 % (2022/23) und
+66,3 % (2026/27), also **+1,33 Punkte je Jahr**. Die Nennerdefinition steht an der Grafik,
+nicht nur im README; der Versatz von einem Jahr im Nenner des zweiten Punktes ist benannt
+statt weggerechnet.
+
+Die Aussage wird ausdrücklich **nicht** als „1,7 Punkte geteilt durch 1,33 = 1,3 Jahre“
+geführt — diese Division unterstellt, die Schwelle von 2029/30 gälte schon heute. Sie gilt
+nicht: In den Aufwachsjahren liegt die kritische Quote bei 278 %, 137 % und 94 %. Statt
+dessen trennt der Monitor die Treiber: **Das Jahr bestimmt der Stufenplan** — vor 2028/29
+kann der Bestand rechnerisch gar nicht reißen; die Schwelle erreicht ihren Tiefstwert von
+71,6 % in 2029/30 und steigt danach wieder auf 78 %, weil die Jahrgänge schrumpfen (ein
+Buckel, keine Rampe). **Ob es reißt, bestimmt die Elternquote** — bei unveränderten 69,8 %
+reicht der Bestand im gesamten Zeitraum.
+
+Belastbar ist der Befund über die Marge: Für ein Kippen in 2029/30 genügen **0,58 Punkte
+je Jahr** gegenüber den belegten 1,33. Selbst wenn 56 % des Anstiegs ein einmaliger
+Anmeldeeffekt des zum 01.08.2026 in Kraft getretenen Rechtsanspruchs wären — der
+naheliegendste Einwand, da der Endpunkt genau dieses Jahr ist — bliebe es beim Kippen in
+2029/30. Die Kennzahl heißt im UI durchgehend „durchschnittliche Veränderung zwischen zwei
+belegten Jahren“, nie „Trend“, und ist als Regler ausgelegt.
 
 **Kostenachse in Euro.** Alle Sätze aus der Förderrichtlinie selbst (BASS 11-02 Nr. 19,
 Fassung BASS 2026/2027, ab 01.08.2026), nicht aus Pressemitteilungen: Landeszuschuss
@@ -46,7 +60,7 @@ Allokationen je Bezirk. Damit wird die Datenlücke vom Schwachpunkt zur messbare
 
 **Szenarien umbenannt** auf „Stufenplan Regelfall“, „Kipppunkt Elternquote“,
 „Umverteilung statt Ausbau“. Die Ausbaurate bleibt als Regler erhalten. Fünf Regler
-insgesamt: Quote, Steigung, Ausbau, Umverteilungstiefe, Sozialindex-Gewicht.
+insgesamt: Quote, Veränderung je Jahr, Ausbau, Umverteilungstiefe, Sozialindex-Gewicht.
 
 **Nicht gebaut, mit Begründung im README:** Der Peer-Städte-Benchmark und die landesweite
 Ganztagsquote entfallen — die Gemeindewerte liegen in der Landesdatenbank NRW hinter
