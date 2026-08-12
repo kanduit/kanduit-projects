@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanduit Ganztags-Bedarfsmonitor Bochum</title>
+<meta name="description" content="Standortgenaue Vorausberechnung des Rechtsanspruchs auf ganztaegige Foerderung im Grundschulalter bis 2029/30">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Reusable Kanduit logo symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <mask id="kmask" maskUnits="userSpaceOnUse" x="-125" y="-125" width="250" height="250">
+      <circle r="110" fill="#fff"/>
+      <rect x="-71" y="-125" width="29" height="250" fill="#000"/>
+      <g stroke="#000" stroke-width="32" stroke-linecap="butt">
+        <line x1="-42" y1="0" x2="66" y2="-122"/>
+        <line x1="-42" y1="0" x2="66" y2="122"/>
+      </g>
+    </mask>
+    <symbol id="k-mark" viewBox="-125 -125 250 250">
+      <circle r="110" fill="currentColor" mask="url(#kmask)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <span class="brand">
+    <svg width="22" height="22" style="color:var(--petrol-600)"><use href="#k-mark"/></svg>
+    Kanduit <span class="sub">Ganztags-Bedarfsmonitor</span>
+  </span>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-view="overview">Überblick</button>
+    <button class="tab" data-view="karte">Karte</button>
+    <button class="tab" data-view="ampel">Lückenampel</button>
+    <button class="tab" data-view="standort">Standorte</button>
+    <button class="tab" data-view="szenarien">Szenarien</button>
+    <button class="tab" data-view="daten">Daten &amp; Methode</button>
+  </nav>
+  <div class="right">
+    <span class="stand" id="standLabel">Stand —</span>
+    <span class="demo-pill">Demo · öffentliche Daten</span>
+    <button class="kbtn ghost" onclick="window.print()">Drucken / PDF</button>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== ÜBERBLICK ===================== -->
+  <section class="view active" id="view-overview">
+    <div class="wrap">
+      <div class="pruef-badge" id="pruef-badge"></div>
+      <div class="kipppunkt-hero" id="kipppunkt-hero"></div>
+
+      <div class="view-head">
+        <p class="eyebrow">§ 24 Abs. 4 SGB VIII · Stufenplan 2026/27 bis 2029/30 · Stadt Bochum</p>
+        <h2>Überblick</h2>
+        <p>Wie viele Kinder haben in welchem Schuljahr einen Rechtsanspruch auf ganztägige
+        Förderung — und reichen die vorhandenen Plätze? Die Jahrgänge stammen aus der
+        Kohortenrechnung der Stadt Bochum selbst, die Platzzahl aus ihrer Mitteilung zum
+        Schuljahr 2026/27. Was fehlt, ist die Verteilung der Plätze auf die Standorte; wo
+        das hineinspielt, steht es an der Kennzahl.</p>
+      </div>
+
+      <div class="grid g4" id="overview-kpis" style="margin-bottom:var(--sp-4)"></div>
+      <div class="banner info" id="overview-banner" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Anspruchsberechtigte Kinder je Schuljahr <span class="info-i" data-info="berechtigt" tabindex="0" role="button" aria-label="Erklärung: Anspruchsberechtigte Kinder">ⓘ</span></div>
+        <div class="card-sub">nach Klassenstufe gestapelt · gestrichelt: stadtweit belegte Ganztagsplätze</div>
+        <div id="chart-overview-anspruch"></div>
+        <p class="note src-note" data-src="bezirke"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Geburten in Bochum <span class="info-i" data-info="geburten" tabindex="0" role="button" aria-label="Erklärung: Geburten je Jahr">ⓘ</span></div>
+        <div class="card-sub">Lebendgeborene je Jahr, Summe über die 30 statistischen Bezirke — der Vorlauf der Einschulungsjahrgänge</div>
+        <div id="chart-overview-geburten"></div>
+        <p class="note src-note" data-src="bostatis"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== KARTE ===================== -->
+  <section class="view" id="view-karte">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">47 Grundschulbezirke · amtliche Gebietsgliederung der Stadt Bochum</p>
+        <h2>Karte</h2>
+        <p>Jede Fläche ist ein Grundschulbezirk, eingefärbt nach Deckungsgrad im gewählten
+        Schuljahr; die Punktfläche zeigt die Zahl der anspruchsberechtigten Kinder. Klick auf
+        einen Bezirk öffnet die Standortansicht.</p>
+      </div>
+
+      <div class="controls" id="karte-controls"></div>
+      <div class="grid g4" id="karte-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="card">
+        <div class="card-title">Deckungsgrad je Grundschulbezirk <span class="info-i" data-info="deckung" tabindex="0" role="button" aria-label="Erklärung: Deckungsgrad">ⓘ</span></div>
+        <div class="card-sub" id="karte-sub"></div>
+        <div class="map-wrap" id="map-host"></div>
+        <div class="legend" id="map-legend"></div>
+        <p class="note src-note" data-src="bezirke"></p>
+      </div>
+
+      <div class="card" style="margin-top:var(--sp-4)">
+        <div class="card-title">Was die zweite Verteilungsannahme ändert <span class="info-i" data-info="allokation" tabindex="0" role="button" aria-label="Erklärung: Platzverteilung">ⓘ</span></div>
+        <div class="card-sub">Differenz sozialindexgewichtete minus flache Verteilung, je Bezirk — die zehn größten Ausschläge in beide Richtungen</div>
+        <div id="chart-karte-allokation"></div>
+        <p class="note">Beide Verteilungen summieren sich exakt auf die stadtweit belegten
+        Plätze. Der Abstand zwischen ihnen ist die Spanne, die eine Platzliste des Amtes
+        auflösen würde — er ist die ehrliche Größe der Datenlücke, nicht ihre Verdeckung.</p>
+        <p class="note src-note" data-src="msb"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LÜCKENAMPEL ===================== -->
+  <section class="view" id="view-ampel">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Ampel: grün ab 100 % · gelb ab 85 % · rot darunter</p>
+        <h2>Lückenampel</h2>
+        <p>Alle Standorte, sortierbar nach jeder Spalte. „Lücke ab“ nennt das erste Schuljahr,
+        in dem der Bedarf die zugeordneten Plätze übersteigt. Die Spalte „Plätze“ ist die
+        einzige Verteilungsannahme des Modells — sie ist als solche gekennzeichnet und wird
+        durch Standortzahlen des Amtes ersetzt, ohne dass sich am Rechenweg etwas ändert.</p>
+      </div>
+
+      <div class="controls" id="ampel-controls"></div>
+      <div class="grid g4" id="ampel-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="banner warn" style="margin-bottom:var(--sp-4)">
+        <b>Datenlücke, offen benannt:</b> Es gibt keinen öffentlichen Datensatz mit
+        OGS-Plätzen je Grundschule. Belegt ist nur die stadtweite Platzzahl. Die Spalte
+        „Plätze (Annahme)“ verteilt sie im Ausgangsjahr proportional zur Schülerzahl und
+        hält sie danach fest — die Unterschiede zwischen den Standorten entstehen also
+        allein aus den Kohorten der Stadt. <b>Datenlieferung Amt erforderlich.</b>
+      </div>
+
+      <div class="toolbar">
+        <label style="display:flex; align-items:center; gap:8px; font-size:.9rem">
+          <input type="checkbox" id="ampel-filter"> nur Standorte mit Lücke
+        </label>
+        <span class="note mono" id="ampel-count" style="margin:0"></span>
+        <button class="kbtn solid" id="ampel-csv">Tabelle als CSV</button>
+      </div>
+
+      <div class="table-wrap" id="ampel-table"></div>
+      <p class="note src-note" data-src="bezirke"></p>
+    </div>
+  </section>
+
+  <!-- ===================== STANDORTE ===================== -->
+  <section class="view" id="view-standort">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Standortdetail · Jahrgangsverlauf und Kohortenherkunft</p>
+        <h2>Standorte</h2>
+        <p>Für einen einzelnen Grundschulbezirk: wie sich die vier Klassenstufen bis 2031/32
+        entwickeln, aus welchen Altersjahrgängen des Bezirks sie stammen, und was die Stadt
+        selbst zur Grundschulkapazität dieses Standorts prognostiziert.</p>
+      </div>
+
+      <div class="controls">
+        <div class="ctrl-group" style="flex:1 1 320px">
+          <span class="lbl">Standort</span>
+          <select class="field" id="standort-select" style="width:100%" aria-label="Standort wählen"></select>
+        </div>
+      </div>
+
+      <p class="note" id="standort-kopf" style="margin-bottom:var(--sp-4)"></p>
+      <div class="grid g4" id="standort-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Jahrgangsverlauf <span class="info-i" data-info="berechtigt" tabindex="0" role="button" aria-label="Erklärung: Jahrgangsverlauf">ⓘ</span></div>
+          <div class="card-sub">Kinder je Klassenstufe und Schuljahr</div>
+          <div id="chart-standort-jg"></div>
+          <p class="note src-note" data-src="bezirke"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Kohortenherkunft <span class="info-i" data-info="ewo" tabindex="0" role="button" aria-label="Erklärung: Kinder im Bezirk nach Altersjahr">ⓘ</span></div>
+          <div class="card-sub">Kinder im Bezirk nach Altersjahr und Jahr ihrer Einschulung</div>
+          <div id="chart-standort-ewo"></div>
+          <p class="note src-note" data-src="bezirke"></p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Freie Grundschulkapazität laut Stadt <span class="info-i" data-info="frkap" tabindex="0" role="button" aria-label="Erklärung: Freie Grundschulkapazität">ⓘ</span></div>
+        <div class="card-sub">eigene Größe des Schulträgers — Klassenplätze, nicht Ganztagsplätze</div>
+        <div id="chart-standort-frkap"></div>
+        <p class="note src-note" data-src="bezirke"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Anspruch und Deckung je Schuljahr <span class="info-i" data-info="deckung" tabindex="0" role="button" aria-label="Erklärung: Deckungsgrad">ⓘ</span></div>
+        <div class="card-sub">unter den aktuell eingestellten Annahmen · Spalte „Plätze“ ist eine Verteilungsannahme</div>
+        <div class="table-wrap" id="standort-tabelle" style="margin-top:12px"></div>
+        <p class="note src-note" data-src="ogs"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SZENARIEN ===================== -->
+  <section class="view" id="view-szenarien">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Drei benannte Szenarien · frei nachstellbar über die Regler</p>
+        <h2>Szenarien</h2>
+        <p>Genau drei Varianten, keine Parameterwüste: der Regelfall des Stufenplans, ein
+        linearer Ausbaupfad und der Stresstest einer steigenden Elternquote. Die Regler
+        darunter machen jede Zwischenlage nachstellbar — für das Gespräch im Ausschuss ist
+        entscheidend, ab welchem Wert die Aussage kippt.</p>
+      </div>
+
+      <div class="controls" id="szenarien-controls"></div>
+      <div class="banner info" id="szenarien-banner" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g3" id="szenarien-karten" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Annahmen <span class="info-i" data-info="ausbau" tabindex="0" role="button" aria-label="Erklärung: Ausbaupfad">ⓘ</span></div>
+        <div class="card-sub">Ein Szenario setzt beide Regler; danach lässt sich jeder Wert einzeln verstellen</div>
+        <div id="szenarien-slider" style="margin-top:8px"></div>
+        <p class="note src-note" data-src="ogs"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Elternquote als Zeitachse <span class="info-i" data-info="steigung" tabindex="0" role="button" aria-label="Erklärung: Steigung der Elternquote">ⓘ</span></div>
+        <div class="card-sub" id="szenarien-quote-sub"></div>
+        <div id="chart-szenarien-quote"></div>
+        <p class="note" id="szenarien-nenner"></p>
+        <p class="note src-note" data-src="ogs"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Kostenbild in Euro <span class="info-i" data-info="kosten" tabindex="0" role="button" aria-label="Erklärung: Kostenbild">ⓘ</span></div>
+        <div class="card-sub" id="szenarien-kosten-sub"></div>
+        <div id="chart-szenarien-kosten"></div>
+        <div class="table-wrap" id="szenarien-kosten-tab" style="margin-top:var(--sp-4)"></div>
+        <p class="note" id="szenarien-saetze"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Offene Plätze je Szenario und Schuljahr <span class="info-i" data-info="luecke" tabindex="0" role="button" aria-label="Erklärung: Offene Plätze">ⓘ</span></div>
+        <div class="card-sub">stadtweite Summe der Standortlücken · Überhänge werden nicht gegengerechnet</div>
+        <div id="chart-szenarien-luecke"></div>
+        <p class="note src-note" data-src="bezirke"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DATEN & METHODE ===================== -->
+  <section class="view" id="view-daten">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Herkunft, Rechenweg, Datenlücken</p>
+        <h2>Daten &amp; Methode</h2>
+        <p>Jede Zahl dieses Monitors lässt sich bis zur Primärquelle zurückverfolgen. Diese
+        Ansicht nennt die Quellen, den Rechenweg und ausdrücklich auch das, was die
+        öffentlichen Daten nicht hergeben.</p>
+      </div>
+
+      <div class="grid g4" id="daten-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Wie viele Grundschulen hat Bochum? <span class="info-i" data-info="schulzahl" tabindex="0" role="button" aria-label="Erklärung: Wie viele Grundschulen hat Bochum?">ⓘ</span></div>
+        <div class="card-sub">Drei Quellen, drei Zahlen — und keine ist falsch</div>
+        <div class="table-wrap" id="daten-abgleich" style="margin-top:12px"></div>
+        <p class="note src-note" data-src="msb"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Registerabgleich der Schülerzahlen <span class="info-i" data-info="register" tabindex="0" role="button" aria-label="Erklärung: Registerabgleich">ⓘ</span></div>
+        <div class="card-sub">Grundgesamtheit dieses Monitors gegenüber dem Landesverzeichnis</div>
+        <div id="daten-schueler" style="margin-top:12px"></div>
+        <p class="note src-note" data-src="msb"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Quellen und Datenlücken</div>
+        <div class="card-sub">was belegt ist — und was eine Datenlieferung des Amtes braucht</div>
+        <div class="table-wrap" id="daten-quellen" style="margin-top:12px"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Grundschülerinnen und Grundschüler in Bochum</div>
+        <div class="card-sub">amtliche Zeitreihe des Landes, alle Grundschulen der Stadt</div>
+        <div id="chart-daten-reihe"></div>
+        <p class="note src-note" data-src="msb"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Rechenweg</div>
+        <div class="card-sub">von der Primärquelle bis zur Ampel</div>
+        <div id="daten-methode" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div style="display:flex; align-items:center; gap:12px">
+      <svg width="30" height="30" style="color:#fff"><use href="#k-mark"/></svg>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:1.2rem; color:#fff">Kanduit</div>
+        <div class="mono">Ganztags-Bedarfsmonitor · Demonstrator</div>
+      </div>
+    </div>
+    <p class="src" id="footer-src">
+      <b style="color:#cbd5e1">Demonstrator der Kanduit UG</b> — alle Daten aus
+      öffentlichen Quellen:
+      <a href="https://geoservicekkm.bochum.de/arcgis/rest/services/maponline/Grundschulen/MapServer" target="_blank" rel="noopener" style="color:var(--petrol-300)">Kartendienst maponline der Stadt Bochum</a>,
+      <a href="https://bostatis.bochum.de/" target="_blank" rel="noopener" style="color:var(--petrol-300)">BOStatIS</a>,
+      <a href="https://bochum.opendata.ruhr/dataset" target="_blank" rel="noopener" style="color:var(--petrol-300)">Open-Data-Portal Bochum</a>,
+      <a href="https://www.schulministerium.nrw/open-data" target="_blank" rel="noopener" style="color:var(--petrol-300)">Open Data des Schulministeriums NRW</a>.
+      Stand <span id="footer-stand">—</span>, ohne Gewähr; kein Produkt der Stadt Bochum.
+      Keine personenbezogenen Daten.
+      Verarbeitung vollständig im Browser · betriebsbereit für Hosting in Deutschland.
+    </p>
+  </div>
+</footer>
+
+<!-- Tooltip -->
+<div class="tt" id="tooltip"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

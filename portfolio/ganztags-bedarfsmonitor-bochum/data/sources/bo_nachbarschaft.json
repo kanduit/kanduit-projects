@@ -1,0 +1,704 @@
+{
+ "kanten": [
+  {
+   "a": "100242",
+   "a_name": "Schule an der Hordeler Heide",
+   "b": "128582",
+   "b_name": "Emil-von-Behring-Schule"
+  },
+  {
+   "a": "100242",
+   "a_name": "Schule an der Hordeler Heide",
+   "b": "128960",
+   "b_name": "Gem. Grundschule An der Maarbrücke"
+  },
+  {
+   "a": "100242",
+   "a_name": "Schule an der Hordeler Heide",
+   "b": "131131",
+   "b_name": "Grundschule Günnigfeld"
+  },
+  {
+   "a": "100242",
+   "a_name": "Schule an der Hordeler Heide",
+   "b": "131155",
+   "b_name": "Glückaufschule"
+  },
+  {
+   "a": "128480",
+   "a_name": "Frauenlobschule",
+   "b": "128491",
+   "b_name": "Grundschule In der Vöde"
+  },
+  {
+   "a": "128480",
+   "a_name": "Frauenlobschule",
+   "b": "128600",
+   "b_name": "Maischützenschule"
+  },
+  {
+   "a": "128480",
+   "a_name": "Frauenlobschule",
+   "b": "128776",
+   "b_name": "Hans-Christian-Andersen-Schule HStO"
+  },
+  {
+   "a": "128480",
+   "a_name": "Frauenlobschule",
+   "b": "128867",
+   "b_name": "Liboriusschule"
+  },
+  {
+   "a": "128480",
+   "a_name": "Frauenlobschule",
+   "b": "196435",
+   "b_name": "Wilbergschule"
+  },
+  {
+   "a": "128491",
+   "a_name": "Grundschule In der Vöde",
+   "b": "128545",
+   "b_name": "Lina-Morgenstern-Schule HStO"
+  },
+  {
+   "a": "128491",
+   "a_name": "Grundschule In der Vöde",
+   "b": "128545 T",
+   "b_name": "Lina-Morgenstern-Schule TStO"
+  },
+  {
+   "a": "128491",
+   "a_name": "Grundschule In der Vöde",
+   "b": "128600",
+   "b_name": "Maischützenschule"
+  },
+  {
+   "a": "128491",
+   "a_name": "Grundschule In der Vöde",
+   "b": "128806 T",
+   "b_name": "Feldsieper Schule TStO"
+  },
+  {
+   "a": "128491",
+   "a_name": "Grundschule In der Vöde",
+   "b": "128867",
+   "b_name": "Liboriusschule"
+  },
+  {
+   "a": "128510",
+   "a_name": "Köllerholz-Schule",
+   "b": "128557",
+   "b_name": "Grundschule Linden"
+  },
+  {
+   "a": "128510",
+   "a_name": "Köllerholz-Schule",
+   "b": "128739",
+   "b_name": "Grundschule Dahlhausen"
+  },
+  {
+   "a": "128510",
+   "a_name": "Köllerholz-Schule",
+   "b": "131179",
+   "b_name": "Dietrich-Bonhoeffer-Schule"
+  },
+  {
+   "a": "128510",
+   "a_name": "Köllerholz-Schule",
+   "b": "190160",
+   "b_name": "Astrid-Lindgren-Schule"
+  },
+  {
+   "a": "128533",
+   "a_name": "Amtmann-Kreyenfeld-Schule",
+   "b": "128600",
+   "b_name": "Maischützenschule"
+  },
+  {
+   "a": "128533",
+   "a_name": "Amtmann-Kreyenfeld-Schule",
+   "b": "128685",
+   "b_name": "Von-Waldthausen-Schule"
+  },
+  {
+   "a": "128533",
+   "a_name": "Amtmann-Kreyenfeld-Schule",
+   "b": "128880",
+   "b_name": "Schule am Volkspark"
+  },
+  {
+   "a": "128533",
+   "a_name": "Amtmann-Kreyenfeld-Schule",
+   "b": "128910 T",
+   "b_name": "Michael-Ende-Schule TStO"
+  },
+  {
+   "a": "128545",
+   "a_name": "Lina-Morgenstern-Schule HStO",
+   "b": "128545 T",
+   "b_name": "Lina-Morgenstern-Schule TStO"
+  },
+  {
+   "a": "128545",
+   "a_name": "Lina-Morgenstern-Schule HStO",
+   "b": "128594",
+   "b_name": "Grundschule Laer"
+  },
+  {
+   "a": "128545",
+   "a_name": "Lina-Morgenstern-Schule HStO",
+   "b": "128673",
+   "b_name": "Vels-Heide-Schule"
+  },
+  {
+   "a": "128545",
+   "a_name": "Lina-Morgenstern-Schule HStO",
+   "b": "128806 T",
+   "b_name": "Feldsieper Schule TStO"
+  },
+  {
+   "a": "128545",
+   "a_name": "Lina-Morgenstern-Schule HStO",
+   "b": "128879",
+   "b_name": "Friederika-Schule"
+  },
+  {
+   "a": "128545 T",
+   "a_name": "Lina-Morgenstern-Schule TStO",
+   "b": "128594",
+   "b_name": "Grundschule Laer"
+  },
+  {
+   "a": "128545 T",
+   "a_name": "Lina-Morgenstern-Schule TStO",
+   "b": "128600",
+   "b_name": "Maischützenschule"
+  },
+  {
+   "a": "128545 T",
+   "a_name": "Lina-Morgenstern-Schule TStO",
+   "b": "128685",
+   "b_name": "Von-Waldthausen-Schule"
+  },
+  {
+   "a": "128557",
+   "a_name": "Grundschule Linden",
+   "b": "128739",
+   "b_name": "Grundschule Dahlhausen"
+  },
+  {
+   "a": "128557",
+   "a_name": "Grundschule Linden",
+   "b": "128820",
+   "b_name": "Neulingschule"
+  },
+  {
+   "a": "128557",
+   "a_name": "Grundschule Linden",
+   "b": "190160",
+   "b_name": "Astrid-Lindgren-Schule"
+  },
+  {
+   "a": "128569",
+   "a_name": "Schule im Kirchviertel HStO",
+   "b": "128569 T",
+   "b_name": "Schule im Kirchviertel TStO"
+  },
+  {
+   "a": "128569",
+   "a_name": "Schule im Kirchviertel HStO",
+   "b": "128818",
+   "b_name": "Natorpschule"
+  },
+  {
+   "a": "128569",
+   "a_name": "Schule im Kirchviertel HStO",
+   "b": "128922",
+   "b_name": "Gräfin-Imma-Schule"
+  },
+  {
+   "a": "128569",
+   "a_name": "Schule im Kirchviertel HStO",
+   "b": "128995",
+   "b_name": "Gem. Grundschule Auf dem Alten Kamp"
+  },
+  {
+   "a": "128569",
+   "a_name": "Schule im Kirchviertel HStO",
+   "b": "184860",
+   "b_name": "Waldschule"
+  },
+  {
+   "a": "128569 T",
+   "a_name": "Schule im Kirchviertel TStO",
+   "b": "128636",
+   "b_name": "Drusenbergschule"
+  },
+  {
+   "a": "128569 T",
+   "a_name": "Schule im Kirchviertel TStO",
+   "b": "128673",
+   "b_name": "Vels-Heide-Schule"
+  },
+  {
+   "a": "128569 T",
+   "a_name": "Schule im Kirchviertel TStO",
+   "b": "128740",
+   "b_name": "Sonnenschule"
+  },
+  {
+   "a": "128569 T",
+   "a_name": "Schule im Kirchviertel TStO",
+   "b": "128818",
+   "b_name": "Natorpschule"
+  },
+  {
+   "a": "128569 T",
+   "a_name": "Schule im Kirchviertel TStO",
+   "b": "128879",
+   "b_name": "Friederika-Schule"
+  },
+  {
+   "a": "128569 T",
+   "a_name": "Schule im Kirchviertel TStO",
+   "b": "128995",
+   "b_name": "Gem. Grundschule Auf dem Alten Kamp"
+  },
+  {
+   "a": "128582",
+   "a_name": "Emil-von-Behring-Schule",
+   "b": "128806",
+   "b_name": "Feldsieper Schule HStO"
+  },
+  {
+   "a": "128582",
+   "a_name": "Emil-von-Behring-Schule",
+   "b": "128960",
+   "b_name": "Gem. Grundschule An der Maarbrücke"
+  },
+  {
+   "a": "128582",
+   "a_name": "Emil-von-Behring-Schule",
+   "b": "196435",
+   "b_name": "Wilbergschule"
+  },
+  {
+   "a": "128594",
+   "a_name": "Grundschule Laer",
+   "b": "128673",
+   "b_name": "Vels-Heide-Schule"
+  },
+  {
+   "a": "128594",
+   "a_name": "Grundschule Laer",
+   "b": "128685",
+   "b_name": "Von-Waldthausen-Schule"
+  },
+  {
+   "a": "128594",
+   "a_name": "Grundschule Laer",
+   "b": "128697",
+   "b_name": "Bunte Schule HStO"
+  },
+  {
+   "a": "128594",
+   "a_name": "Grundschule Laer",
+   "b": "128880",
+   "b_name": "Schule am Volkspark"
+  },
+  {
+   "a": "128594",
+   "a_name": "Grundschule Laer",
+   "b": "128971",
+   "b_name": "Hufelandschule"
+  },
+  {
+   "a": "128594",
+   "a_name": "Grundschule Laer",
+   "b": "128995",
+   "b_name": "Gem. Grundschule Auf dem Alten Kamp"
+  },
+  {
+   "a": "128594",
+   "a_name": "Grundschule Laer",
+   "b": "184860",
+   "b_name": "Waldschule"
+  },
+  {
+   "a": "128600",
+   "a_name": "Maischützenschule",
+   "b": "128685",
+   "b_name": "Von-Waldthausen-Schule"
+  },
+  {
+   "a": "128600",
+   "a_name": "Maischützenschule",
+   "b": "128776",
+   "b_name": "Hans-Christian-Andersen-Schule HStO"
+  },
+  {
+   "a": "128612",
+   "a_name": "Arnoldschule",
+   "b": "128636",
+   "b_name": "Drusenbergschule"
+  },
+  {
+   "a": "128612",
+   "a_name": "Arnoldschule",
+   "b": "128806",
+   "b_name": "Feldsieper Schule HStO"
+  },
+  {
+   "a": "128612",
+   "a_name": "Arnoldschule",
+   "b": "128806 T",
+   "b_name": "Feldsieper Schule TStO"
+  },
+  {
+   "a": "128612",
+   "a_name": "Arnoldschule",
+   "b": "128879",
+   "b_name": "Friederika-Schule"
+  },
+  {
+   "a": "128612",
+   "a_name": "Arnoldschule",
+   "b": "128960",
+   "b_name": "Gem. Grundschule An der Maarbrücke"
+  },
+  {
+   "a": "128636",
+   "a_name": "Drusenbergschule",
+   "b": "128740",
+   "b_name": "Sonnenschule"
+  },
+  {
+   "a": "128636",
+   "a_name": "Drusenbergschule",
+   "b": "128879",
+   "b_name": "Friederika-Schule"
+  },
+  {
+   "a": "128636",
+   "a_name": "Drusenbergschule",
+   "b": "128960",
+   "b_name": "Gem. Grundschule An der Maarbrücke"
+  },
+  {
+   "a": "128673",
+   "a_name": "Vels-Heide-Schule",
+   "b": "128879",
+   "b_name": "Friederika-Schule"
+  },
+  {
+   "a": "128673",
+   "a_name": "Vels-Heide-Schule",
+   "b": "128995",
+   "b_name": "Gem. Grundschule Auf dem Alten Kamp"
+  },
+  {
+   "a": "128685",
+   "a_name": "Von-Waldthausen-Schule",
+   "b": "128880",
+   "b_name": "Schule am Volkspark"
+  },
+  {
+   "a": "128697",
+   "a_name": "Bunte Schule HStO",
+   "b": "128697 T",
+   "b_name": "Bunte Schule TStO"
+  },
+  {
+   "a": "128697",
+   "a_name": "Bunte Schule HStO",
+   "b": "128880",
+   "b_name": "Schule am Volkspark"
+  },
+  {
+   "a": "128697",
+   "a_name": "Bunte Schule HStO",
+   "b": "128910",
+   "b_name": "Michael-Ende-Schule HStO"
+  },
+  {
+   "a": "128697",
+   "a_name": "Bunte Schule HStO",
+   "b": "128971",
+   "b_name": "Hufelandschule"
+  },
+  {
+   "a": "128697 T",
+   "a_name": "Bunte Schule TStO",
+   "b": "128910",
+   "b_name": "Michael-Ende-Schule HStO"
+  },
+  {
+   "a": "128739",
+   "a_name": "Grundschule Dahlhausen",
+   "b": "131120",
+   "b_name": "Regenbogenschule"
+  },
+  {
+   "a": "128739",
+   "a_name": "Grundschule Dahlhausen",
+   "b": "131179",
+   "b_name": "Dietrich-Bonhoeffer-Schule"
+  },
+  {
+   "a": "128740",
+   "a_name": "Sonnenschule",
+   "b": "128818",
+   "b_name": "Natorpschule"
+  },
+  {
+   "a": "128740",
+   "a_name": "Sonnenschule",
+   "b": "128820",
+   "b_name": "Neulingschule"
+  },
+  {
+   "a": "128740",
+   "a_name": "Sonnenschule",
+   "b": "128960",
+   "b_name": "Gem. Grundschule An der Maarbrücke"
+  },
+  {
+   "a": "128740",
+   "a_name": "Sonnenschule",
+   "b": "131179",
+   "b_name": "Dietrich-Bonhoeffer-Schule"
+  },
+  {
+   "a": "128776",
+   "a_name": "Hans-Christian-Andersen-Schule HStO",
+   "b": "128776 T",
+   "b_name": "Hans-Christian-Andersen-Schule TStO"
+  },
+  {
+   "a": "128806",
+   "a_name": "Feldsieper Schule HStO",
+   "b": "128806 T",
+   "b_name": "Feldsieper Schule TStO"
+  },
+  {
+   "a": "128806",
+   "a_name": "Feldsieper Schule HStO",
+   "b": "128867",
+   "b_name": "Liboriusschule"
+  },
+  {
+   "a": "128806",
+   "a_name": "Feldsieper Schule HStO",
+   "b": "128960",
+   "b_name": "Gem. Grundschule An der Maarbrücke"
+  },
+  {
+   "a": "128806",
+   "a_name": "Feldsieper Schule HStO",
+   "b": "196435",
+   "b_name": "Wilbergschule"
+  },
+  {
+   "a": "128806 T",
+   "a_name": "Feldsieper Schule TStO",
+   "b": "128867",
+   "b_name": "Liboriusschule"
+  },
+  {
+   "a": "128806 T",
+   "a_name": "Feldsieper Schule TStO",
+   "b": "128879",
+   "b_name": "Friederika-Schule"
+  },
+  {
+   "a": "128818",
+   "a_name": "Natorpschule",
+   "b": "128820",
+   "b_name": "Neulingschule"
+  },
+  {
+   "a": "128818",
+   "a_name": "Natorpschule",
+   "b": "128922",
+   "b_name": "Gräfin-Imma-Schule"
+  },
+  {
+   "a": "128820",
+   "a_name": "Neulingschule",
+   "b": "128922",
+   "b_name": "Gräfin-Imma-Schule"
+  },
+  {
+   "a": "128820",
+   "a_name": "Neulingschule",
+   "b": "131179",
+   "b_name": "Dietrich-Bonhoeffer-Schule"
+  },
+  {
+   "a": "128820",
+   "a_name": "Neulingschule",
+   "b": "190160",
+   "b_name": "Astrid-Lindgren-Schule"
+  },
+  {
+   "a": "128867",
+   "a_name": "Liboriusschule",
+   "b": "196435",
+   "b_name": "Wilbergschule"
+  },
+  {
+   "a": "128880",
+   "a_name": "Schule am Volkspark",
+   "b": "128910",
+   "b_name": "Michael-Ende-Schule HStO"
+  },
+  {
+   "a": "128880",
+   "a_name": "Schule am Volkspark",
+   "b": "128910 T",
+   "b_name": "Michael-Ende-Schule TStO"
+  },
+  {
+   "a": "128910",
+   "a_name": "Michael-Ende-Schule HStO",
+   "b": "128910 T",
+   "b_name": "Michael-Ende-Schule TStO"
+  },
+  {
+   "a": "128922",
+   "a_name": "Gräfin-Imma-Schule",
+   "b": "128971",
+   "b_name": "Hufelandschule"
+  },
+  {
+   "a": "128922",
+   "a_name": "Gräfin-Imma-Schule",
+   "b": "184860",
+   "b_name": "Waldschule"
+  },
+  {
+   "a": "128960",
+   "a_name": "Gem. Grundschule An der Maarbrücke",
+   "b": "131088",
+   "b_name": "Kirchschule Höntrop"
+  },
+  {
+   "a": "128960",
+   "a_name": "Gem. Grundschule An der Maarbrücke",
+   "b": "131155",
+   "b_name": "Glückaufschule"
+  },
+  {
+   "a": "128960",
+   "a_name": "Gem. Grundschule An der Maarbrücke",
+   "b": "131179",
+   "b_name": "Dietrich-Bonhoeffer-Schule"
+  },
+  {
+   "a": "128971",
+   "a_name": "Hufelandschule",
+   "b": "184860",
+   "b_name": "Waldschule"
+  },
+  {
+   "a": "128995",
+   "a_name": "Gem. Grundschule Auf dem Alten Kamp",
+   "b": "184860",
+   "b_name": "Waldschule"
+  },
+  {
+   "a": "131088",
+   "a_name": "Kirchschule Höntrop",
+   "b": "131090",
+   "b_name": "Gem. Grundschule Westenfeld"
+  },
+  {
+   "a": "131088",
+   "a_name": "Kirchschule Höntrop",
+   "b": "131120",
+   "b_name": "Regenbogenschule"
+  },
+  {
+   "a": "131088",
+   "a_name": "Kirchschule Höntrop",
+   "b": "131155",
+   "b_name": "Glückaufschule"
+  },
+  {
+   "a": "131088",
+   "a_name": "Kirchschule Höntrop",
+   "b": "131179",
+   "b_name": "Dietrich-Bonhoeffer-Schule"
+  },
+  {
+   "a": "131090",
+   "a_name": "Gem. Grundschule Westenfeld",
+   "b": "131120",
+   "b_name": "Regenbogenschule"
+  },
+  {
+   "a": "131090",
+   "a_name": "Gem. Grundschule Westenfeld",
+   "b": "131155",
+   "b_name": "Glückaufschule"
+  },
+  {
+   "a": "131090",
+   "a_name": "Gem. Grundschule Westenfeld",
+   "b": "131167",
+   "b_name": "Grundschule Leithe"
+  },
+  {
+   "a": "131090",
+   "a_name": "Gem. Grundschule Westenfeld",
+   "b": "196447",
+   "b_name": "Gertrudisschule"
+  },
+  {
+   "a": "131120",
+   "a_name": "Regenbogenschule",
+   "b": "131179",
+   "b_name": "Dietrich-Bonhoeffer-Schule"
+  },
+  {
+   "a": "131131",
+   "a_name": "Grundschule Günnigfeld",
+   "b": "131155",
+   "b_name": "Glückaufschule"
+  },
+  {
+   "a": "131131",
+   "a_name": "Grundschule Günnigfeld",
+   "b": "196447",
+   "b_name": "Gertrudisschule"
+  },
+  {
+   "a": "131155",
+   "a_name": "Glückaufschule",
+   "b": "196447",
+   "b_name": "Gertrudisschule"
+  },
+  {
+   "a": "131167",
+   "a_name": "Grundschule Leithe",
+   "b": "196447",
+   "b_name": "Gertrudisschule"
+  },
+  {
+   "a": "131179",
+   "a_name": "Dietrich-Bonhoeffer-Schule",
+   "b": "190160",
+   "b_name": "Astrid-Lindgren-Schule"
+  }
+ ],
+ "meta": {
+  "abruf": "2026-08-07",
+  "grad_max": 9,
+  "grad_min": 1,
+  "hinweis": "Beschraenkt im Szenario „Umverteilung statt Ausbau“ die Verlagerung von Plaetzen auf angrenzende Bezirke. Von Hand pruefbar: jede Kante nennt beide Bezirksnamen.",
+  "kanten": 115,
+  "quelle": "abgeleitet aus den Bezirksgrenzen desselben Kartendienstes (unvereinfachte Geometrie)",
+  "quelle_url": "https://geoservicekkm.bochum.de/arcgis/rest/services/maponline/Grundschulen/MapServer",
+  "regel": "benachbart, wenn die Umringe mindestens zwei Stuetzpunkte teilen (gemeinsames Grenzstueck, nicht nur eine beruehrende Ecke)"
+ }
+}
