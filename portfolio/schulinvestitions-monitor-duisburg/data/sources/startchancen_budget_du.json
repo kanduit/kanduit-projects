@@ -1,0 +1,19 @@
+{
+ "investitionsbudget_eur": 60048769.33,
+ "landessumme_eur": 966562390.85,
+ "laufzeit": {
+  "bis": 2034,
+  "von": 2024
+ },
+ "meta": {
+  "abruf": "2026-08-14",
+  "dateien": [
+   "https://www.schulministerium.nrw/system/files/media/document/file/schultraegerbudgets_investitionsprogramm_saeule_i_startchancen_250702.pdf"
+  ],
+  "quelle": "Ministerium fuer Schule und Bildung NRW — Schultraegerbudgets zur Umsetzung der Saeule I (Investitionsprogramm) des Startchancen-Programms 2024 bis 2034",
+  "quelle_url": "https://www.schulministerium.nrw/startchancen",
+  "stand": "2025-07-02"
+ },
+ "startchancen_schulen_nrw": 923,
+ "traeger": "Stadt Duisburg"
+}
