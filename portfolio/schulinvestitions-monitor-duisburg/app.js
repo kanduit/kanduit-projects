@@ -26,7 +26,7 @@ const fmtMonth = m => MONTH_SHORT[m.slice(5, 7)] + ' ' + m.slice(2, 4);
 /* ====================================================================
    TABS
    ==================================================================== */
-const views = { overview: 'view-overview', karte: 'view-karte', register: 'view-register', modell: 'view-modell', eigenanteil: 'view-eigenanteil', szenarien: 'view-szenarien' };
+const views = { overview: 'view-overview', karte: 'view-karte', register: 'view-register', modell: 'view-modell', eigenanteil: 'view-eigenanteil', szenarien: 'view-szenarien', daten: 'view-daten' };
 function showView(name) {
   $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === name));
   Object.entries(views).forEach(([k, id]) => $('#' + id).classList.toggle('active', k === name));
@@ -79,8 +79,17 @@ document.addEventListener('focusout', e => { if (e.target.closest && e.target.cl
    Jeder Eintrag benennt die Berechnung UND die Datenlücke.
    ==================================================================== */
 const S = DATA.stadt, B = DATA.budget, GZ = DATA.ganztag, BM = DATA.benchmark;
+const GP = DATA.gegenprobe, RG = DATA.register;
+const TRAEGER_TEXT = { stadt: 'Stadt Duisburg', anderer_oeffentlicher: 'anderer öffentlicher Träger', privat: 'freie Trägerschaft' };
+const TRAEGER_CSV = { stadt: 'Stadt Duisburg', anderer_oeffentlicher: 'anderer oeffentlicher Traeger', privat: 'freie Traegerschaft' };
+const QUELLEN_ZWECK = {
+  msb: 'Standorte, Schulform, Trägerschaft, Schülerzahlen, Sozialindexstufen, Koordinaten',
+  msbReihe: 'Trendfortschreibung je Schulform, Gegenprobe, Nenner für den Städtevergleich',
+  startchancen: 'Startchancen-Status je Standort (Verknüpfung über die Schulnummer)',
+  budget: 'Schulträgerbudget Säule I, Landessumme, Vergleich der kreisfreien Städte',
+  bezirke: 'Stadtbezirksgrenzen für Karte und Zuordnung per Punkt-in-Polygon',
+};
 const SCHULEN = DATA.schulen;
-const PRIV = SCHULEN.filter(s => s.priv).length;
 const BEZ_NAME = {}; DATA.bezirke.forEach(b => { BEZ_NAME[b.nr] = b.name; });
 
 const METRIC_INFO = {
@@ -89,10 +98,12 @@ const METRIC_INFO = {
     d: `Alle ${fmtInt(S.schulen)} Schulen mit aktivem Schulbetrieb im Duisburger
 Schulverzeichnis des MSB (Gemeindeschlüssel 05112000), Schuljahr ${DATA.meta.schuljahr}.
 Nicht enthalten sind Schulamt, ZfsL und Lehrerseminare — die stehen unter denselben
-Schlüsseln im Register, sind aber keine Schulen. ${fmtInt(PRIV)} Standorte sind in
-privater Trägerschaft und damit nicht in städtischer Baulast; sie bleiben in der Liste,
-weil sie für die Schulentwicklungsplanung nach § 80 SchulG zählen — im Register sind
-sie als „privat“ gekennzeichnet.`,
+Schlüsseln im Register, sind aber keine Schulen. Davon stehen ${fmtInt(RG.traeger.stadt)}
+in Trägerschaft der Stadt und damit in ihrer Baulast; zwei Förderschulen gehören einem
+anderen öffentlichen Träger, vier Schulen sind in freier Trägerschaft. Alle bleiben in der
+Liste, weil die Schulentwicklungsplanung nach § 80 SchulG das gesamte Stadtgebiet umfasst —
+Sanierungs- und Ganztagsvolumen werden aber nur für die städtischen Standorte angesetzt.
+Der Abgleich mit der Zahl „rund 130“ auf der Amtsseite steht unter „Daten & Methode“.`,
   },
   schueler: {
     t: 'Schülerinnen und Schüler',
@@ -228,6 +239,42 @@ Zahl für das Gespräch mit der Kämmerei, weil sie eine Frist hinter sich hat �
 ${B.bis} nicht abgerufen ist, ist Fördergeld, das die Stadt nicht bekommt. Der
 Einplanungsalgorithmus ist eine Demo-Annahme; die Programmlaufzeit und der Förderbetrag
 sind es nicht.`,
+  },
+  registerabgleich: {
+    t: 'Registerabgleich — welche Schulzahl gilt',
+    d: `Drei Quellen nennen drei Zahlen, und keine ist falsch — sie zählen Verschiedenes.
+Das Stadtportal spricht von „rund 130 Schulen" und meint die Schulen in Trägerschaft der
+Stadt: laut Trägernummer im Schulverzeichnis sind das ${fmtInt(RG.traeger.stadt)}.
+Dieser Monitor führt ${fmtInt(RG.gesamt)} — alle Schulen im Stadtgebiet mit aktivem
+Schulbetrieb, unabhängig vom Träger, weil die Schulentwicklungsplanung nach § 80 SchulG NRW
+das gesamte Stadtgebiet umfasst. Ungefiltert enthält das Register sogar
+${fmtInt(RG.inBetrieb)} Einträge; die zusätzlichen ${fmtInt(RG.keineSchule)} sind Schulamt,
+ZfsL und vier Lehrerseminare — keine Schulen. Für das Geld zählt die mittlere Zahl:
+Sanierungs- und Ganztagsvolumen setzt der Monitor nur für die ${fmtInt(RG.traeger.stadt)}
+Standorte in städtischer Baulast an.`,
+  },
+  gegenprobe: {
+    t: 'Gegenprobe der Fortschreibung',
+    d: `Dasselbe Verfahren, an der Vergangenheit geprüft. Fitfenster und Horizont sind
+genauso lang wie in der Produktivrechnung (6 bzw. 5 Jahre), nur um sechs Jahre nach hinten
+verschoben: angepasst auf ${GP.fitVon}–${GP.fitBis}, vorhergesagt ${GP.ziel} — ein Jahr,
+das das Modell dabei nicht kennt. Ergebnis: mittlere absolute Abweichung
+${nf1.format(GP.mapeGewichtet)} % gewichtet nach Schülerzahl, ${nf1.format(GP.mape)} %
+ungewichtet über die Schulformen. Die Fortschreibung liegt dabei durchgängig zu niedrig
+(${nf1.format(GP.abw)} % über alle Formen), weil das Fitfenster ${GP.fitVon}–${GP.fitBis}
+die Duisburger Wachstumsphase ab 2020 noch nicht enthält. Für die Planung heißt das: die
+Prognose taugt als Größenordnung und eher als Untergrenze, nicht als Punktwert je Jahrgang.
+Dafür braucht es die Geburtsjahrgänge und Wanderungssalden der Stadt.`,
+  },
+  baulast: {
+    t: 'Schulen in städtischer Baulast',
+    d: `${fmtInt(RG.traeger.stadt)} der ${fmtInt(RG.gesamt)} Standorte stehen in Trägerschaft
+der Stadt Duisburg (Trägernummer 10054 im Schulverzeichnis). Zwei Förderschulen gehören einem
+anderen öffentlichen Träger, vier Schulen sind in freier Trägerschaft. Alle bleiben im
+Register — die Schulentwicklungsplanung umfasst das gesamte Stadtgebiet —, aber nur für die
+städtischen Standorte werden Sanierungs- und Ganztagsvolumen angesetzt. Alle
+${fmtInt(S.sc)} Startchancen-Schulen sind städtisch, das Schulträgerbudget Säule I trifft
+also keine Abgrenzungsfrage.`,
   },
   score: {
     t: 'Prioritätswert 0–100',
@@ -539,8 +586,10 @@ function openBlatt(id) {
     <div class="dsec">Standort</div>
     ${zeile('Stadtbezirk', esc(BEZ_NAME[s.b] || '—'),
       'Punkt-in-Polygon der UTM32-Koordinate gegen die amtlichen Stadtbezirksgrenzen der Stadt Duisburg.')}
-    ${zeile('Trägerschaft', s.priv ? 'privat' : 'öffentlich',
-      'Rechtsform laut Schulverzeichnis MSB NRW, Schuljahr ' + DATA.meta.schuljahr + '.')}
+    ${zeile('Trägerschaft' + infoIcon('baulast'), TRAEGER_TEXT[s.tr] || '—',
+      s.tr === 'stadt'
+        ? 'Trägernummer 10054 im Schulverzeichnis — die Stadt Duisburg ist Schulträger und trägt die Baulast.'
+        : 'Nicht in städtischer Baulast. Der Standort bleibt im Register, weil die Schulentwicklungsplanung nach § 80 SchulG NRW das gesamte Stadtgebiet umfasst — Sanierungs- und Ganztagsvolumen werden für ihn aber nicht angesetzt.')}
     ${zeile('Schülerinnen und Schüler', fmtInt(s.sch),
       'MSB Open Data, anzahlen.csv, Schuljahr ' + DATA.meta.schuljahr +
       '. Aggregat je Schule, keine personenbezogenen Daten.')}
@@ -780,7 +829,9 @@ function renderKarte() {
 /* ---------------- Standortregister ---------------- */
 const COLS = [
   { k: 'rang', t: 'Rang', num: true, v: r => r.rang, c: r => `<span class="rank">${r.rang}</span>` },
-  { k: 'name', t: 'Standort', v: r => r.s.n, c: r => esc(r.s.n) + (r.s.priv ? ' <span class="pill">privat</span>' : '') },
+  { k: 'name', t: 'Standort', v: r => r.s.n,
+    c: r => esc(r.s.n) + (r.s.tr !== 'stadt'
+      ? ` <span class="pill warn" title="nicht in städtischer Baulast">${r.s.tr === 'privat' ? 'frei' : 'anderer Träger'}</span>` : '') },
   { k: 'form', t: 'Schulform', v: r => r.s.f, c: r => esc(r.s.f) },
   { k: 'bezirk', t: 'Stadtbezirk', v: r => BEZ_NAME[r.s.b] || '', c: r => esc(BEZ_NAME[r.s.b] || '—') },
   { k: 'sch', t: 'Schüler', num: true, v: r => r.s.sch, c: r => fmtInt(r.s.sch) },
@@ -845,7 +896,7 @@ function csvExport() {
     'Volumen Ganztag EUR (Demo-Annahme)', 'Volumen gesamt EUR', 'Foerderung EUR',
     'Eigenanteil EUR', 'Prioritaetsrang', 'Prioritaetswert'];
   const lines = rows.map(r => [r.s.id, r.s.n, r.s.f, BEZ_NAME[r.s.b] || '',
-    r.s.priv ? 'privat' : 'oeffentlich', r.s.sch, r.s.soz == null ? '' : r.s.soz, r.s.z,
+    TRAEGER_CSV[r.s.tr] || '', r.s.sch, r.s.soz == null ? '' : r.s.soz, r.s.z,
     r.s.sc ? 'ja' : 'nein', r.s.lue, r.s.gz, r.s.vSc, r.s.vSan, r.s.vGz, r.s.vol,
     r.s.foe, r.s.eig, r.rang, nf1.format(r.sc)]);
   const q = v => /[";\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : v;
@@ -1173,6 +1224,82 @@ function szVerzoegerung(box) {
   verdrahteQuellen();
 }
 
+function renderDaten() {
+  /* --- Registerabgleich: drei Quellen, drei Zahlen --- */
+  const zeilen = [
+    { q: 'Stadtportal, Amt für Schulische Bildung', z: 'rund 130',
+      w: 'Schulen in <b>Trägerschaft der Stadt</b> — laut Trägernummer im Landesregister ' +
+         fmtInt(RG.traeger.stadt) + '. Das ist die Zahl, für die die Stadt baut und zahlt.' },
+    { q: 'Dieser Monitor', z: fmtInt(RG.gesamt),
+      w: 'Alle Schulen im Stadtgebiet mit aktivem Schulbetrieb, <b>unabhängig vom Träger</b>. ' +
+         'Die Schulentwicklungsplanung nach § 80 SchulG NRW umfasst das gesamte Stadtgebiet.' },
+    { q: 'Schulverzeichnis MSB, ungefiltert', z: fmtInt(RG.inBetrieb),
+      w: 'Enthält zusätzlich ' + fmtInt(RG.keineSchule) + ' Einträge, die keine Schulen sind: ' +
+         'Schulamt, Zentrum für schulpraktische Lehrerausbildung und vier Lehrerseminare.' },
+  ];
+  $('#tab-register').innerHTML =
+    `<table><thead><tr><th>Quelle</th><th class="num">Zahl</th><th>Was gezählt wird</th></tr></thead>
+     <tbody>${zeilen.map(r => `<tr><td>${r.q}</td>
+       <td class="num"><b>${r.z}</b></td><td>${r.w}</td></tr>`).join('')}</tbody></table>`;
+
+  const tr = RG.traeger;
+  const box = $('#chart-traeger'); box.innerHTML = '';
+  mixBar(box, 'Trägerschaft der ' + fmtInt(RG.gesamt) + ' Standorte', [
+    { label: 'Stadt Duisburg', n: tr.stadt, color: 'var(--dv-petrol)' },
+    { label: 'anderer öffentlicher Träger', n: tr.anderer_oeffentlicher || 0, color: 'var(--dv-amber)' },
+    { label: 'freie Trägerschaft', n: tr.privat || 0, color: 'var(--neutral-400)' },
+  ], fmtInt(tr.stadt) + ' in städtischer Baulast');
+
+  $('#register-fazit').innerHTML = `<b>Keine der drei Zahlen ist falsch</b> — sie beantworten
+    verschiedene Fragen. Für die Investitionsrechnung gilt die Baulast: Sanierungs- und
+    Ganztagsvolumen werden nur für die ${fmtInt(tr.stadt)} städtischen Standorte angesetzt,
+    die übrigen ${fmtInt(RG.gesamt - tr.stadt)} bleiben im Register, tragen aber keinen
+    kommunalen Eigenanteil. Alle ${fmtInt(S.sc)} Startchancen-Schulen sind städtisch — beim
+    Schulträgerbudget stellt sich die Abgrenzungsfrage also gar nicht.`;
+
+  /* --- Gegenprobe --- */
+  const k = $('#gegenprobe-kpis'); k.innerHTML = '';
+  [
+    { k: 'Anpassungsfenster', v: GP.fitVon + '–' + GP.fitBis, d: 'sechs Jahre, wie in der Produktivrechnung', info: 'gegenprobe' },
+    { k: 'Vorhergesagtes Jahr', v: String(GP.ziel), d: 'fünf Jahre Horizont — dem Modell unbekannt', info: 'gegenprobe' },
+    { k: 'Mittlere Abweichung', v: nf1.format(GP.mapeGewichtet) + ' %', d: 'nach Schülerzahl gewichtet · ' + nf1.format(GP.mape) + ' % ungewichtet', cls: 'petrol', info: 'gegenprobe' },
+    { k: 'Richtung des Fehlers', v: nf1.format(GP.abw) + ' %', d: 'durchgängig zu niedrig — die Prognose ist eine Untergrenze', cls: 'ink', info: 'gegenprobe' },
+  ].forEach(x => k.appendChild(statCard(x)));
+
+  barChart($('#chart-gegenprobe'), GP.formen.map(f => ({
+    label: f.name, value: Math.abs(f.abw),
+    valLabel: nf1.format(f.abw) + ' %',
+    color: Math.abs(f.abw) <= 10 ? 'var(--dv-green)' : Math.abs(f.abw) <= 20 ? 'var(--dv-amber)' : 'var(--dv-coral)',
+    tip: `<b>${esc(f.name)}</b>
+      <div class="row"><span>Prognose ${GP.ziel}</span><span>${fmtInt(f.prognose)}</span></div>
+      <div class="row"><span>tatsächlich ${GP.ziel}</span><span>${fmtInt(f.ist)}</span></div>
+      <div class="row"><span>Abweichung</span><span>${nf1.format(f.abw)} %</span></div>`,
+  })), { padL: 150, rowH: 26 });
+
+  $('#gegenprobe-fazit').innerHTML = `Über alle Schulformen sagt das Verfahren
+    ${fmtInt(GP.prognose)} Schülerinnen und Schüler für ${GP.ziel} voraus, tatsächlich waren es
+    ${fmtInt(GP.ist)} — <b>${nf1.format(GP.abw)} %</b>. Der Fehler ist einseitig: <b>jede</b>
+    Schulform wird unterschätzt, weil das Anpassungsfenster ${GP.fitVon}–${GP.fitBis} die
+    Duisburger Wachstumsphase ab 2020 noch nicht enthält. Das ist die ehrliche Einordnung der
+    Prognose in diesem Monitor: sie taugt als Größenordnung und eher als <b>Untergrenze</b>,
+    nicht als Punktwert je Jahrgang. Für belastbare Jahrgangszahlen braucht es die
+    Geburtsjahrgänge und Wanderungssalden der Stadt — die liegen dem Amt vor, uns nicht.`;
+
+  /* --- Quellen --- */
+  $('#tab-quellen').innerHTML =
+    `<table><thead><tr><th>Quelle</th><th>Verwendet für</th></tr></thead><tbody>` +
+    Object.keys(SRC_LABEL).sort().map(key => {
+      const q = SRC_LABEL[key];
+      return `<tr><td><a href="${q.u}" target="_blank" rel="noopener">${esc(q.t)}</a></td>
+        <td>${esc(QUELLEN_ZWECK[key] || '—')}</td></tr>`;
+    }).join('') + `</tbody></table>`;
+
+  /* --- Register der Demo-Annahmen, Wortlaut aus generate.py --- */
+  $('#annahmen-liste').innerHTML = (DATA.annahmen || []).map(a =>
+    `<div class="kv"><span class="kk"><b>${esc(a.t)}</b></span><span class="vv"></span>
+     <span class="src">${esc(a.d)}</span></div>`).join('');
+}
+
 /** Quellenzeilen unter neu erzeugten Karten nachverdrahten. */
 function verdrahteQuellen() {
   $$('.src-note').forEach(n => {
@@ -1243,16 +1370,12 @@ $('#szenario-body').addEventListener('keydown', e => {
   if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openBlatt(tr.dataset.id); }
 });
 
-/* Register der Demo-Annahmen im Fuß der Überblicksseite */
-$('#annahmen-liste').innerHTML = DATA.annahmen.map(a =>
-  `<div class="kv"><span class="kk"><b>${esc(a.t)}</b></span><span class="vv"></span>
-   <span class="src">${esc(a.d)}</span></div>`).join('');
-
 renderOverview();
 renderKarte();
 renderRegister();
 renderModell();
 renderEigenanteil();
 renderSzenarien();
+renderDaten();
 verdrahteQuellen();
 })();
