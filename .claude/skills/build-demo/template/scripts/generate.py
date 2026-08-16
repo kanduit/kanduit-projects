@@ -20,6 +20,21 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 SRC = os.path.join(ROOT, "data", "sources")
 
+# Jede Größe, die nicht offen belegt ist, steht hier — im Wortlaut, mit
+# Begründung. app.js zieht daraus die ◈-Tooltips; es gibt keine zweite Stelle,
+# an der Annahmen beschrieben werden. Ein Eintrag je Annahme:
+#   {"k": "kurzname", "t": "Titel", "d": "Warum angenommen, wie gebildet,
+#    wodurch im Projekt zu ersetzen."}
+ANNAHMEN = [
+    # TODO: je nicht öffentlich belegter Größe ein Eintrag. Leer lassen ist nur
+    # zulässig, wenn wirklich jede Zahl aus einer offenen Quelle stammt.
+]
+
+# Anzeigename + URL je Quellenschlüssel; data-src im HTML verweist hierauf.
+QUELLEN = {
+    # "kuerzel": {"t": "Anzeigename der Quelle", "u": "https://…"},
+}
+
 HEADER = (
     "/* Kanduit {{TITLE}} — aggregierte öffentliche Daten.\n"
     "   Quelle(n): TODO — Abruf siehe meta.stand.\n"
@@ -42,8 +57,12 @@ def main():
         raise SystemExit("no snapshots found — run scripts/fetch_<quelle>.py first")
 
     # TODO: Snapshots laden und zu Kennzahlen aggregieren.
-    # payload-Konvention: {"meta": {"stand": "TT.MM.JJJJ", "quellen": {...}}, ...}
+    # payload-Konvention:
+    #   {"meta": {"stand": "TT.MM.JJJJ", "quellen": QUELLEN, …},
+    #    "annahmen": ANNAHMEN, …}
     # meta.stand aus den Snapshot-Metadaten übernehmen (fetch-Datum).
+    # meta.quellen speist die Quellenzeile unter jeder Karte,
+    # annahmen speist die ◈-Tooltips — beides in app.js ohne Zutun.
     raise SystemExit("TODO: Aggregation implementieren (siehe Docstring)")
 
 

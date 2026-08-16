@@ -203,8 +203,44 @@ tbody tr:last-child td{ border-bottom:none; }
   .view-head h2{ font-size:1.45rem; }
 }
 
+/* ---------------- Demo-Annahme-Kennzeichnung ----------------
+   Alles, was nicht aus einer offenen Quelle stammt, trägt sichtbar ein ◈. */
+.pill.annahme{ background:#f3e8ff; color:#6b21a8; }
+.assume{ color:#7c3aed; font-weight:600; cursor:help; margin-left:3px; }
+.assume:focus-visible{ outline:2px solid #a78bfa; outline-offset:2px; border-radius:3px; }
+.banner.assume-banner{ background:#faf5ff; border:1px solid #e9d5ff; color:#5b21b6; }
+
+/* ---------------- Leitzahl ----------------
+   Eine Zahl, die das Argument trägt — nicht vier gleich große. */
+.leitzahl{ background:var(--ink); color:#fff; border-radius:var(--r-card);
+  padding:var(--sp-5) var(--sp-6); box-shadow:var(--shadow);
+  display:grid; grid-template-columns:auto 1fr; gap:var(--sp-3) var(--sp-6); align-items:center; }
+.leitzahl .k{ grid-column:1/-1; font-family:var(--font-mono); font-size:var(--t-micro);
+  text-transform:uppercase; letter-spacing:.09em; color:var(--petrol-300); }
+.leitzahl .v{ font-family:var(--font-display); font-weight:800; font-size:clamp(2.4rem,6vw,3.4rem);
+  letter-spacing:-.035em; line-height:1; white-space:nowrap; }
+.leitzahl .d{ font-size:.98rem; line-height:1.5; color:var(--neutral-300); max-width:62ch; }
+.leitzahl .d b{ color:#fff; }
+.leitzahl a{ color:var(--petrol-300); text-decoration:underline dotted; }
+@media(max-width:760px){
+  .leitzahl{ grid-template-columns:1fr; padding:var(--sp-5); gap:var(--sp-2); }
+}
+
+/* ---------------- Drucken ----------------
+   Entweder das geöffnete Kennzahlenblatt oder die aktive Ansicht — nie beides
+   und nie alle Ansichten. Das Blatt ist als Anlage zu einer Ausschussvorlage
+   gedacht; ein PDF mit sechs Ansichten verfehlt den Zweck. */
 @media print{
-  .topbar, .footer, .kbtn{ display:none !important; }
-  .view{ display:block !important; page-break-after:always; }
+  .topbar, .footer, .kbtn, .controls, .seg{ display:none !important; }
+  .view{ display:none !important; }
+  .view.active{ display:block !important; }
+  .card, .stat, .leitzahl, .table-wrap{ box-shadow:none; break-inside:avoid; }
+  a{ color:var(--ink) !important; }
   body{ background:#fff; }
+  .drawer-back{ display:none !important; }
+  .drawer .dclose{ display:none !important; }
+  body.printing-blatt main{ display:none !important; }
+  body.printing-blatt .drawer{ position:static; transform:none; width:100%;
+    box-shadow:none; overflow:visible; }
+  body:not(.printing-blatt) .drawer{ display:none !important; }
 }

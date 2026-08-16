@@ -44,8 +44,8 @@ def parse_tabs(spec):
         if not label:
             die(f"tab '{tid}' has an empty label")
         tabs.append((tid, label))
-    if not 1 <= len(tabs) <= 6:
-        die("need 1–6 tabs")
+    if not 1 <= len(tabs) <= 7:
+        die("need 1–7 tabs (inkl. der Pflicht-Ansicht 'daten')")
     if len({t[0] for t in tabs}) != len(tabs):
         die("tab ids must be unique")
     return tabs
@@ -92,13 +92,63 @@ VIEW_SECTION = """  <!-- ===================== {LABEL_UPPER} ===================
 """
 
 
+DATEN_SECTION = """  <!-- ===================== DATEN & METHODE ===================== -->
+  <section class="view" id="view-daten">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Herkunft · Rechenweg · Datenlücken</p>
+        <h2>Daten &amp; Methode</h2>
+        <p>Jede Zahl dieses Monitors lässt sich bis zur Primärquelle zurückverfolgen.
+        Diese Ansicht nennt die Quellen, den Rechenweg und ausdrücklich auch das, was die
+        öffentlichen Daten nicht hergeben.</p>
+      </div>
+
+      <!-- TODO Registerabgleich: Wenn mehrere Quellen verschiedene Zahlen für
+           dieselbe Größe nennen (Amtsseite sagt "rund 130", das Landesregister 135),
+           gehört genau das hierher — als Karte, nicht als Fußnote. Es ist der erste
+           Einwand im Termin und die billigste Gelegenheit, Sorgfalt zu zeigen. -->
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">TODO Registerabgleich <span class="info-i" data-info="metricKey" tabindex="0" role="button" aria-label="Erklärung">ⓘ</span></div>
+        <div class="card-sub">TODO mehrere Quellen, mehrere Zahlen — und welche hier gilt</div>
+        <div id="chart-daten-abgleich"></div>
+        <p class="note src-note" data-src="quelleKey"></p>
+      </div>
+
+      <!-- TODO Gegenprobe: das Prognose-/Modellverfahren an der Vergangenheit
+           prüfen (auf altem Fenster anpassen, bekannte Jahre vorhersagen,
+           mittlere Abweichung ausweisen). Ohne diese Karte ist jede
+           Fortschreibung eine Behauptung. -->
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">TODO Gegenprobe an der Vergangenheit <span class="info-i" data-info="metricKey" tabindex="0" role="button" aria-label="Erklärung">ⓘ</span></div>
+        <div class="card-sub">TODO Anpassungsfenster, Vorhersagefenster, mittlere Abweichung</div>
+        <div id="chart-daten-backtest"></div>
+        <p class="note src-note" data-src="quelleKey"></p>
+      </div>
+
+      <!-- Register der Demo-Annahmen: wird aus DATA.annahmen gefüllt, kein
+           handgeschriebener Text. Zugleich die Einkaufsliste für das Projekt. -->
+      <div class="card">
+        <div class="card-title">Was belegt ist — und was eine Datenlieferung des Amtes braucht</div>
+        <div class="card-sub">jede nicht öffentlich belegte Größe, mit Begründung</div>
+        <div id="annahmen-liste" style="margin-top:var(--sp-3)"></div>
+      </div>
+    </div>
+  </section>
+"""
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("slug")
     ap.add_argument("--title", required=True, help='z.B. "Kita-Monitor Essen"')
     ap.add_argument("--brand-sub", required=True, help='Topbar-Zusatz, z.B. "Kita-Monitor"')
     ap.add_argument("--city", required=True, help='Für den Footer-Disclaimer, z.B. "Stadt Essen"')
-    ap.add_argument("--tabs", required=True, help='id:Label,id:Label,… (1–6, erste = aktiv)')
+    ap.add_argument("--tabs", required=True,
+                    help='id:Label,… (1–7, erste = aktiv). Fehlt "daten", wird '
+                         '"daten:Daten & Methode" automatisch angehängt.')
+    ap.add_argument("--no-daten", action="store_true",
+                    help="die Pflicht-Ansicht 'Daten & Methode' nicht anhängen "
+                         "(nur für Demos ohne jede Datenlücke)")
     ap.add_argument("--data-key", help="JS-Datenschlüssel window.KANDUIT_<KEY> (Default: erstes Slug-Wort, groß)")
     ap.add_argument("--port", type=int, help="serve.py-Port (Default: niedrigster freier ≥ 8123)")
     ap.add_argument("--desc", help="Meta-Description (Default aus Titel)")
@@ -120,6 +170,13 @@ def main():
             die(f"already exists: {path}")
 
     tabs = parse_tabs(a.tabs)
+    # 'Daten & Methode' ist Pflicht: Herkunft, Registerabgleich, Datenlücken.
+    # Ohne diese Ansicht hat der Demonstrator keinen Ort für die Frage, die in
+    # jedem Termin kommt — "woher haben Sie die Zahl, und warum weicht sie ab?"
+    if not a.no_daten and not any(tid == "daten" for tid, _ in tabs):
+        if len(tabs) >= 7:
+            die("7 Tabs vergeben und 'daten' fehlt — einen Tab zusammenlegen")
+        tabs.append(("daten", "Daten & Methode"))
     today = datetime.date.today()
     subs = {
         "{{SLUG}}": a.slug,
@@ -135,12 +192,22 @@ def main():
             f'    <button class="tab{" active" if i == 0 else ""}" data-view="{tid}">{label}</button>'
             for i, (tid, label) in enumerate(tabs)),
         "{{VIEW_SECTIONS}}": "\n".join(
+            DATEN_SECTION if tid == "daten" else
             VIEW_SECTION.format(tid=tid, label=label, LABEL_UPPER=label.upper(),
                                 active=" active" if i == 0 else "")
             for i, (tid, label) in enumerate(tabs)),
         "{{VIEWS_MAP}}": "{ " + ", ".join(f"{tid}: 'view-{tid}'" for tid, _ in tabs) + " }",
         "{{RENDER_STUBS}}": "\n".join(
-            f"function {render_func(tid)}() {{\n  // TODO: Ansicht „{label}“\n}}\n"
+            (f"function {render_func(tid)}() {{\n"
+             "  /* Register der Demo-Annahmen — Wortlaut kommt aus generate.py. */\n"
+             "  $('#annahmen-liste').innerHTML = (DATA.annahmen || []).map(a =>\n"
+             "    `<div class=\"kv\"><span class=\"kk\"><b>${esc(a.t)}</b></span>"
+             "<span class=\"vv\"></span>\n"
+             "     <span class=\"src\">${esc(a.d)}</span></div>`).join('')\n"
+             "    || '<p class=\"note\">Keine Demo-Annahmen — jede Zahl stammt aus einer offenen Quelle.</p>';\n"
+             "  // TODO: Registerabgleich und Gegenprobe rendern.\n}\n"
+             if tid == "daten" else
+             f"function {render_func(tid)}() {{\n  // TODO: Ansicht „{label}“\n}}\n")
             for tid, label in tabs),
         "{{RENDER_CALLS}}": "\n".join(f"{render_func(tid)}();" for tid, _ in tabs),
     }
@@ -182,7 +249,8 @@ def main():
 next steps (details: .claude/skills/build-demo/SKILL.md):
   1. scripts/fetch_<quelle>.py schreiben und ausführen → data/sources/*.json
   2. scripts/generate.py implementieren und ausführen → data.js
-  3. Views in app.js + METRIC_INFO/SRC_LABEL füllen, index.html-TODOs ersetzen
+  3. Views in app.js + METRIC_INFO füllen, index.html-TODOs ersetzen
+     (QUELLEN und ANNAHMEN in generate.py pflegen — app.js zieht beides selbst)
   4. python3 portfolio/{a.slug}/serve.py → alle Tabs prüfen (Desktop + 375px)
   5. python3 portfolio/{a.slug}/scripts/publish.py && … --check
   6. docs/index.html-Karte + README-Bullet ergänzen (Snippets: references/reference.md)
