@@ -1,5 +1,33 @@
 # Changelog — Schulinvestitions-Monitor Duisburg
 
+## 16.08.2026 — Gegenprobe, Daten & Methode, Baulast
+
+Die drei Punkte, an denen der Monitor die Anforderungen des eigenen Bau-Skills noch nicht
+erfüllt hat.
+
+- **Gegenprobe.** Das Fortschreibungsverfahren wird an der Vergangenheit geprüft:
+  Anpassungsfenster 2013–2019, Vorhersage 2024, beides genauso
+  lang wie in der Produktivrechnung. Ergebnis: mittlere absolute Abweichung
+  6,5 % gewichtet, 11,8 % ungewichtet — und ein
+  **einseitiger Fehler**: alle sieben fortgeschriebenen Schulformen werden unterschätzt,
+  in Summe um -6,5 %. Das Anpassungsfenster enthält die Duisburger
+  Wachstumsphase ab 2020 noch nicht. Die Prognose im Monitor ist damit eher eine
+  Untergrenze als ein Punktwert — das steht jetzt so in der Oberfläche.
+- **Ansicht „Daten & Methode".** Siebter Tab, mit Registerabgleich, Gegenprobe,
+  Quellenübersicht und dem Register der Demo-Annahmen (das aus dem Überblick dorthin
+  gewandert ist).
+- **Registerabgleich.** Drei Quellen, drei Zahlen: die Amtsseite nennt „rund 130", dieser
+  Monitor 135, das ungefilterte Landesregister 141. Aufgelöst über
+  die Trägernummer — 129 Standorte stehen in Trägerschaft der Stadt,
+  zwei bei einem anderen öffentlichen Träger, vier in freier Trägerschaft; die Differenz zu
+  141 sind 6 Einträge, die keine Schulen sind (Schulamt,
+  ZfsL, vier Seminare). Keine der drei Zahlen ist falsch.
+- **Baulast korrigiert.** Sanierungs- und Ganztagsvolumen werden nur noch für die
+  129 städtischen Standorte angesetzt. Vorher trugen auch die sechs Schulen
+  anderer Träger einen kommunalen Eigenanteil, was die Belastung der Stadt überzeichnet
+  hat. Alle 48 Startchancen-Schulen sind städtisch — beim Schulträgerbudget stellt
+  sich die Frage nicht.
+
 ## 16.08.2026 — Städtevergleich, Leitzahl, Druckbereich
 
 Nachgezogen aus dem Abgleich mit den bereits gebauten Demonstratoren.

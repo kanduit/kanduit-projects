@@ -28,6 +28,7 @@ for the public sector in North Rhine-Westphalia. The full documentation is in Ge
 4. **Priorisierung** — four freely weighted criteria; the current weighting is always readable as plain text.
 5. **Eigenanteil** — municipal own share per budget year 2026–2034 under an adjustable annual cap.
 6. **Szenarien** — the three named scenarios: own-share cap, all-day first, one-year delay.
+7. **Daten & Methode** — register reconciliation ("rund 130" vs 135 vs 141, resolved via the Trägernummer), a back-test of the forecast (6,5 % weighted MAE, systematically low by -6,5 %), sources, and the full register of demo assumptions.
 
 A printable **fact sheet per site** is reachable from the map, the table and the ranking;
 every figure carries its source, date and derivation.

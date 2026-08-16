@@ -46,6 +46,7 @@ URL_SOZIALINDEX = SITE + "schulliste_sj_25_26_open_data.csv"
 AGS_DU = "05112000"      # Gemeindeschluessel Duisburg
 KREIS_DU = "112"         # Kreisschluessel in der Zeitreihe (Krfr. Stadt Duisburg)
 IN_BETRIEB = "1"         # Schulbetriebsschluessel: Schule in Betrieb
+TRAEGER_STADT = "10054"  # Traegernummer der Stadt Duisburg als Schultraeger
 
 # Das Schulverzeichnis fuehrt unter denselben Schluesseln auch Einrichtungen,
 # die keine Schulen sind (Schulamt, Zentrum fuer schulpraktische Lehrerausbildung,
@@ -100,6 +101,7 @@ def main():
             formen[code.zfill(2)] = text
 
     liste = []
+    keine_schule = 0
     for r in schulen:
         if r.get("Gemeindeschluessel") != AGS_DU:
             continue
@@ -107,8 +109,19 @@ def main():
             continue
         form = (r.get("Schulform") or "").strip()
         if form in KEINE_SCHULE:
+            keine_schule += 1
             continue
         nr = r["Schulnummer"]
+        tnr = (r.get("Traegernummer") or "").strip()
+        # Traegerschaft entscheidet ueber die Baulast: nur fuer die eigenen
+        # Schulen investiert die Stadt. Der Landschaftsverband und die freien
+        # Traeger stehen im Register, gehoeren aber nicht in den Eigenanteil.
+        if tnr == TRAEGER_STADT:
+            traeger = "stadt"
+        elif r.get("Rechtsform") == "2":
+            traeger = "privat"
+        else:
+            traeger = "anderer_oeffentlicher"
         e, n = num(r.get("UTMRechtswert")), num(r.get("UTMHochwert"))
         lat, lon = (None, None)
         if e and n:
@@ -123,6 +136,8 @@ def main():
             "strasse": (r.get("Strasse") or "").strip(),
             "plz": (r.get("PLZ") or "").strip(),
             "rechtsform": "privat" if r.get("Rechtsform") == "2" else "oeffentlich",
+            "traegernr": tnr,
+            "traeger": traeger,
             "betrieb_seit": (r.get("Schulbetriebsdatum") or "").strip(),
             "schueler": int(anzahlen.get(nr) or 0),
             "sozialindex": sozial.get(nr, "ohne"),
@@ -132,6 +147,13 @@ def main():
     liste.sort(key=lambda s: s["nr"])
     if len(liste) < 100:
         raise SystemExit("unerwartet wenige Schulen (%d) — Quelle pruefen" % len(liste))
+
+    nach_traeger = {}
+    for s in liste:
+        nach_traeger[s["traeger"]] = nach_traeger.get(s["traeger"], 0) + 1
+    print("  Traegerschaft:", ", ".join("%s=%d" % kv for kv in sorted(nach_traeger.items())))
+    if nach_traeger.get("stadt", 0) < 100:
+        raise SystemExit("unerwartet wenige staedtische Schulen — Traegernummer pruefen")
 
     ohne_geo = [s["nr"] for s in liste if s["lat"] is None]
     ohne_soz = [s["nr"] for s in liste if s["sozialindex"] == "ohne"]
@@ -187,6 +209,8 @@ def main():
             "abruf": stand,
             "ohne_sozialindex": len(ohne_soz),
             "ohne_koordinate": len(ohne_geo),
+            "traegerschaft": nach_traeger,
+            "ausgeschlossen_keine_schule": keine_schule,
             "hinweis": "Nur Einrichtungsdaten. Keine personenbezogenen Daten. "
                        "Die Sozialindexstufe ist die neunstufige Stufe des Landes "
                        "NRW (1 = geringste, 9 = hoechste Belastung); sie liegt nur "

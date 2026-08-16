@@ -33,6 +33,7 @@ Software für den öffentlichen Sektor in NRW. Eine englische Übersicht steht i
 | **Standortregister** | sortier-, filter- und als CSV exportierbare Tabelle, Zeile öffnet das Kennzahlenblatt | Spalten mit ◈ beruhen auf Annahmen, nicht auf Amtsdaten |
 | **Priorisierung** | vier frei gewichtbare Kriterien, Gewichtung jederzeit als Text ablesbar | 28 Standorte ohne Sozialindexstufe gehen neutral ein |
 | **Eigenanteil** | Eigenanteil je Haushaltsjahr 2026–2034 unter einstellbarem Jahresdeckel | Einplanungsverfahren und Deckel sind Modellannahmen |
+| **Daten & Methode** | Registerabgleich, Gegenprobe an der Vergangenheit, Quellen, Register der Demo-Annahmen | benennt den einseitigen Prognosefehler von -6,5 % |
 | **Szenarien** | „Eigenanteil-Deckel“, „Ganztag zuerst“, „Verzögerung um ein Jahr“ | Szenario 3 benennt das Packungs-Artefakt seines eigenen Verfahrens |
 
 Dazu als sechste Ansicht das **Kennzahlenblatt je Standort** (Klick auf Karte, Tabelle
@@ -65,6 +66,30 @@ Oberfläche.
 Bemerkenswert am Rande: das Schulbetriebsdatum des Schulverzeichnisses wäre der
 naheliegende Ersatz für ein Baujahr — es steht aber für 101 der 135 Standorte
 auf 1973, dem Aufbau des Registers. Es wird deshalb bewusst **nicht** verwendet.
+
+## Prüfung des Verfahrens
+
+Die Trendfortschreibung wird an der Vergangenheit geprüft: angepasst auf
+2013–2019, vorhergesagt 2024 — Fenster und Horizont genauso lang
+wie in der Produktivrechnung. Mittlere absolute Abweichung 6,5 %
+gewichtet nach Schülerzahl, 11,8 % ungewichtet über die Schulformen. Der Fehler
+ist einseitig: **alle** fortgeschriebenen Schulformen werden unterschätzt, in Summe um
+-6,5 %, weil das Anpassungsfenster die Duisburger Wachstumsphase ab 2020 noch
+nicht enthält. Die Prognose taugt damit als Größenordnung und eher als Untergrenze, nicht
+als Punktwert je Jahrgang.
+
+## Wie viele Schulen hat Duisburg?
+
+Drei Quellen, drei Zahlen, keine falsch. Die Amtsseite nennt „rund 130" und meint die
+Schulen in Trägerschaft der Stadt — laut Trägernummer im Landesregister
+129. Dieser Monitor führt 135: alle Schulen im Stadtgebiet
+mit aktivem Schulbetrieb, unabhängig vom Träger, weil die Schulentwicklungsplanung nach
+§ 80 SchulG NRW das gesamte Stadtgebiet umfasst. Ungefiltert enthält das Register
+141 Einträge; die zusätzlichen 6 sind Schulamt, ZfsL und
+vier Lehrerseminare.
+
+Für das Geld zählt die Baulast: Sanierungs- und Ganztagsvolumen werden nur für die
+129 städtischen Standorte angesetzt.
 
 ## Einordnung im Land
 
