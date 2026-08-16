@@ -41,6 +41,7 @@
     <button class="tab" data-view="modell">Priorisierung</button>
     <button class="tab" data-view="eigenanteil">Eigenanteil</button>
     <button class="tab" data-view="szenarien">Szenarien</button>
+    <button class="tab" data-view="daten">Daten &amp; Methode</button>
   </nav>
   <div class="right">
     <span class="stand" id="standLabel">Stand —</span>
@@ -111,11 +112,9 @@
         <p class="note src-note" data-src="budget"></p>
       </div>
 
-      <div class="card">
-        <div class="card-title">Register der Demo-Annahmen</div>
-        <div class="card-sub">jede nicht öffentlich belegte Größe, mit Begründung</div>
-        <div id="annahmen-liste" style="margin-top:var(--sp-3)"></div>
-      </div>
+      <p class="note">Herkunft jeder Zahl, Abgleich mit den Zahlen des Amtes, Prüfung des
+      Prognoseverfahrens an der Vergangenheit und das vollständige Register der
+      Demo-Annahmen: <a href="#" data-goto="daten">Daten &amp; Methode</a>.</p>
     </div>
   </section>
 
@@ -243,6 +242,49 @@
         <button data-s="verzoegerung">3 · Verzögerung um ein Jahr</button>
       </div>
       <div id="szenario-body"></div>
+    </div>
+  </section>
+
+  <!-- ===================== DATEN & METHODE ===================== -->
+  <section class="view" id="view-daten">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Herkunft · Rechenweg · Datenlücken</p>
+        <h2>Daten &amp; Methode</h2>
+        <p>Jede Zahl dieses Monitors lässt sich bis zur Primärquelle zurückverfolgen. Diese
+        Ansicht nennt die Quellen, prüft das Prognoseverfahren an der Vergangenheit und
+        benennt ausdrücklich auch das, was die öffentlichen Daten nicht hergeben.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Wie viele Schulen hat Duisburg? <span class="info-i" data-info="registerabgleich" tabindex="0" role="button" aria-label="Erklärung: Registerabgleich">ⓘ</span></div>
+        <div class="card-sub">Drei Quellen, drei Zahlen — und keine ist falsch</div>
+        <div class="table-wrap" id="tab-register" style="margin-top:var(--sp-4)"></div>
+        <div id="chart-traeger" style="margin-top:var(--sp-4)"></div>
+        <p class="note" id="register-fazit"></p>
+        <p class="note src-note" data-src="msb"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Gegenprobe: taugt die Fortschreibung? <span class="info-i" data-info="gegenprobe" tabindex="0" role="button" aria-label="Erklärung: Gegenprobe">ⓘ</span></div>
+        <div class="card-sub">Verfahren an der Vergangenheit geprüft · Abweichung je Schulform</div>
+        <div class="grid g4" id="gegenprobe-kpis" style="margin:var(--sp-4) 0"></div>
+        <div id="chart-gegenprobe"></div>
+        <p class="note" id="gegenprobe-fazit"></p>
+        <p class="note src-note" data-src="msbReihe"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Quellen</div>
+        <div class="card-sub">alle offen zugänglich · Abruf siehe Stand</div>
+        <div class="table-wrap" id="tab-quellen" style="margin-top:var(--sp-4)"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Was belegt ist — und was eine Datenlieferung des Amtes braucht</div>
+        <div class="card-sub">jede nicht öffentlich belegte Größe, mit Begründung</div>
+        <div id="annahmen-liste" style="margin-top:var(--sp-3)"></div>
+      </div>
     </div>
   </section>
 

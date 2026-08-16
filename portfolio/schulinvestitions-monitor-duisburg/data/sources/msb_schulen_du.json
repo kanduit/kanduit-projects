@@ -1,6 +1,7 @@
 {
  "meta": {
   "abruf": "2026-08-16",
+  "ausgeschlossen_keine_schule": 6,
   "dateien": [
    "https://www.schulministerium.nrw.de/BiPo/OpenData/Schuldaten/schuldaten.csv",
    "https://www.schulministerium.nrw.de/BiPo/OpenData/Schuldaten/SchuelerGesamtZahl/anzahlen.csv",
@@ -12,7 +13,12 @@
   "ohne_sozialindex": 28,
   "quelle": "Ministerium fuer Schule und Bildung NRW — Open Data (Schulverzeichnis, Schuelerzahlen, Sozialindexstufen)",
   "quelle_url": "https://www.schulministerium.nrw/open-data",
-  "schuljahr": "2025/26"
+  "schuljahr": "2025/26",
+  "traegerschaft": {
+   "anderer_oeffentlicher": 2,
+   "privat": 4,
+   "stadt": 129
+  }
  },
  "schulen": [
   {
@@ -28,7 +34,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1144,
    "sozialindex": "7",
-   "strasse": "Körnerplatz 2"
+   "strasse": "Körnerplatz 2",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.2024",
@@ -43,7 +51,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 231,
    "sozialindex": "5",
-   "strasse": "Obere Holtener Str. 42"
+   "strasse": "Obere Holtener Str. 42",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.2025",
@@ -58,7 +68,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 103,
    "sozialindex": "ohne",
-   "strasse": "Gneisenaustr. 251"
+   "strasse": "Gneisenaustr. 251",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -73,7 +85,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 420,
    "sozialindex": "4",
-   "strasse": "Bilsestr. 10"
+   "strasse": "Bilsestr. 10",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -88,7 +102,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 254,
    "sozialindex": "9",
-   "strasse": "Wiesbadener Str. 76-78"
+   "strasse": "Wiesbadener Str. 76-78",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -103,7 +119,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 294,
    "sozialindex": "3",
-   "strasse": "Rolandstr. 2"
+   "strasse": "Rolandstr. 2",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -118,7 +136,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 249,
    "sozialindex": "4",
-   "strasse": "Neanderstr. 121"
+   "strasse": "Neanderstr. 121",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -133,7 +153,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 182,
    "sozialindex": "4",
-   "strasse": "Nombericher Str. 74"
+   "strasse": "Nombericher Str. 74",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -148,7 +170,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 336,
    "sozialindex": "9",
-   "strasse": "Friedenstr. 5-7"
+   "strasse": "Friedenstr. 5-7",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -163,7 +187,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 224,
    "sozialindex": "1",
-   "strasse": "Böhmer Str. 10-14"
+   "strasse": "Böhmer Str. 10-14",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -178,7 +204,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 208,
    "sozialindex": "9",
-   "strasse": "Kampstr. 121"
+   "strasse": "Kampstr. 121",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -193,7 +221,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 351,
    "sozialindex": "7",
-   "strasse": "Jägerstr. 23a"
+   "strasse": "Jägerstr. 23a",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -208,7 +238,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 190,
    "sozialindex": "5",
-   "strasse": "Goldstr. 7-9"
+   "strasse": "Goldstr. 7-9",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -223,7 +255,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 276,
    "sozialindex": "9",
-   "strasse": "Henriettenstr. 25"
+   "strasse": "Henriettenstr. 25",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -238,7 +272,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 218,
    "sozialindex": "5",
-   "strasse": "Gartenstr. 110"
+   "strasse": "Gartenstr. 110",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -253,7 +289,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 159,
    "sozialindex": "3",
-   "strasse": "Grabenstr. 150"
+   "strasse": "Grabenstr. 150",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -268,7 +306,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 199,
    "sozialindex": "2",
-   "strasse": "Am Knappert 20"
+   "strasse": "Am Knappert 20",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -283,7 +323,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 386,
    "sozialindex": "3",
-   "strasse": "Tonstr. 16"
+   "strasse": "Tonstr. 16",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -298,7 +340,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 202,
    "sozialindex": "5",
-   "strasse": "Zoppenbrückstr. 43-45"
+   "strasse": "Zoppenbrückstr. 43-45",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -313,7 +357,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 154,
    "sozialindex": "5",
-   "strasse": "Wrangelstr. 17"
+   "strasse": "Wrangelstr. 17",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -328,7 +374,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 220,
    "sozialindex": "3",
-   "strasse": "Wehofer Str. 45"
+   "strasse": "Wehofer Str. 45",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -343,7 +391,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 266,
    "sozialindex": "6",
-   "strasse": "Warbruckstr. 217"
+   "strasse": "Warbruckstr. 217",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -358,7 +408,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 331,
    "sozialindex": "4",
-   "strasse": "Heinrich-Bongers-Str. 12"
+   "strasse": "Heinrich-Bongers-Str. 12",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -373,7 +425,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 479,
    "sozialindex": "9",
-   "strasse": "St.-Johann-Str. 37"
+   "strasse": "St.-Johann-Str. 37",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -388,7 +442,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 290,
    "sozialindex": "9",
-   "strasse": "Schulstr. 31-35"
+   "strasse": "Schulstr. 31-35",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -403,7 +459,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 386,
    "sozialindex": "9",
-   "strasse": "Sandstr. 46"
+   "strasse": "Sandstr. 46",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -418,7 +476,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 296,
    "sozialindex": "7",
-   "strasse": "Max-Planck-Str. 71-73"
+   "strasse": "Max-Planck-Str. 71-73",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -433,7 +493,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 342,
    "sozialindex": "9",
-   "strasse": "Lange Kamp 17"
+   "strasse": "Lange Kamp 17",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -448,7 +510,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 339,
    "sozialindex": "3",
-   "strasse": "Böhmer Str. 10-14"
+   "strasse": "Böhmer Str. 10-14",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -463,7 +527,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 362,
    "sozialindex": "4",
-   "strasse": "Mozartstr. 30"
+   "strasse": "Mozartstr. 30",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -478,7 +544,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 199,
    "sozialindex": "6",
-   "strasse": "Lilienthalstr. 28"
+   "strasse": "Lilienthalstr. 28",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -493,7 +561,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 184,
    "sozialindex": "6",
-   "strasse": "Klosterstr. 18"
+   "strasse": "Klosterstr. 18",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -508,7 +578,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 353,
    "sozialindex": "8",
-   "strasse": "Karolinenstr. 10"
+   "strasse": "Karolinenstr. 10",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -523,7 +595,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 345,
    "sozialindex": "6",
-   "strasse": "Humboldtstr. 8"
+   "strasse": "Humboldtstr. 8",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -538,7 +612,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 202,
    "sozialindex": "7",
-   "strasse": "Fürst-Bismarck-Str. 26"
+   "strasse": "Fürst-Bismarck-Str. 26",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -553,7 +629,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 363,
    "sozialindex": "9",
-   "strasse": "Brückenstr. 96-98"
+   "strasse": "Brückenstr. 96-98",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -568,7 +646,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 146,
    "sozialindex": "1",
-   "strasse": "Hermann-Grothe-Str. 99"
+   "strasse": "Hermann-Grothe-Str. 99",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -583,7 +663,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 213,
    "sozialindex": "2",
-   "strasse": "Heisterbacher Str. 9"
+   "strasse": "Heisterbacher Str. 9",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -598,7 +680,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 345,
    "sozialindex": "7",
-   "strasse": "Hebbelstr. 1"
+   "strasse": "Hebbelstr. 1",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -613,7 +697,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 273,
    "sozialindex": "5",
-   "strasse": "Birkenstr. 15"
+   "strasse": "Birkenstr. 15",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -628,7 +714,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 207,
    "sozialindex": "2",
-   "strasse": "Großenbaumer Allee 34 a"
+   "strasse": "Großenbaumer Allee 34 a",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -643,7 +731,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 287,
    "sozialindex": "7",
-   "strasse": "Kantstr. 80"
+   "strasse": "Kantstr. 80",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -658,7 +748,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 413,
    "sozialindex": "9",
-   "strasse": "Ottostr. 65"
+   "strasse": "Ottostr. 65",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -673,7 +765,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 207,
    "sozialindex": "9",
-   "strasse": "Gartenstr. 110"
+   "strasse": "Gartenstr. 110",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -688,7 +782,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 311,
    "sozialindex": "8",
-   "strasse": "Erzstr. 10"
+   "strasse": "Erzstr. 10",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -703,7 +799,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 305,
    "sozialindex": "9",
-   "strasse": "Eschenstr. 53"
+   "strasse": "Eschenstr. 53",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -718,7 +816,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 358,
    "sozialindex": "8",
-   "strasse": "Brückelstr. 5"
+   "strasse": "Brückelstr. 5",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -733,7 +833,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 300,
    "sozialindex": "9",
-   "strasse": "Breite Str. 58"
+   "strasse": "Breite Str. 58",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -748,7 +850,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 359,
    "sozialindex": "5",
-   "strasse": "Bergstr. 48"
+   "strasse": "Bergstr. 48",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -763,7 +867,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 205,
    "sozialindex": "2",
-   "strasse": "Am See 22"
+   "strasse": "Am See 22",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -778,7 +884,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 267,
    "sozialindex": "8",
-   "strasse": "Am Tollberg 50"
+   "strasse": "Am Tollberg 50",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -793,7 +901,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 475,
    "sozialindex": "3",
-   "strasse": "Albert-Schweitzer-Str. 64"
+   "strasse": "Albert-Schweitzer-Str. 64",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -808,7 +918,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 223,
    "sozialindex": "7",
-   "strasse": "Schulstr. 7"
+   "strasse": "Schulstr. 7",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -823,7 +935,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 285,
    "sozialindex": "5",
-   "strasse": "Sternstr. 76"
+   "strasse": "Sternstr. 76",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -838,7 +952,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 297,
    "sozialindex": "5",
-   "strasse": "Vennbruchstr. 1"
+   "strasse": "Vennbruchstr. 1",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -853,7 +969,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 176,
    "sozialindex": "3",
-   "strasse": "Unter den Kastanien 28"
+   "strasse": "Unter den Kastanien 28",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -868,7 +986,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 355,
    "sozialindex": "6",
-   "strasse": "Karlstr. 35"
+   "strasse": "Karlstr. 35",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -883,7 +1003,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 199,
    "sozialindex": "1",
-   "strasse": "Theißelmannstr. 33"
+   "strasse": "Theißelmannstr. 33",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -898,7 +1020,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 329,
    "sozialindex": "8",
-   "strasse": "Ottostr. 86"
+   "strasse": "Ottostr. 86",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -913,7 +1037,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 321,
    "sozialindex": "9",
-   "strasse": "Kirchstr. 185"
+   "strasse": "Kirchstr. 185",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -928,7 +1054,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 274,
    "sozialindex": "4",
-   "strasse": "Marienstr. 28"
+   "strasse": "Marienstr. 28",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -943,7 +1071,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 249,
    "sozialindex": "2",
-   "strasse": "Schillerstr. 124"
+   "strasse": "Schillerstr. 124",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -958,7 +1088,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 321,
    "sozialindex": "5",
-   "strasse": "Marktstr. 25"
+   "strasse": "Marktstr. 25",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -973,7 +1105,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 413,
    "sozialindex": "3",
-   "strasse": "Mevissenstr. 19"
+   "strasse": "Mevissenstr. 19",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -988,7 +1122,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 281,
    "sozialindex": "1",
-   "strasse": "Van-Gogh-Str. 60"
+   "strasse": "Van-Gogh-Str. 60",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1003,7 +1139,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 205,
    "sozialindex": "8",
-   "strasse": "Pestalozzistr. 8"
+   "strasse": "Pestalozzistr. 8",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1018,7 +1156,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 292,
    "sozialindex": "8",
-   "strasse": "Am Borgschenhof 7"
+   "strasse": "Am Borgschenhof 7",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1033,7 +1173,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 393,
    "sozialindex": "9",
-   "strasse": "Beethovenstr. 16"
+   "strasse": "Beethovenstr. 16",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1048,7 +1190,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 236,
    "sozialindex": "5",
-   "strasse": "Auf dem Berg 15"
+   "strasse": "Auf dem Berg 15",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1063,7 +1207,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 321,
    "sozialindex": "5",
-   "strasse": "Bergheimer Str. 167"
+   "strasse": "Bergheimer Str. 167",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1078,7 +1224,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 422,
    "sozialindex": "9",
-   "strasse": "Krefelder Str. 47"
+   "strasse": "Krefelder Str. 47",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1093,7 +1241,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 219,
    "sozialindex": "1",
-   "strasse": "Waldstr. 3h"
+   "strasse": "Waldstr. 3h",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1108,7 +1258,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 218,
    "sozialindex": "5",
-   "strasse": "Breslauer Str. 1"
+   "strasse": "Breslauer Str. 1",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1123,7 +1275,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 197,
    "sozialindex": "2",
-   "strasse": "Kirchstr. 12"
+   "strasse": "Kirchstr. 12",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1138,7 +1292,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 203,
    "sozialindex": "1",
-   "strasse": "Gartenstr. 13"
+   "strasse": "Gartenstr. 13",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1153,7 +1309,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 301,
    "sozialindex": "8",
-   "strasse": "Ludgerusstr. 1"
+   "strasse": "Ludgerusstr. 1",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1168,7 +1326,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 154,
    "sozialindex": "ohne",
-   "strasse": "Vorm Grindsbruch 30-32"
+   "strasse": "Vorm Grindsbruch 30-32",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1183,7 +1343,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 222,
    "sozialindex": "ohne",
-   "strasse": "Sittardsberger Allee 263"
+   "strasse": "Sittardsberger Allee 263",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1198,7 +1360,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 247,
    "sozialindex": "ohne",
-   "strasse": "Kalthoffstr. 20"
+   "strasse": "Kalthoffstr. 20",
+   "traeger": "anderer_oeffentlicher",
+   "traegernr": "10029"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1213,7 +1377,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 242,
    "sozialindex": "ohne",
-   "strasse": "Johanniterstr. 103-105"
+   "strasse": "Johanniterstr. 103-105",
+   "traeger": "anderer_oeffentlicher",
+   "traegernr": "10029"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1228,7 +1394,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 286,
    "sozialindex": "ohne",
-   "strasse": "Eschenstr. 65a"
+   "strasse": "Eschenstr. 65a",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1243,7 +1411,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 426,
    "sozialindex": "ohne",
-   "strasse": "Reichenberger Str. 19a"
+   "strasse": "Reichenberger Str. 19a",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1258,7 +1428,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 349,
    "sozialindex": "ohne",
-   "strasse": "Kopernikusstr. 38"
+   "strasse": "Kopernikusstr. 38",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1273,7 +1445,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 173,
    "sozialindex": "ohne",
-   "strasse": "Dahlingstr. 40"
+   "strasse": "Dahlingstr. 40",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1288,7 +1462,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 597,
    "sozialindex": "6",
-   "strasse": "Wacholderstr. 12"
+   "strasse": "Wacholderstr. 12",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1303,7 +1479,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 597,
    "sozialindex": "6",
-   "strasse": "Weststr. 40-42"
+   "strasse": "Weststr. 40-42",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1318,7 +1496,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 591,
    "sozialindex": "6",
-   "strasse": "Landgerichtsstr. 17"
+   "strasse": "Landgerichtsstr. 17",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1333,7 +1513,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 356,
    "sozialindex": "ohne",
-   "strasse": "Carstanjenstr. 10"
+   "strasse": "Carstanjenstr. 10",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1348,7 +1530,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1323,
    "sozialindex": "4",
-   "strasse": "Mainstr. 10"
+   "strasse": "Mainstr. 10",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1363,7 +1547,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 918,
    "sozialindex": "3",
-   "strasse": "Realschulstr. 45"
+   "strasse": "Realschulstr. 45",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1378,7 +1564,9 @@
    "rechtsform": "privat",
    "schueler": 749,
    "sozialindex": "ohne",
-   "strasse": "Realschulstr. 11"
+   "strasse": "Realschulstr. 11",
+   "traeger": "privat",
+   "traegernr": "70920"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1393,7 +1581,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 781,
    "sozialindex": "6",
-   "strasse": "Musfeldstr. 152"
+   "strasse": "Musfeldstr. 152",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1408,7 +1598,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1344,
    "sozialindex": "2",
-   "strasse": "Am Ziegelkamp 13-15"
+   "strasse": "Am Ziegelkamp 13-15",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1423,7 +1615,9 @@
    "rechtsform": "privat",
    "schueler": 679,
    "sozialindex": "ohne",
-   "strasse": "An der Abtei 10"
+   "strasse": "An der Abtei 10",
+   "traeger": "privat",
+   "traegernr": "70920"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1438,7 +1632,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 903,
    "sozialindex": "7",
-   "strasse": "Werner-Wild-Str. 12"
+   "strasse": "Werner-Wild-Str. 12",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1453,7 +1649,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 733,
    "sozialindex": "6",
-   "strasse": "Am Grillopark 24"
+   "strasse": "Am Grillopark 24",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1468,7 +1666,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 745,
    "sozialindex": "4",
-   "strasse": "Beckersloh 81"
+   "strasse": "Beckersloh 81",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1483,7 +1683,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1010,
    "sozialindex": "4",
-   "strasse": "Wilhelmstr. 25"
+   "strasse": "Wilhelmstr. 25",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1498,7 +1700,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 828,
    "sozialindex": "5",
-   "strasse": "Flutweg 62"
+   "strasse": "Flutweg 62",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1513,7 +1717,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1008,
    "sozialindex": "2",
-   "strasse": "Schulallee 11"
+   "strasse": "Schulallee 11",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1528,7 +1734,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 2581,
    "sozialindex": "ohne",
-   "strasse": "Carstanjenstr. 10"
+   "strasse": "Carstanjenstr. 10",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1543,7 +1751,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 479,
    "sozialindex": "ohne",
-   "strasse": "Bürgermeister-Wendel-Platz 1"
+   "strasse": "Bürgermeister-Wendel-Platz 1",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1558,7 +1768,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 325,
    "sozialindex": "2",
-   "strasse": "Lauenburger Allee 17"
+   "strasse": "Lauenburger Allee 17",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1973",
@@ -1573,7 +1785,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 252,
    "sozialindex": "ohne",
-   "strasse": "Franz-Lenze-Str. 97"
+   "strasse": "Franz-Lenze-Str. 97",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1974",
@@ -1588,7 +1802,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 384,
    "sozialindex": "ohne",
-   "strasse": "Am Rönsbergshof 13-15"
+   "strasse": "Am Rönsbergshof 13-15",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1975",
@@ -1603,7 +1819,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 207,
    "sozialindex": "2",
-   "strasse": "Im Reimel 9"
+   "strasse": "Im Reimel 9",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1976",
@@ -1618,7 +1836,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1297,
    "sozialindex": "3",
-   "strasse": "Großenbaumer Allee 168-174"
+   "strasse": "Großenbaumer Allee 168-174",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1977",
@@ -1633,7 +1853,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 367,
    "sozialindex": "4",
-   "strasse": "Aakerfährstr. 80"
+   "strasse": "Aakerfährstr. 80",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1978",
@@ -1648,7 +1870,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 217,
    "sozialindex": "ohne",
-   "strasse": "Paschacker 11"
+   "strasse": "Paschacker 11",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1978",
@@ -1663,7 +1887,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 34,
    "sozialindex": "ohne",
-   "strasse": "Krefelder Str. 311a"
+   "strasse": "Krefelder Str. 311a",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1980",
@@ -1678,7 +1904,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 116,
    "sozialindex": "ohne",
-   "strasse": "Kranichstr. 21-25"
+   "strasse": "Kranichstr. 21-25",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1980",
@@ -1693,7 +1921,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1927,
    "sozialindex": "ohne",
-   "strasse": "August-Thyssen-Str. 45"
+   "strasse": "August-Thyssen-Str. 45",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1981",
@@ -1708,7 +1938,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1543,
    "sozialindex": "5",
-   "strasse": "Hamborner Str. 274-278"
+   "strasse": "Hamborner Str. 274-278",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1981",
@@ -1723,7 +1955,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1411,
    "sozialindex": "ohne",
-   "strasse": "Dahlmannstr. 26"
+   "strasse": "Dahlmannstr. 26",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1982",
@@ -1738,7 +1972,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1158,
    "sozialindex": "6",
-   "strasse": "Flutweg 56"
+   "strasse": "Flutweg 56",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1983",
@@ -1753,7 +1989,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1240,
    "sozialindex": "5",
-   "strasse": "Pappenstr. 49-51"
+   "strasse": "Pappenstr. 49-51",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1986",
@@ -1768,7 +2006,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1226,
    "sozialindex": "9",
-   "strasse": "Westender Str. 30-32"
+   "strasse": "Westender Str. 30-32",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1986",
@@ -1783,7 +2023,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1825,
    "sozialindex": "ohne",
-   "strasse": "Am Ziegelkamp 28-30"
+   "strasse": "Am Ziegelkamp 28-30",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1987",
@@ -1798,7 +2040,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1369,
    "sozialindex": "5",
-   "strasse": "Kurze Str. 51"
+   "strasse": "Kurze Str. 51",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1987",
@@ -1813,7 +2057,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1109,
    "sozialindex": "8",
-   "strasse": "Ehrenstr. 87"
+   "strasse": "Ehrenstr. 87",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1990",
@@ -1828,7 +2074,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1114,
    "sozialindex": "ohne",
-   "strasse": "Krefelder Str. 92"
+   "strasse": "Krefelder Str. 92",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1991",
@@ -1843,7 +2091,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1470,
    "sozialindex": "ohne",
-   "strasse": "Klöcknerstr. 48"
+   "strasse": "Klöcknerstr. 48",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1991",
@@ -1858,7 +2108,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1153,
    "sozialindex": "8",
-   "strasse": "Möhlenkampstr. 10"
+   "strasse": "Möhlenkampstr. 10",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1991",
@@ -1873,7 +2125,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1133,
    "sozialindex": "6",
-   "strasse": "Albert-Einstein-Str. 11"
+   "strasse": "Albert-Einstein-Str. 11",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1992",
@@ -1888,7 +2142,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1891,
    "sozialindex": "ohne",
-   "strasse": "Walther-Rathenau-Str. 10"
+   "strasse": "Walther-Rathenau-Str. 10",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1993",
@@ -1903,7 +2159,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1180,
    "sozialindex": "5",
-   "strasse": "Lessingstr. 3"
+   "strasse": "Lessingstr. 3",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1993",
@@ -1918,7 +2176,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 814,
    "sozialindex": "6",
-   "strasse": "Karlstr. 25"
+   "strasse": "Karlstr. 25",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1993",
@@ -1933,7 +2193,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 2163,
    "sozialindex": "ohne",
-   "strasse": "Carstanjenstr. 10"
+   "strasse": "Carstanjenstr. 10",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1994",
@@ -1948,7 +2210,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 792,
    "sozialindex": "9",
-   "strasse": "Diesterwegstr. 6"
+   "strasse": "Diesterwegstr. 6",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1996",
@@ -1963,7 +2227,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 1001,
    "sozialindex": "9",
-   "strasse": "Gottfried-Könzgen-Str. 3"
+   "strasse": "Gottfried-Könzgen-Str. 3",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.1998",
@@ -1978,7 +2244,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 808,
    "sozialindex": "5",
-   "strasse": "Netzestr. 1"
+   "strasse": "Netzestr. 1",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.2012",
@@ -1993,7 +2261,9 @@
    "rechtsform": "privat",
    "schueler": 152,
    "sozialindex": "ohne",
-   "strasse": "Schulz-Knaudt-Str. 50"
+   "strasse": "Schulz-Knaudt-Str. 50",
+   "traeger": "privat",
+   "traegernr": "82510"
   },
   {
    "betrieb_seit": "19.08.2016",
@@ -2008,7 +2278,9 @@
    "rechtsform": "privat",
    "schueler": 96,
    "sozialindex": "ohne",
-   "strasse": "Kantstr. 30"
+   "strasse": "Kantstr. 30",
+   "traeger": "privat",
+   "traegernr": "10032"
   },
   {
    "betrieb_seit": "01.08.2014",
@@ -2023,7 +2295,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 739,
    "sozialindex": "5",
-   "strasse": "Am Ziegelkamp 7"
+   "strasse": "Am Ziegelkamp 7",
+   "traeger": "stadt",
+   "traegernr": "10054"
   },
   {
    "betrieb_seit": "01.08.2014",
@@ -2038,7 +2312,9 @@
    "rechtsform": "oeffentlich",
    "schueler": 880,
    "sozialindex": "7",
-   "strasse": "Kalthoffstr. 50"
+   "strasse": "Kalthoffstr. 50",
+   "traeger": "stadt",
+   "traegernr": "10054"
   }
  ]
 }

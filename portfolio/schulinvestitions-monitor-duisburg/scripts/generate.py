@@ -43,6 +43,7 @@ EIGENQUOTE = 1 - FOERDERQUOTE
 PROGNOSE_JAHR = 2030
 BASIS_JAHR = 2025
 REF_JAHR = 2019              # Trendbasis
+BT_FIT_VON, BT_FIT_BIS, BT_ZIEL = 2013, 2019, 2024   # Gegenprobe-Fenster
 TREND_CAP = 0.25             # max. +/-25 % Fortschreibung bis 2030
 GANZTAG_QUOTE = 0.75         # angenommene Inanspruchnahme des Ganztagsanspruchs
 GANZTAG_NEU = 0.40           # angenommener Anteil noch zu schaffender Plaetze
@@ -106,6 +107,19 @@ ANNAHMEN = [
              "förderfähig. (3) Ganztag: Demo-Annahme, %s € je noch zu schaffendem "
              "Platz, nicht aus Säule I förderfähig. Förderfähig ist ausschließlich "
              "Strang 1 — die Trennung ist der Punkt, nicht die Summe.",
+    },
+    {
+        "k": "baulast",
+        "t": "Baulast — welche Standorte die Stadt bezahlt",
+        "d": "Keine Annahme, sondern eine Abgrenzung, die leicht untergeht: Von den "
+             "135 Schulen im Stadtgebiet stehen 129 in Trägerschaft der Stadt "
+             "(Trägernummer 10054 im Schulverzeichnis). Zwei Förderschulen gehören "
+             "einem anderen öffentlichen Träger, vier Schulen sind in freier "
+             "Trägerschaft. Alle 135 bleiben im Register, weil die "
+             "Schulentwicklungsplanung nach § 80 SchulG NRW das gesamte Stadtgebiet "
+             "umfasst — Sanierungs- und Ganztagsvolumen werden aber nur für die 129 "
+             "Standorte in städtischer Baulast angesetzt. Genau daher rührt auch die "
+             "Differenz zur Zahl „rund 130\u201c auf der Amtsseite.",
     },
     {
         "k": "zeitachse",
@@ -296,6 +310,7 @@ def main():
             "lue": luecke,
             "gz": gz,
             "priv": s["rechtsform"] == "privat",
+            "tr": s["traeger"],
         })
 
     ohne_bezirk = [s["id"] for s in schulen if not s["b"]]
@@ -314,9 +329,14 @@ def main():
     gew_summe = sum(gew.values()) or 1
     for s in schulen:
         s["vSc"] = int(round(gesamt_sc * gew[s["id"]] / gew_summe)) if s["sc"] else 0
+        # Baulast: die Stadt investiert nur in ihre eigenen Schulen. Die beiden
+        # Standorte eines anderen oeffentlichen Traegers und die vier freien
+        # Schulen bleiben im Register (die Schulentwicklungsplanung nach
+        # § 80 SchulG umfasst sie), tragen aber keinen kommunalen Eigenanteil.
+        eigen_baulast = s["tr"] == "stadt"
         stufen_ueber = max(0, s["z"] - (SAN_AB_NOTE - 1))
-        s["vSan"] = int(round(s["sch"] * stufen_ueber * SAN_EUR_SCHUELER))
-        s["gzNeu"] = int(round(s["gz"] * GANZTAG_NEU))
+        s["vSan"] = int(round(s["sch"] * stufen_ueber * SAN_EUR_SCHUELER)) if eigen_baulast else 0
+        s["gzNeu"] = int(round(s["gz"] * GANZTAG_NEU)) if eigen_baulast else 0
         s["vGz"] = s["gzNeu"] * GANZTAG_EUR_PLATZ
 
     # Rundungsdifferenz auf den groessten Startchancen-Standort buchen, damit
@@ -349,6 +369,36 @@ def main():
             "gz": sum(s["gz"] for s in drin),
             "lue": sum(s["lue"] for s in drin),
         })
+
+    # ------------------------------------------------ Gegenprobe (Back-Test)
+    # Dasselbe Verfahren, an der Vergangenheit geprueft: Fitfenster und Horizont
+    # sind genauso lang wie in der Produktivrechnung (6 bzw. 5 Jahre), nur um
+    # sechs Jahre nach hinten verschoben. Die Zieljahre kennt das Modell nicht.
+    def fortschreibung(form, fit_von, fit_bis, ziel):
+        j = reihe.get(form, {})
+        a, b = j.get(fit_von, 0), j.get(fit_bis, 0)
+        if form in AUSLAUFEND or not a or not b:
+            return None
+        jaehrlich = (b / a) ** (1.0 / (fit_bis - fit_von)) - 1
+        faktor = (1 + jaehrlich) ** (ziel - fit_bis)
+        return b * max(1 - TREND_CAP, min(1 + TREND_CAP, faktor))
+
+    bt_zeilen, bt_p, bt_i = [], 0.0, 0
+    for form in sorted(reihe, key=lambda f: -reihe[f].get(BT_ZIEL, 0)):
+        p = fortschreibung(form, BT_FIT_VON, BT_FIT_BIS, BT_ZIEL)
+        ist = reihe[form].get(BT_ZIEL, 0)
+        if p is None or not ist:
+            continue
+        bt_zeilen.append({
+            "name": form,
+            "prognose": int(round(p)),
+            "ist": ist,
+            "abw": round((p / ist - 1) * 100, 1),
+        })
+        bt_p += p
+        bt_i += ist
+    mape = (sum(abs(z["abw"]) for z in bt_zeilen) / len(bt_zeilen)) if bt_zeilen else 0
+    gew_mape = (sum(abs(z["abw"]) * z["ist"] for z in bt_zeilen) / bt_i) if bt_i else 0
 
     # ------------------------------------------------ Benchmark kreisfreie Staedte
     # Beide Seiten kommen aus schon geladenen Quellen: das Budget aus dem
@@ -408,6 +458,8 @@ def main():
             "foe": sum(s["foe"] for s in schulen),
             "eig": sum(s["eig"] for s in schulen),
             "sanStandorte": sum(1 for s in schulen if s["vSan"] > 0),
+            "baulast": sum(1 for s in schulen if s["tr"] == "stadt"),
+            "ohneBaulast": sum(1 for s in schulen if s["tr"] != "stadt"),
             "lue": sum(s["lue"] for s in schulen),
             "refJahr": REF_JAHR,
             "basisJahr": BASIS_JAHR,
@@ -431,6 +483,22 @@ def main():
             "stufen": stufen,
             "gesamt": sum(s["gz"] for s in gs),
             "neu": sum(s["gzNeu"] for s in gs),
+        },
+        "gegenprobe": {
+            "fitVon": BT_FIT_VON, "fitBis": BT_FIT_BIS, "ziel": BT_ZIEL,
+            "formen": bt_zeilen,
+            "prognose": int(round(bt_p)),
+            "ist": bt_i,
+            "abw": round((bt_p / bt_i - 1) * 100, 1) if bt_i else None,
+            "mape": round(mape, 1),
+            "mapeGewichtet": round(gew_mape, 1),
+        },
+        "register": {
+            "traeger": schulen_src["meta"]["traegerschaft"],
+            "keineSchule": schulen_src["meta"]["ausgeschlossen_keine_schule"],
+            "gesamt": len(schulen),
+            "inBetrieb": len(schulen) + schulen_src["meta"]["ausgeschlossen_keine_schule"],
+            "schuelerStadt": sum(s["sch"] for s in schulen if s["tr"] == "stadt"),
         },
         "benchmark": {
             "staedte": bench,
