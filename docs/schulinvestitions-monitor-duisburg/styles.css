@@ -1,5 +1,5 @@
 /* =========================================================================
-   Kanduit {{TITLE}} — Design tokens & components
+   Kanduit Schulinvestitions-Monitor Duisburg — Design tokens & components
    Brand: Petrol (#0E7490), Ink (#0C1517), Archivo + IBM Plex Mono
    (gleiche Systematik wie Schulbau-Monitor / Vergabe-Monitor)
    ========================================================================= */
@@ -185,26 +185,9 @@ tbody tr:last-child td{ border-bottom:none; }
 .mixrow .lbl{ font-family:var(--font-mono); font-size:var(--t-micro); text-transform:uppercase;
   letter-spacing:.07em; color:var(--neutral-500); margin-bottom:5px; }
 
-.footer{ background:var(--ink); color:var(--neutral-300); padding:28px clamp(16px,4vw,40px); margin-top:var(--sp-7); }
-.footer .wrap{ display:flex; flex-wrap:wrap; gap:18px; justify-content:space-between; align-items:center; padding:0; }
-.footer .src{ font-size:var(--t-small); max-width:70ch; line-height:1.5; }
-.footer .mono{ font-size:var(--t-micro); text-transform:uppercase; letter-spacing:.08em; color:var(--neutral-500); }
-
-/* ---------------- Mobile / small screens ---------------- */
-@media(max-width:760px){
-  .topbar{ flex-wrap:wrap; gap:10px 12px; padding:10px 16px; }
-  .brand{ font-size:1.02rem; }
-  .topbar .right{ margin-left:auto; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
-  .stand{ display:none; }
-  .tabs{ order:3; width:100%; margin-left:0; flex-wrap:nowrap; overflow-x:auto;
-    -webkit-overflow-scrolling:touch; gap:4px; padding-bottom:2px; scrollbar-width:none; }
-  .tabs::-webkit-scrollbar{ display:none; }
-  .tab{ flex:0 0 auto; }
-  .view-head h2{ font-size:1.45rem; }
-}
-
-/* ---------------- Demo-Annahme-Kennzeichnung ----------------
-   Alles, was nicht aus einer offenen Quelle stammt, trägt sichtbar ein ◈. */
+/* ---------------- Demo-Annahme-Kennzeichnung ---------------- */
+/* Alles, was nicht aus einer offenen Quelle stammt, traegt sichtbar dieses
+   Zeichen — die Trennung echt/angenommen ist die Kernaussage der Demo. */
 .pill.annahme{ background:#f3e8ff; color:#6b21a8; }
 .assume{ color:#7c3aed; font-weight:600; cursor:help; margin-left:3px; }
 .assume:focus-visible{ outline:2px solid #a78bfa; outline-offset:2px; border-radius:3px; }
@@ -226,10 +209,123 @@ tbody tr:last-child td{ border-bottom:none; }
   .leitzahl{ grid-template-columns:1fr; padding:var(--sp-5); gap:var(--sp-2); }
 }
 
-/* ---------------- Drucken ----------------
-   Entweder das geöffnete Kennzahlenblatt oder die aktive Ansicht — nie beides
-   und nie alle Ansichten. Das Blatt ist als Anlage zu einer Ausschussvorlage
-   gedacht; ein PDF mit sechs Ansichten verfehlt den Zweck. */
+/* ---------------- Map ---------------- */
+.map-wrap{ position:relative; }
+.map{ width:100%; height:auto; display:block; touch-action:manipulation; }
+.map .bez{ fill:var(--neutral-100); stroke:var(--neutral-400); stroke-width:.9;
+  stroke-linejoin:round; transition:fill .15s; }
+.map .bez:hover{ fill:var(--petrol-100); }
+.map .bez-lbl{ font-family:var(--font-mono); font-size:8px; fill:var(--neutral-600);
+  text-anchor:middle; pointer-events:none; text-transform:uppercase; letter-spacing:.06em;
+  paint-order:stroke; stroke:var(--paper); stroke-width:3px; stroke-linejoin:round; }
+.map .dot{ stroke:#fff; stroke-width:.8; cursor:pointer; transition:.12s; }
+.map .dot:hover{ stroke:var(--ink); stroke-width:1.6; }
+.map .dot.sc{ stroke:var(--ink); stroke-width:1.1; }
+.map-legend{ display:flex; flex-wrap:wrap; gap:12px 18px; margin-top:var(--sp-3); align-items:center; }
+.map-legend .item{ display:flex; align-items:center; gap:7px; font-size:var(--t-small); color:var(--neutral-600); }
+.map-legend .dotsw{ width:13px; height:13px; border-radius:50%; flex:none; border:1px solid #fff;
+  box-shadow:0 0 0 1px var(--neutral-300); }
+
+/* ---------------- Controls (Filter, Slider, Szenarien) ---------------- */
+.controls{ display:flex; flex-wrap:wrap; gap:var(--sp-3); align-items:flex-end; margin-bottom:var(--sp-4); }
+.ctl{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+.ctl label{ font-family:var(--font-mono); font-size:var(--t-micro); text-transform:uppercase;
+  letter-spacing:.07em; color:var(--neutral-500); }
+.ctl select, .ctl input[type=search]{ font-family:var(--font-display); font-size:.9rem;
+  padding:8px 12px; border:1px solid var(--neutral-300); border-radius:10px;
+  background:#fff; color:var(--ink); min-width:150px; }
+.ctl select:focus-visible, .ctl input:focus-visible{ outline:2px solid var(--petrol-400); outline-offset:1px; }
+.chk{ display:flex; align-items:center; gap:8px; font-size:.9rem; color:var(--neutral-700);
+  padding-bottom:9px; cursor:pointer; }
+
+.sliders{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--sp-4) var(--sp-5); }
+@media(max-width:760px){ .sliders{ grid-template-columns:1fr; } }
+.slider{ display:flex; flex-direction:column; gap:4px; }
+.slider .head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+.slider .nm{ font-size:.92rem; font-weight:600; }
+.slider .val{ font-family:var(--font-mono); font-size:.9rem; color:var(--petrol-700); }
+.slider input[type=range]{ width:100%; accent-color:var(--petrol-600); cursor:pointer; }
+.slider .hint{ font-size:var(--t-small); color:var(--neutral-500); }
+
+.weight-readout{ font-family:var(--font-mono); font-size:.88rem; line-height:1.6;
+  background:var(--neutral-100); border:1px solid var(--neutral-200);
+  border-radius:10px; padding:12px 14px; color:var(--neutral-700); overflow-wrap:anywhere; }
+
+.seg{ display:inline-flex; flex-wrap:wrap; gap:4px; background:var(--neutral-100);
+  padding:4px; border-radius:var(--r-pill); }
+.seg button{ font-family:var(--font-mono); font-size:var(--t-micro); text-transform:uppercase;
+  letter-spacing:.06em; padding:8px 14px; border:none; background:transparent; cursor:pointer;
+  border-radius:var(--r-pill); color:var(--neutral-600); transition:.15s; }
+.seg button:hover{ color:var(--neutral-900); }
+.seg button.active{ background:#fff; color:var(--petrol-700); box-shadow:var(--shadow); }
+
+/* ---------------- Table extras ---------------- */
+thead th.sortable{ cursor:pointer; user-select:none; }
+thead th.sortable:hover{ color:var(--petrol-700); }
+thead th .arrow{ opacity:.35; margin-left:3px; }
+thead th.sorted .arrow{ opacity:1; color:var(--petrol-600); }
+tbody tr.clickable{ cursor:pointer; }
+tbody tr.clickable:hover{ background:var(--petrol-100); }
+.rank{ font-family:var(--font-mono); font-weight:600; color:var(--neutral-500); }
+.zbar{ display:inline-block; width:52px; height:8px; border-radius:4px;
+  background:var(--neutral-200); overflow:hidden; vertical-align:middle; }
+.zbar i{ display:block; height:100%; }
+.delta.up{ color:var(--ok); } .delta.down{ color:var(--error); }
+
+/* ---------------- Drawer (Kennzahlenblatt) ---------------- */
+.drawer-back{ position:fixed; inset:0; background:rgba(12,21,23,.42); z-index:120;
+  opacity:0; pointer-events:none; transition:opacity .2s; }
+.drawer-back.show{ opacity:1; pointer-events:auto; }
+.drawer{ position:fixed; top:0; right:0; height:100%; width:min(560px,100%); z-index:130;
+  background:#fff; box-shadow:-20px 0 50px -20px rgba(12,21,23,.4);
+  transform:translateX(100%); transition:transform .24s ease; overflow-y:auto;
+  -webkit-overflow-scrolling:touch; }
+.drawer.show{ transform:none; }
+.drawer .dhead{ position:sticky; top:0; background:#fff; border-bottom:1px solid var(--neutral-200);
+  padding:18px 22px; display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+.drawer .dhead h3{ font-size:1.2rem; font-weight:700; }
+.drawer .dbody{ padding:18px 22px 40px; }
+.drawer .dclose{ border:none; background:var(--neutral-100); border-radius:8px; cursor:pointer;
+  font-size:1.1rem; line-height:1; padding:7px 11px; color:var(--neutral-600); flex:none; }
+.drawer .dclose:hover{ background:var(--neutral-200); }
+.kv{ display:grid; grid-template-columns:1fr auto; gap:7px 14px; font-size:.92rem;
+  padding:12px 0; border-bottom:1px solid var(--neutral-100); }
+.kv:last-of-type{ border-bottom:none; }
+.kv .kk{ color:var(--neutral-600); }
+.kv .vv{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; text-align:right; }
+.kv .src{ grid-column:1/-1; font-size:var(--t-micro); color:var(--neutral-400); line-height:1.45; }
+.dsec{ font-family:var(--font-mono); font-size:var(--t-micro); text-transform:uppercase;
+  letter-spacing:.08em; color:var(--neutral-500); margin:22px 0 2px; }
+
+/* Drucken: entweder das geöffnete Kennzahlenblatt oder die aktive Ansicht —
+   nie beides und nie alle sechs. Siehe auch den zweiten @media-print-Block. */
+@media print{
+  .drawer-back{ display:none !important; }
+  .drawer .dclose{ display:none !important; }
+  body.printing-blatt main{ display:none !important; }
+  body.printing-blatt .drawer{ position:static; transform:none; width:100%;
+    box-shadow:none; overflow:visible; }
+  body:not(.printing-blatt) .drawer{ display:none !important; }
+}
+
+.footer{ background:var(--ink); color:var(--neutral-300); padding:28px clamp(16px,4vw,40px); margin-top:var(--sp-7); }
+.footer .wrap{ display:flex; flex-wrap:wrap; gap:18px; justify-content:space-between; align-items:center; padding:0; }
+.footer .src{ font-size:var(--t-small); max-width:70ch; line-height:1.5; }
+.footer .mono{ font-size:var(--t-micro); text-transform:uppercase; letter-spacing:.08em; color:var(--neutral-500); }
+
+/* ---------------- Mobile / small screens ---------------- */
+@media(max-width:760px){
+  .topbar{ flex-wrap:wrap; gap:10px 12px; padding:10px 16px; }
+  .brand{ font-size:1.02rem; }
+  .topbar .right{ margin-left:auto; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+  .stand{ display:none; }
+  .tabs{ order:3; width:100%; margin-left:0; flex-wrap:nowrap; overflow-x:auto;
+    -webkit-overflow-scrolling:touch; gap:4px; padding-bottom:2px; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar{ display:none; }
+  .tab{ flex:0 0 auto; }
+  .view-head h2{ font-size:1.45rem; }
+}
+
 @media print{
   .topbar, .footer, .kbtn, .controls, .seg{ display:none !important; }
   .view{ display:none !important; }
@@ -237,10 +333,4 @@ tbody tr:last-child td{ border-bottom:none; }
   .card, .stat, .leitzahl, .table-wrap{ box-shadow:none; break-inside:avoid; }
   a{ color:var(--ink) !important; }
   body{ background:#fff; }
-  .drawer-back{ display:none !important; }
-  .drawer .dclose{ display:none !important; }
-  body.printing-blatt main{ display:none !important; }
-  body.printing-blatt .drawer{ position:static; transform:none; width:100%;
-    box-shadow:none; overflow:visible; }
-  body:not(.printing-blatt) .drawer{ display:none !important; }
 }

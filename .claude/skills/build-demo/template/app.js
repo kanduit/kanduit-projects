@@ -13,12 +13,18 @@ const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls)
 const nf = new Intl.NumberFormat('de-DE');
 const nf1 = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
 const fmtInt = v => nf.format(Math.round(v));
-const fmtMio = v => nf1.format(v / 1e6) + ' Mio €';
+/* Geldbeträge immer mit einer Nachkommastelle — sonst steht „60 Mio €“ neben
+   „219,4 Mio €“ und eine KPI-Reihe liest sich unsauber. */
+const nfMio = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const fmtMio = v => nfMio.format(v / 1e6) + ' Mio €';
 const fmtTsd = v => nf.format(Math.round(v / 1000)) + ' T€';
 const fmtVal = v => v == null ? '—' : (v >= 1e6 ? fmtMio(v) : fmtTsd(v));
 const fmtDate = iso => iso ? iso.slice(8, 10) + '.' + iso.slice(5, 7) + '.' + iso.slice(0, 4) : '—';
 const MONTH_SHORT = { '01': 'Jan', '02': 'Feb', '03': 'Mrz', '04': 'Apr', '05': 'Mai', '06': 'Jun', '07': 'Jul', '08': 'Aug', '09': 'Sep', '10': 'Okt', '11': 'Nov', '12': 'Dez' };
 const fmtMonth = m => MONTH_SHORT[m.slice(5, 7)] + ' ' + m.slice(2, 4);
+const fmtEur = v => nf.format(Math.round(v)) + ' €';
+const fmtPct = v => nf1.format(v * 100) + ' %';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 /* ====================================================================
    TABS
@@ -70,15 +76,43 @@ document.addEventListener('focusout', e => { if (e.target.closest && e.target.cl
 
 /* ====================================================================
    SOURCE NOTES — Quellen-Link unter jeder Chart-Karte.
-   TODO: Einträge füllen; im HTML <p class="note src-note" data-src="key"></p>.
+   Die Labels kommen aus generate.py (meta.quellen), damit Anzeige und
+   Datenherkunft nicht auseinanderlaufen können. Im HTML:
+   <p class="note src-note" data-src="key"></p>
+   verdrahteQuellen() nach jedem Nachrendern aufrufen (Szenario-Karten o. ä.).
    ==================================================================== */
-const SRC_LABEL = {
-  // key: { t: 'Anzeigename der Quelle', u: 'https://…' },
-};
-$$('.src-note').forEach(n => {
-  const s = SRC_LABEL[n.dataset.src]; if (!s) return;
-  n.innerHTML = `Quelle: <a href="${s.u}" target="_blank" rel="noopener">${s.t}</a> · Abruf ${DATA.meta.stand}`;
-});
+const SRC_LABEL = DATA.meta.quellen || {};
+function verdrahteQuellen() {
+  $$('.src-note').forEach(n => {
+    const s = SRC_LABEL[n.dataset.src]; if (!s || n.dataset.done) return;
+    n.dataset.done = '1';
+    n.innerHTML = `Quelle: <a href="${s.u}" target="_blank" rel="noopener">${s.t}</a> · Abruf ${DATA.meta.stand}`;
+  });
+}
+
+/* ====================================================================
+   DEMO-ANNAHMEN — Wortlaut unverändert aus generate.py (ANNAHMEN).
+   Jede nicht öffentlich belegte Größe trägt in der Oberfläche ein ◈ mit
+   der vollständigen Begründung. Die Trennung echt/angenommen ist bei jedem
+   dieser Demonstratoren der Glaubwürdigkeitstest — nicht die Optik.
+   ==================================================================== */
+const ANNAHME = {};
+(DATA.annahmen || []).forEach(a => { ANNAHME[a.k] = a; });
+
+function assumeMark(key) {
+  const a = ANNAHME[key];
+  return a ? ` <span class="assume" data-assume="${key}" tabindex="0" role="button"
+    aria-label="Demo-Annahme: ${esc(a.t)}">◈</span>` : '';
+}
+function assumeTip(node, x, y) {
+  const a = ANNAHME[node.dataset.assume]; if (!a) return;
+  showTip(`<b>◈ Demo-Annahme — ${esc(a.t)}</b><div class="def">${esc(a.d)}</div>`, x, y);
+}
+document.addEventListener('mouseover', e => { const n = e.target.closest && e.target.closest('.assume'); if (n) assumeTip(n, e.clientX, e.clientY); });
+document.addEventListener('mousemove', e => { const n = e.target.closest && e.target.closest('.assume'); if (n) assumeTip(n, e.clientX, e.clientY); });
+document.addEventListener('mouseout', e => { if (e.target.closest && e.target.closest('.assume')) hideTip(); });
+document.addEventListener('focusin', e => { const n = e.target.closest && e.target.closest('.assume'); if (n) { const r = n.getBoundingClientRect(); assumeTip(n, r.right, r.bottom); } });
+document.addEventListener('focusout', e => { if (e.target.closest && e.target.closest('.assume')) hideTip(); });
 
 /* ====================================================================
    SVG chart kit
@@ -210,5 +244,21 @@ function statCard(s) {
    ==================================================================== */
 $('#standLabel').textContent = 'Stand ' + DATA.meta.stand;
 $('#footer-stand').textContent = DATA.meta.stand;
+
+/* Drucken: ein geöffnetes Kennzahlenblatt hat Vorrang, sonst die aktive
+   Ansicht — nie alle Ansichten auf einmal. */
+$('#print-btn').addEventListener('click', () => {
+  const d = $('#drawer');
+  document.body.classList.toggle('printing-blatt', !!d && d.classList.contains('show'));
+  window.print();
+});
+window.addEventListener('afterprint', () => document.body.classList.remove('printing-blatt'));
+
+/* Querverweise aus Fließtext auf einen Tab: <a href="#" data-goto="tabid">…</a> */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[data-goto]'); if (!a) return;
+  e.preventDefault(); showView(a.dataset.goto);
+});
 {{RENDER_CALLS}}
+verdrahteQuellen();
 })();

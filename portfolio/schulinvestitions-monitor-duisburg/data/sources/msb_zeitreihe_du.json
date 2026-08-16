@@ -1,0 +1,1528 @@
+{
+ "kreisfreie_staedte": [
+  {
+   "kreis": "Krfr. Stadt Bielefeld",
+   "schueler": 54508
+  },
+  {
+   "kreis": "Krfr. Stadt Bochum",
+   "schueler": 49919
+  },
+  {
+   "kreis": "Krfr. Stadt Bonn",
+   "schueler": 52650
+  },
+  {
+   "kreis": "Krfr. Stadt Bottrop",
+   "schueler": 14329
+  },
+  {
+   "kreis": "Krfr. Stadt Dortmund",
+   "schueler": 88865
+  },
+  {
+   "kreis": "Krfr. Stadt Duisburg",
+   "schueler": 71852
+  },
+  {
+   "kreis": "Krfr. Stadt Düsseldorf",
+   "schueler": 90417
+  },
+  {
+   "kreis": "Krfr. Stadt Essen",
+   "schueler": 84057
+  },
+  {
+   "kreis": "Krfr. Stadt Gelsenkirchen",
+   "schueler": 41313
+  },
+  {
+   "kreis": "Krfr. Stadt Hagen",
+   "schueler": 31499
+  },
+  {
+   "kreis": "Krfr. Stadt Hamm",
+   "schueler": 25998
+  },
+  {
+   "kreis": "Krfr. Stadt Herne",
+   "schueler": 21682
+  },
+  {
+   "kreis": "Krfr. Stadt Krefeld",
+   "schueler": 34585
+  },
+  {
+   "kreis": "Krfr. Stadt Köln",
+   "schueler": 150994
+  },
+  {
+   "kreis": "Krfr. Stadt Leverkusen",
+   "schueler": 25078
+  },
+  {
+   "kreis": "Krfr. Stadt Mönchengladbach",
+   "schueler": 39026
+  },
+  {
+   "kreis": "Krfr. Stadt Mülheim an der Ruhr",
+   "schueler": 22290
+  },
+  {
+   "kreis": "Krfr. Stadt Münster",
+   "schueler": 51589
+  },
+  {
+   "kreis": "Krfr. Stadt Oberhausen",
+   "schueler": 27762
+  },
+  {
+   "kreis": "Krfr. Stadt Remscheid",
+   "schueler": 16552
+  },
+  {
+   "kreis": "Krfr. Stadt Solingen",
+   "schueler": 21352
+  },
+  {
+   "kreis": "Krfr. Stadt Wuppertal",
+   "schueler": 50976
+  }
+ ],
+ "meta": {
+  "abruf": "2026-08-16",
+  "basisjahr": 2025,
+  "dateien": [
+   "https://www.schulministerium.nrw/system/files/media/document/file/opendata2025-26.csv"
+  ],
+  "filter": "Kreis 112 (Krfr. Stadt Duisburg), alle Schulformen; zusaetzlich Schuelerzahlen aller kreisfreien Staedte im Basisjahr als Nenner fuer den Budgetvergleich",
+  "quelle": "Ministerium fuer Schule und Bildung NRW — Open Data, Schuelerzahlen nach Kreis und Schulform",
+  "quelle_url": "https://www.schulministerium.nrw/open-data"
+ },
+ "reihe": [
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2012,
+   "klassen": 845,
+   "rechtsform": "oeffentlich",
+   "schueler": 17225,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2012,
+   "klassen": 82,
+   "rechtsform": "privat",
+   "schueler": 764,
+   "schulen": 1
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2012,
+   "klassen": 10,
+   "rechtsform": "privat",
+   "schueler": 105,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2012,
+   "klassen": 219,
+   "rechtsform": "oeffentlich",
+   "schueler": 2326,
+   "schulen": 17
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2012,
+   "klassen": 408,
+   "rechtsform": "oeffentlich",
+   "schueler": 13661,
+   "schulen": 13
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2012,
+   "klassen": 759,
+   "rechtsform": "oeffentlich",
+   "schueler": 17007,
+   "schulen": 81
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2012,
+   "klassen": 1,
+   "rechtsform": "privat",
+   "schueler": 6,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2012,
+   "klassen": 225,
+   "rechtsform": "oeffentlich",
+   "schueler": 10510,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2012,
+   "klassen": 33,
+   "rechtsform": "privat",
+   "schueler": 1590,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2012,
+   "klassen": 139,
+   "rechtsform": "oeffentlich",
+   "schueler": 2870,
+   "schulen": 12
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2012,
+   "klassen": 193,
+   "rechtsform": "oeffentlich",
+   "schueler": 5034,
+   "schulen": 9
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2012,
+   "klassen": 10,
+   "rechtsform": "oeffentlich",
+   "schueler": 272,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2013,
+   "klassen": 825,
+   "rechtsform": "oeffentlich",
+   "schueler": 16677,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2013,
+   "klassen": 78,
+   "rechtsform": "privat",
+   "schueler": 819,
+   "schulen": 2
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2013,
+   "klassen": 9,
+   "rechtsform": "privat",
+   "schueler": 138,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2013,
+   "klassen": 215,
+   "rechtsform": "oeffentlich",
+   "schueler": 2362,
+   "schulen": 17
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2013,
+   "klassen": 412,
+   "rechtsform": "oeffentlich",
+   "schueler": 13895,
+   "schulen": 13
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2013,
+   "klassen": 740,
+   "rechtsform": "oeffentlich",
+   "schueler": 16616,
+   "schulen": 81
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2013,
+   "klassen": 2,
+   "rechtsform": "privat",
+   "schueler": 25,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2013,
+   "klassen": 230,
+   "rechtsform": "oeffentlich",
+   "schueler": 9890,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2013,
+   "klassen": 32,
+   "rechtsform": "privat",
+   "schueler": 1407,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2013,
+   "klassen": 120,
+   "rechtsform": "oeffentlich",
+   "schueler": 2351,
+   "schulen": 11
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2013,
+   "klassen": 190,
+   "rechtsform": "oeffentlich",
+   "schueler": 4834,
+   "schulen": 9
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2013,
+   "klassen": 10,
+   "rechtsform": "oeffentlich",
+   "schueler": 298,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2014,
+   "klassen": 795,
+   "rechtsform": "oeffentlich",
+   "schueler": 16273,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2014,
+   "klassen": 60,
+   "rechtsform": "privat",
+   "schueler": 553,
+   "schulen": 2
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2014,
+   "klassen": 11,
+   "rechtsform": "privat",
+   "schueler": 129,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2014,
+   "klassen": 205,
+   "rechtsform": "oeffentlich",
+   "schueler": 2285,
+   "schulen": 16
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2014,
+   "klassen": 418,
+   "rechtsform": "oeffentlich",
+   "schueler": 13982,
+   "schulen": 13
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2014,
+   "klassen": 742,
+   "rechtsform": "oeffentlich",
+   "schueler": 16729,
+   "schulen": 78
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2014,
+   "klassen": 3,
+   "rechtsform": "privat",
+   "schueler": 40,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2014,
+   "klassen": 227,
+   "rechtsform": "oeffentlich",
+   "schueler": 9737,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2014,
+   "klassen": 35,
+   "rechtsform": "privat",
+   "schueler": 1471,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2014,
+   "klassen": 100,
+   "rechtsform": "oeffentlich",
+   "schueler": 1876,
+   "schulen": 9
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2014,
+   "klassen": 174,
+   "rechtsform": "oeffentlich",
+   "schueler": 4491,
+   "schulen": 9
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2014,
+   "klassen": 9,
+   "rechtsform": "oeffentlich",
+   "schueler": 223,
+   "schulen": 2
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2014,
+   "klassen": 10,
+   "rechtsform": "oeffentlich",
+   "schueler": 254,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2015,
+   "klassen": 777,
+   "rechtsform": "oeffentlich",
+   "schueler": 16086,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2015,
+   "klassen": 5,
+   "rechtsform": "privat",
+   "schueler": 71,
+   "schulen": 2
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2015,
+   "klassen": 9,
+   "rechtsform": "privat",
+   "schueler": 106,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2015,
+   "klassen": 196,
+   "rechtsform": "oeffentlich",
+   "schueler": 2209,
+   "schulen": 16
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2015,
+   "klassen": 426,
+   "rechtsform": "oeffentlich",
+   "schueler": 14173,
+   "schulen": 13
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2015,
+   "klassen": 738,
+   "rechtsform": "oeffentlich",
+   "schueler": 16738,
+   "schulen": 76
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2015,
+   "klassen": 3,
+   "rechtsform": "privat",
+   "schueler": 45,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2015,
+   "klassen": 230,
+   "rechtsform": "oeffentlich",
+   "schueler": 9613,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2015,
+   "klassen": 36,
+   "rechtsform": "privat",
+   "schueler": 1476,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2015,
+   "klassen": 82,
+   "rechtsform": "oeffentlich",
+   "schueler": 1566,
+   "schulen": 6
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2015,
+   "klassen": 157,
+   "rechtsform": "oeffentlich",
+   "schueler": 4127,
+   "schulen": 8
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2015,
+   "klassen": 24,
+   "rechtsform": "oeffentlich",
+   "schueler": 570,
+   "schulen": 3
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2015,
+   "klassen": 11,
+   "rechtsform": "oeffentlich",
+   "schueler": 293,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2016,
+   "klassen": 780,
+   "rechtsform": "oeffentlich",
+   "schueler": 15960,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2016,
+   "klassen": 4,
+   "rechtsform": "privat",
+   "schueler": 109,
+   "schulen": 2
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2016,
+   "klassen": 10,
+   "rechtsform": "privat",
+   "schueler": 133,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2016,
+   "klassen": 193,
+   "rechtsform": "oeffentlich",
+   "schueler": 2267,
+   "schulen": 14
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2016,
+   "klassen": 438,
+   "rechtsform": "oeffentlich",
+   "schueler": 14238,
+   "schulen": 13
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2016,
+   "klassen": 741,
+   "rechtsform": "oeffentlich",
+   "schueler": 17499,
+   "schulen": 76
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2016,
+   "klassen": 4,
+   "rechtsform": "privat",
+   "schueler": 63,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2016,
+   "klassen": 235,
+   "rechtsform": "oeffentlich",
+   "schueler": 9574,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2016,
+   "klassen": 39,
+   "rechtsform": "privat",
+   "schueler": 1507,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2016,
+   "klassen": 70,
+   "rechtsform": "oeffentlich",
+   "schueler": 1380,
+   "schulen": 6
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2016,
+   "klassen": 149,
+   "rechtsform": "oeffentlich",
+   "schueler": 3870,
+   "schulen": 7
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2016,
+   "klassen": 40,
+   "rechtsform": "oeffentlich",
+   "schueler": 970,
+   "schulen": 3
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2016,
+   "klassen": 10,
+   "rechtsform": "oeffentlich",
+   "schueler": 252,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2017,
+   "klassen": 773,
+   "rechtsform": "oeffentlich",
+   "schueler": 15831,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2017,
+   "klassen": 2,
+   "rechtsform": "privat",
+   "schueler": 46,
+   "schulen": 1
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2017,
+   "klassen": 9,
+   "rechtsform": "privat",
+   "schueler": 147,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2017,
+   "klassen": 198,
+   "rechtsform": "oeffentlich",
+   "schueler": 2308,
+   "schulen": 13
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2017,
+   "klassen": 446,
+   "rechtsform": "oeffentlich",
+   "schueler": 14444,
+   "schulen": 13
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2017,
+   "klassen": 761,
+   "rechtsform": "oeffentlich",
+   "schueler": 17987,
+   "schulen": 75
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2017,
+   "klassen": 5,
+   "rechtsform": "privat",
+   "schueler": 88,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2017,
+   "klassen": 233,
+   "rechtsform": "oeffentlich",
+   "schueler": 9425,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2017,
+   "klassen": 39,
+   "rechtsform": "privat",
+   "schueler": 1534,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2017,
+   "klassen": 61,
+   "rechtsform": "oeffentlich",
+   "schueler": 1150,
+   "schulen": 6
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2017,
+   "klassen": 141,
+   "rechtsform": "oeffentlich",
+   "schueler": 3590,
+   "schulen": 7
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2017,
+   "klassen": 56,
+   "rechtsform": "oeffentlich",
+   "schueler": 1387,
+   "schulen": 3
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2017,
+   "klassen": 9,
+   "rechtsform": "oeffentlich",
+   "schueler": 247,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2018,
+   "klassen": 770,
+   "rechtsform": "oeffentlich",
+   "schueler": 15816,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2018,
+   "klassen": 2,
+   "rechtsform": "privat",
+   "schueler": 46,
+   "schulen": 1
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2018,
+   "klassen": 11,
+   "rechtsform": "privat",
+   "schueler": 168,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2018,
+   "klassen": 198,
+   "rechtsform": "oeffentlich",
+   "schueler": 2375,
+   "schulen": 13
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2018,
+   "klassen": 443,
+   "rechtsform": "oeffentlich",
+   "schueler": 14401,
+   "schulen": 13
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2018,
+   "klassen": 765,
+   "rechtsform": "oeffentlich",
+   "schueler": 18085,
+   "schulen": 75
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2018,
+   "klassen": 7,
+   "rechtsform": "privat",
+   "schueler": 118,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2018,
+   "klassen": 227,
+   "rechtsform": "oeffentlich",
+   "schueler": 9269,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2018,
+   "klassen": 40,
+   "rechtsform": "privat",
+   "schueler": 1558,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2018,
+   "klassen": 41,
+   "rechtsform": "oeffentlich",
+   "schueler": 811,
+   "schulen": 4
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2018,
+   "klassen": 124,
+   "rechtsform": "oeffentlich",
+   "schueler": 3213,
+   "schulen": 7
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2018,
+   "klassen": 75,
+   "rechtsform": "oeffentlich",
+   "schueler": 1875,
+   "schulen": 3
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2018,
+   "klassen": 9,
+   "rechtsform": "oeffentlich",
+   "schueler": 259,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2019,
+   "klassen": 769,
+   "rechtsform": "oeffentlich",
+   "schueler": 15878,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2019,
+   "klassen": 3,
+   "rechtsform": "privat",
+   "schueler": 70,
+   "schulen": 1
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2019,
+   "klassen": 9,
+   "rechtsform": "privat",
+   "schueler": 169,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2019,
+   "klassen": 200,
+   "rechtsform": "oeffentlich",
+   "schueler": 2436,
+   "schulen": 13
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2019,
+   "klassen": 446,
+   "rechtsform": "oeffentlich",
+   "schueler": 14545,
+   "schulen": 13
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2019,
+   "klassen": 766,
+   "rechtsform": "oeffentlich",
+   "schueler": 18279,
+   "schulen": 75
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2019,
+   "klassen": 7,
+   "rechtsform": "privat",
+   "schueler": 120,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2019,
+   "klassen": 227,
+   "rechtsform": "oeffentlich",
+   "schueler": 9160,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2019,
+   "klassen": 38,
+   "rechtsform": "privat",
+   "schueler": 1571,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2019,
+   "klassen": 28,
+   "rechtsform": "oeffentlich",
+   "schueler": 616,
+   "schulen": 3
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2019,
+   "klassen": 102,
+   "rechtsform": "oeffentlich",
+   "schueler": 2719,
+   "schulen": 5
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2019,
+   "klassen": 92,
+   "rechtsform": "oeffentlich",
+   "schueler": 2345,
+   "schulen": 3
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2019,
+   "klassen": 8,
+   "rechtsform": "oeffentlich",
+   "schueler": 253,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2020,
+   "klassen": 784,
+   "rechtsform": "oeffentlich",
+   "schueler": 15417,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2020,
+   "klassen": 4,
+   "rechtsform": "privat",
+   "schueler": 91,
+   "schulen": 1
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2020,
+   "klassen": 10,
+   "rechtsform": "privat",
+   "schueler": 180,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2020,
+   "klassen": 207,
+   "rechtsform": "oeffentlich",
+   "schueler": 2453,
+   "schulen": 13
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2020,
+   "klassen": 485,
+   "rechtsform": "oeffentlich",
+   "schueler": 15567,
+   "schulen": 14
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2020,
+   "klassen": 764,
+   "rechtsform": "oeffentlich",
+   "schueler": 18472,
+   "schulen": 75
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2020,
+   "klassen": 8,
+   "rechtsform": "privat",
+   "schueler": 142,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2020,
+   "klassen": 224,
+   "rechtsform": "oeffentlich",
+   "schueler": 9141,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2020,
+   "klassen": 38,
+   "rechtsform": "privat",
+   "schueler": 1547,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2020,
+   "klassen": 23,
+   "rechtsform": "oeffentlich",
+   "schueler": 480,
+   "schulen": 2
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2020,
+   "klassen": 98,
+   "rechtsform": "oeffentlich",
+   "schueler": 2625,
+   "schulen": 4
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2020,
+   "klassen": 64,
+   "rechtsform": "oeffentlich",
+   "schueler": 1605,
+   "schulen": 2
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2020,
+   "klassen": 8,
+   "rechtsform": "oeffentlich",
+   "schueler": 265,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2021,
+   "klassen": 770,
+   "rechtsform": "oeffentlich",
+   "schueler": 15065,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2021,
+   "klassen": 5,
+   "rechtsform": "privat",
+   "schueler": 104,
+   "schulen": 1
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2021,
+   "klassen": 11,
+   "rechtsform": "privat",
+   "schueler": 195,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2021,
+   "klassen": 211,
+   "rechtsform": "oeffentlich",
+   "schueler": 2563,
+   "schulen": 13
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2021,
+   "klassen": 493,
+   "rechtsform": "oeffentlich",
+   "schueler": 15964,
+   "schulen": 14
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2021,
+   "klassen": 770,
+   "rechtsform": "oeffentlich",
+   "schueler": 18786,
+   "schulen": 75
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2021,
+   "klassen": 8,
+   "rechtsform": "privat",
+   "schueler": 136,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2021,
+   "klassen": 227,
+   "rechtsform": "oeffentlich",
+   "schueler": 9116,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2021,
+   "klassen": 39,
+   "rechtsform": "privat",
+   "schueler": 1621,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2021,
+   "klassen": 19,
+   "rechtsform": "oeffentlich",
+   "schueler": 366,
+   "schulen": 2
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2021,
+   "klassen": 96,
+   "rechtsform": "oeffentlich",
+   "schueler": 2586,
+   "schulen": 4
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2021,
+   "klassen": 65,
+   "rechtsform": "oeffentlich",
+   "schueler": 1574,
+   "schulen": 2
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2021,
+   "klassen": 8,
+   "rechtsform": "oeffentlich",
+   "schueler": 273,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2022,
+   "klassen": 748,
+   "rechtsform": "oeffentlich",
+   "schueler": 14835,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2022,
+   "klassen": 5,
+   "rechtsform": "privat",
+   "schueler": 109,
+   "schulen": 1
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2022,
+   "klassen": 11,
+   "rechtsform": "privat",
+   "schueler": 180,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2022,
+   "klassen": 214,
+   "rechtsform": "oeffentlich",
+   "schueler": 2689,
+   "schulen": 13
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2022,
+   "klassen": 499,
+   "rechtsform": "oeffentlich",
+   "schueler": 16132,
+   "schulen": 14
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2022,
+   "klassen": 788,
+   "rechtsform": "oeffentlich",
+   "schueler": 19737,
+   "schulen": 75
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2022,
+   "klassen": 8,
+   "rechtsform": "privat",
+   "schueler": 145,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2022,
+   "klassen": 235,
+   "rechtsform": "oeffentlich",
+   "schueler": 9475,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2022,
+   "klassen": 43,
+   "rechtsform": "privat",
+   "schueler": 1575,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2022,
+   "klassen": 15,
+   "rechtsform": "oeffentlich",
+   "schueler": 250,
+   "schulen": 1
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2022,
+   "klassen": 95,
+   "rechtsform": "oeffentlich",
+   "schueler": 2555,
+   "schulen": 4
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2022,
+   "klassen": 65,
+   "rechtsform": "oeffentlich",
+   "schueler": 1627,
+   "schulen": 2
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2022,
+   "klassen": 8,
+   "rechtsform": "oeffentlich",
+   "schueler": 246,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2023,
+   "klassen": 750,
+   "rechtsform": "oeffentlich",
+   "schueler": 14957,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2023,
+   "klassen": 6,
+   "rechtsform": "privat",
+   "schueler": 118,
+   "schulen": 1
+  },
+  {
+   "form_text": "Freie Waldorfschule",
+   "jahr": 2023,
+   "klassen": 0,
+   "rechtsform": "privat",
+   "schueler": 0,
+   "schulen": 0
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2023,
+   "klassen": 225,
+   "rechtsform": "oeffentlich",
+   "schueler": 2843,
+   "schulen": 13
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2023,
+   "klassen": 506,
+   "rechtsform": "oeffentlich",
+   "schueler": 16311,
+   "schulen": 14
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2023,
+   "klassen": 806,
+   "rechtsform": "oeffentlich",
+   "schueler": 20598,
+   "schulen": 75
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2023,
+   "klassen": 8,
+   "rechtsform": "privat",
+   "schueler": 149,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2023,
+   "klassen": 286,
+   "rechtsform": "oeffentlich",
+   "schueler": 9538,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2023,
+   "klassen": 50,
+   "rechtsform": "privat",
+   "schueler": 1544,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2023,
+   "klassen": 13,
+   "rechtsform": "oeffentlich",
+   "schueler": 263,
+   "schulen": 1
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2023,
+   "klassen": 101,
+   "rechtsform": "oeffentlich",
+   "schueler": 2617,
+   "schulen": 4
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2023,
+   "klassen": 67,
+   "rechtsform": "oeffentlich",
+   "schueler": 1672,
+   "schulen": 2
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2023,
+   "klassen": 8,
+   "rechtsform": "oeffentlich",
+   "schueler": 289,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2024,
+   "klassen": 747,
+   "rechtsform": "oeffentlich",
+   "schueler": 14881,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2024,
+   "klassen": 6,
+   "rechtsform": "privat",
+   "schueler": 123,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2024,
+   "klassen": 235,
+   "rechtsform": "oeffentlich",
+   "schueler": 2998,
+   "schulen": 13
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2024,
+   "klassen": 512,
+   "rechtsform": "oeffentlich",
+   "schueler": 16324,
+   "schulen": 15
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2024,
+   "klassen": 832,
+   "rechtsform": "oeffentlich",
+   "schueler": 21167,
+   "schulen": 75
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2024,
+   "klassen": 8,
+   "rechtsform": "privat",
+   "schueler": 149,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2024,
+   "klassen": 288,
+   "rechtsform": "oeffentlich",
+   "schueler": 9425,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2024,
+   "klassen": 48,
+   "rechtsform": "privat",
+   "schueler": 1472,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2024,
+   "klassen": 13,
+   "rechtsform": "oeffentlich",
+   "schueler": 280,
+   "schulen": 1
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2024,
+   "klassen": 100,
+   "rechtsform": "oeffentlich",
+   "schueler": 2586,
+   "schulen": 4
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2024,
+   "klassen": 68,
+   "rechtsform": "oeffentlich",
+   "schueler": 1655,
+   "schulen": 2
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2024,
+   "klassen": 8,
+   "rechtsform": "oeffentlich",
+   "schueler": 291,
+   "schulen": 1
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2025,
+   "klassen": 762,
+   "rechtsform": "oeffentlich",
+   "schueler": 14861,
+   "schulen": 9
+  },
+  {
+   "form_text": "Berufskolleg",
+   "jahr": 2025,
+   "klassen": 5,
+   "rechtsform": "privat",
+   "schueler": 96,
+   "schulen": 1
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "jahr": 2025,
+   "klassen": 245,
+   "rechtsform": "oeffentlich",
+   "schueler": 3102,
+   "schulen": 13
+  },
+  {
+   "form_text": "Gesamtschule",
+   "jahr": 2025,
+   "klassen": 527,
+   "rechtsform": "oeffentlich",
+   "schueler": 16493,
+   "schulen": 16
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2025,
+   "klassen": 840,
+   "rechtsform": "oeffentlich",
+   "schueler": 21258,
+   "schulen": 75
+  },
+  {
+   "form_text": "Grundschule",
+   "jahr": 2025,
+   "klassen": 8,
+   "rechtsform": "privat",
+   "schueler": 152,
+   "schulen": 1
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2025,
+   "klassen": 292,
+   "rechtsform": "oeffentlich",
+   "schueler": 9593,
+   "schulen": 10
+  },
+  {
+   "form_text": "Gymnasium",
+   "jahr": 2025,
+   "klassen": 46,
+   "rechtsform": "privat",
+   "schueler": 1428,
+   "schulen": 2
+  },
+  {
+   "form_text": "Hauptschule",
+   "jahr": 2025,
+   "klassen": 14,
+   "rechtsform": "oeffentlich",
+   "schueler": 301,
+   "schulen": 1
+  },
+  {
+   "form_text": "Realschule",
+   "jahr": 2025,
+   "klassen": 102,
+   "rechtsform": "oeffentlich",
+   "schueler": 2593,
+   "schulen": 4
+  },
+  {
+   "form_text": "Sekundarschule",
+   "jahr": 2025,
+   "klassen": 65,
+   "rechtsform": "oeffentlich",
+   "schueler": 1619,
+   "schulen": 2
+  },
+  {
+   "form_text": "Weiterbildungskolleg",
+   "jahr": 2025,
+   "klassen": 8,
+   "rechtsform": "oeffentlich",
+   "schueler": 356,
+   "schulen": 1
+  }
+ ]
+}

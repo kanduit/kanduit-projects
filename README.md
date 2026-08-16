@@ -11,6 +11,7 @@ Monorepo fuer Kanduit-Portfolio-Projekte mit klarer Trennung zwischen Quelle und
 
 ## Aktuelle Projekte
 
+- `portfolio/schulinvestitions-monitor-duisburg` -> statisch, publiziert unter `docs/schulinvestitions-monitor-duisburg/`
 - `portfolio/vergabe-monitor-duesseldorf` -> statisch, publiziert unter `docs/vergabe-monitor-duesseldorf/`
 - `portfolio/ganztags-bedarfsmonitor-bochum` -> statisch, publiziert unter `docs/ganztags-bedarfsmonitor-bochum/`
 - `portfolio/ganztags-bedarfsmonitor-krefeld` -> statisch, publiziert unter `docs/ganztags-bedarfsmonitor-krefeld/`

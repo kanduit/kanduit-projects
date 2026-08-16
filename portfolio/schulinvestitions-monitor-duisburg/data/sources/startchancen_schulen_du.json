@@ -1,0 +1,257 @@
+{
+ "meta": {
+  "abruf": "2026-08-16",
+  "dateien": [
+   "https://www.schulministerium.nrw/system/files/media/document/file/startchancen-programm_bestaetigte_teilnehmerliste_gesamt_stand_250521.pdf"
+  ],
+  "erste_gruppe_2024_25": "https://www.schulministerium.nrw/system/files/media/document/file/startchancen-programm_bestaetigte_teilnehmerliste_schuljahr_24_25_stand_240524.pdf",
+  "filter": "Schultraeger 'Stadt Duisburg'",
+  "hinweis": "Verbindungsschluessel zum Schulverzeichnis ist die Schulnummer. Die Liste nennt keine personenbezogenen Daten.",
+  "quelle": "Ministerium fuer Schule und Bildung NRW — bestaetigte Teilnehmerliste Startchancen-Programm (Gesamtliste beider Aufnahmegruppen)",
+  "quelle_url": "https://www.schulministerium.nrw/startchancen",
+  "stand": "2025-05-21",
+  "zeilen_nrw": 923
+ },
+ "schulen": [
+  {
+   "form_text": "Gesamtschule",
+   "kurz": "Duisburg, GE Green-Gesamtschule",
+   "nr": "100085"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Hans-Christian-Andersen",
+   "nr": "101084"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Friedenstr.",
+   "nr": "101151"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Schule im Dichterviertel",
+   "nr": "101205"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, KG Abteischule",
+   "nr": "101217"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, KG Henriettenstr.",
+   "nr": "101254"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Schule am Park",
+   "nr": "101382"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Hochfelder Markt",
+   "nr": "101400"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Bruckhausen",
+   "nr": "101412"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Sandstr.",
+   "nr": "101424"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Salzmannschule",
+   "nr": "101436"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Lange Kamp",
+   "nr": "101448"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Lilienthalstr.",
+   "nr": "101503"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Klosterstr.",
+   "nr": "101515"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Hundertwasser-Schule",
+   "nr": "101527"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Humboldtstr.",
+   "nr": "101540"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Ruhrort",
+   "nr": "101552"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Brückenstr.",
+   "nr": "101564"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Hebbelstr.",
+   "nr": "101606"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Kunterbunt",
+   "nr": "101631"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Regenbogenschule",
+   "nr": "101643"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Gartenstraße",
+   "nr": "101655"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Laar",
+   "nr": "101667"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Eschenstr.",
+   "nr": "101679"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Otfried-Preußler",
+   "nr": "101692"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Breite Str.",
+   "nr": "101709"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Wanheim",
+   "nr": "101734"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Schulstr.",
+   "nr": "106239"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, KG Don-Bosco",
+   "nr": "106288"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Ottoschule",
+   "nr": "109046"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Kirchstr.",
+   "nr": "109060"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Pestalozzistr.",
+   "nr": "109400"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Am Borgschenhof",
+   "nr": "109411"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Beethovenstr.",
+   "nr": "109423"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Krefelder Str.",
+   "nr": "109459"
+  },
+  {
+   "form_text": "Grundschule",
+   "kurz": "Duisburg, GG Gerhart-Hauptmann",
+   "nr": "109745"
+  },
+  {
+   "form_text": "Hauptschule",
+   "kurz": "Duisburg, GH Ludgerusstraße",
+   "nr": "138848"
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "kurz": "Duisburg, FÖ Eschenstr.",
+   "nr": "152020"
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "kurz": "Duisburg, FÖ James-Rizzi-Schule",
+   "nr": "152031"
+  },
+  {
+   "form_text": "Förderschule G/H",
+   "kurz": "Duisburg, FÖ Duisburg-Nord",
+   "nr": "152109"
+  },
+  {
+   "form_text": "Gymnasium",
+   "kurz": "Duisburg, Gym Max-Planck",
+   "nr": "164665"
+  },
+  {
+   "form_text": "Berufskolleg",
+   "kurz": "Duisburg, BK Sophie-Scholl",
+   "nr": "188104"
+  },
+  {
+   "form_text": "Gesamtschule",
+   "kurz": "Duisburg, GE Meiderich",
+   "nr": "189261"
+  },
+  {
+   "form_text": "Gesamtschule",
+   "kurz": "Duisburg, GE Erich Kästner",
+   "nr": "189595"
+  },
+  {
+   "form_text": "Gesamtschule",
+   "kurz": "Duisburg, GE Theodor-König",
+   "nr": "191395"
+  },
+  {
+   "form_text": "Gesamtschule",
+   "kurz": "Duisburg, GE Herbert-Grillo",
+   "nr": "192405"
+  },
+  {
+   "form_text": "Gesamtschule",
+   "kurz": "Duisburg, GE Globus am Dellplatz",
+   "nr": "193252"
+  },
+  {
+   "form_text": "Sekundarschule",
+   "kurz": "Duisburg, SK Justus-von-Liebig-Schule",
+   "nr": "199096"
+  }
+ ]
+}

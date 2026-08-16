@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanduit Schulinvestitions-Monitor Duisburg</title>
+<meta name="description" content="Demonstrator: Schulinvestitions-Monitor Duisburg — Kanduit UG, aus öffentlichen Daten.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Reusable Kanduit logo symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <mask id="kmask" maskUnits="userSpaceOnUse" x="-125" y="-125" width="250" height="250">
+      <circle r="110" fill="#fff"/>
+      <rect x="-71" y="-125" width="29" height="250" fill="#000"/>
+      <g stroke="#000" stroke-width="32" stroke-linecap="butt">
+        <line x1="-42" y1="0" x2="66" y2="-122"/>
+        <line x1="-42" y1="0" x2="66" y2="122"/>
+      </g>
+    </mask>
+    <symbol id="k-mark" viewBox="-125 -125 250 250">
+      <circle r="110" fill="currentColor" mask="url(#kmask)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <span class="brand">
+    <svg width="22" height="22" style="color:var(--petrol-600)"><use href="#k-mark"/></svg>
+    Kanduit <span class="sub">Schulinvestitions-Monitor</span>
+  </span>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-view="overview">Überblick</button>
+    <button class="tab" data-view="karte">Standortkarte</button>
+    <button class="tab" data-view="register">Standortregister</button>
+    <button class="tab" data-view="modell">Priorisierung</button>
+    <button class="tab" data-view="eigenanteil">Eigenanteil</button>
+    <button class="tab" data-view="szenarien">Szenarien</button>
+  </nav>
+  <div class="right">
+    <span class="stand" id="standLabel">Stand —</span>
+    <span class="demo-pill">Demo · öffentliche Daten</span>
+    <button class="kbtn ghost" id="print-btn">Drucken / PDF</button>
+  </div>
+</header>
+
+<main>
+  <section class="view active" id="view-overview">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Öffentliche Daten · MSB NRW und Stadt Duisburg</p>
+        <h2>Überblick</h2>
+        <p>Rund 135 Schulstandorte, drei getrennt geführte Bedarfslisten und ein Schulträgerbudget, das über zehn Jahre reicht. Diese Ansicht zeigt die Ausgangslage aus veröffentlichten Daten — und trennt sichtbar, was belegt ist und was für den Demonstrator angenommen wurde.</p>
+      </div>
+      <div class="banner assume-banner" style="margin-bottom:var(--sp-4)">
+        <b>Was hier echt ist — und was nicht.</b> Standorte, Schülerzahlen, Sozialindexstufen,
+        Startchancen-Teilnahme und das Schulträgerbudget Säule I stammen unverändert aus
+        veröffentlichten Quellen des Schulministeriums NRW und der Stadt Duisburg.
+        <b>Bauzustand, Maßnahmenkosten und die Ganztagsquote liegen nicht offen vor</b> — sie sind
+        gekennzeichnete Demo-Annahmen und überall mit <span class="assume" style="cursor:default">◈</span>
+        markiert. Im Projekt werden sie durch Amtsdaten ersetzt; die Systematik bleibt dieselbe.
+      </div>
+
+      <div class="leitzahl" id="leitzahl" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g4" id="overview-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Schülerzahlen Duisburg seit 2012 <span class="info-i" data-info="reihe" tabindex="0" role="button" aria-label="Erklärung: Schülerzahlen Duisburg">ⓘ</span></div>
+          <div class="card-sub">alle Schulformen · öffentlich und privat</div>
+          <div id="chart-reihe"></div>
+          <p class="note">Die Stabsstelle Schulentwicklungsplanung beschreibt die Lage auf ihrer
+          eigenen Aufgabenseite als „steigende Schülerinnen- und Schülerzahlen, was ein Anpassen
+          und einen Ausbau des Schulraumangebots erfordert“. Die Zeitreihe des Ministeriums
+          bestätigt das: seit 2015 steigend, aktuell wieder auf dem Stand von 2012.</p>
+          <p class="note src-note" data-src="msbReihe"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Entwicklung je Schulform <span class="info-i" data-info="formen" tabindex="0" role="button" aria-label="Erklärung: Entwicklung je Schulform">ⓘ</span></div>
+          <div class="card-sub">Veränderung der Schülerzahl 2019 bis 2025</div>
+          <div id="chart-formen"></div>
+          <p class="note">Grau gesetzt: Hauptschule und Sekundarschule. Ihre Rückgänge folgen dem
+          Umbau der Schullandschaft, nicht der Demografie — sie werden deshalb nicht
+          fortgeschrieben.</p>
+          <p class="note src-note" data-src="msbReihe"></p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Drei Bedarfsstränge, ein Haushalt <span class="info-i" data-info="straenge" tabindex="0" role="button" aria-label="Erklärung: Die drei Bedarfsstränge">ⓘ</span></div>
+        <div class="card-sub">Sanierung · Startchancen Säule I · Ganztag</div>
+        <div id="chart-straenge"></div>
+        <p class="note">Heute werden diese drei Bedarfe in getrennten Listen geführt, obwohl sie
+        um dieselben Standorte und dieselben Haushaltsmittel konkurrieren. Nur der
+        Startchancen-Strang ist in einer veröffentlichten Summe verankert; Sanierung und Ganztag
+        sind Demo-Annahmen. Förderfähig ist ausschließlich Säule I.</p>
+        <p class="note src-note" data-src="budget"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Startchancen Säule I im Vergleich der kreisfreien Städte <span class="info-i" data-info="benchmark" tabindex="0" role="button" aria-label="Erklärung: Vergleich der kreisfreien Städte">ⓘ</span></div>
+        <div class="card-sub">Schulträgerbudget je Schülerin und Schüler · alle 22 kreisfreien Städte in NRW</div>
+        <div id="chart-benchmark"></div>
+        <p class="note" id="benchmark-note"></p>
+        <p class="note src-note" data-src="budget"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Register der Demo-Annahmen</div>
+        <div class="card-sub">jede nicht öffentlich belegte Größe, mit Begründung</div>
+        <div id="annahmen-liste" style="margin-top:var(--sp-3)"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-karte">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Schulverzeichnis MSB NRW · Stadtbezirke der Stadt Duisburg</p>
+        <h2>Standortkarte</h2>
+        <p>Alle Schulstandorte auf den amtlichen Stadtbezirksgrenzen, eingefärbt nach Prioritätsrang und mit gesondert markierten Startchancen-Schulen. Die Zuordnung zum Stadtbezirk entsteht aus der Koordinate des Schulverzeichnisses, nicht aus einer Adressliste.</p>
+      </div>
+      <div class="grid g4" id="karte-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Schulstandorte nach Prioritätsrang <span class="info-i" data-info="score" tabindex="0" role="button" aria-label="Erklärung: Prioritätswert">ⓘ</span></div>
+        <div class="card-sub">amtliche Stadtbezirksgrenzen · Punkt je Standort · klickbar</div>
+        <div class="map-wrap" id="map" style="margin-top:var(--sp-4)"></div>
+        <div class="map-legend" id="map-legend"></div>
+        <p class="note">Die Einfärbung folgt der unter „Priorisierung“ eingestellten Gewichtung
+        und ändert sich mit ihr. Ein Klick auf einen Standort öffnet das Kennzahlenblatt.</p>
+        <p class="note src-note" data-src="bezirke"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Schülerinnen und Schüler je Stadtbezirk <span class="info-i" data-info="bezirke" tabindex="0" role="button" aria-label="Erklärung: Standorte je Stadtbezirk">ⓘ</span></div>
+        <div class="card-sub">Zuordnung über Punkt-in-Polygon</div>
+        <div id="chart-bezirke"></div>
+        <p class="note src-note" data-src="msb"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-register">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Schulverzeichnis · Sozialindexstufen · Startchancen-Teilnehmerliste</p>
+        <h2>Standortregister</h2>
+        <p>Zustand, Kapazität, Startchancen-Status und geschätztes Maßnahmenvolumen je Standort in einer sortier-, filter- und exportierbaren Tabelle. Jede Zeile führt zum Kennzahlenblatt mit Quelle, Stand und Rechenweg.</p>
+      </div>
+      <div class="grid g4" id="register-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="controls">
+        <div class="ctl"><label for="f-suche">Suche</label>
+          <input type="search" id="f-suche" placeholder="Name oder Schulnummer"></div>
+        <div class="ctl"><label for="f-form">Schulform</label><select id="f-form"></select></div>
+        <div class="ctl"><label for="f-bezirk">Stadtbezirk</label><select id="f-bezirk"></select></div>
+        <label class="chk"><input type="checkbox" id="f-sc"> nur Startchancen-Schulen</label>
+        <button class="kbtn ghost" id="csv" style="margin-bottom:2px">Als CSV exportieren</button>
+      </div>
+
+      <div class="table-wrap" id="register-table"></div>
+      <p class="note" id="register-count"></p>
+      <p class="note">Spalten mit ◈ beruhen auf Demo-Annahmen. Klick auf eine Zeile öffnet das
+      druckbare Kennzahlenblatt mit Quelle, Stand und Rechenweg je Zahl — verwendbar als Anlage
+      zu Ausschussvorlagen und als Zuarbeit zur Wirtschaftlichkeitsbetrachtung im
+      Verwendungsnachweis.</p>
+      <p class="note src-note" data-src="msb"></p>
+    </div>
+  </section>
+
+  <section class="view" id="view-modell">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Vier Kriterien · frei gewichtbar</p>
+        <h2>Priorisierungsmodell</h2>
+        <p>Die Reihenfolge entsteht aus vier normierten Kriterien mit einstellbaren Gewichten. Die aktuelle Gewichtung ist jederzeit als Text ablesbar — das ist der eigentliche Gegenstand, nicht die Karte.</p>
+      </div>
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Kriteriengewichte <span class="info-i" data-info="score" tabindex="0" role="button" aria-label="Erklärung: Prioritätswert">ⓘ</span></div>
+        <div class="card-sub">frei einstellbar · alle Ansichten rechnen live nach</div>
+        <div class="sliders" id="sliders" style="margin-top:var(--sp-4)"></div>
+        <div class="weight-readout" id="weight-readout" style="margin-top:var(--sp-4)"></div>
+        <button class="kbtn ghost" id="w-reset" style="margin-top:var(--sp-3)">Auf Ausgangswerte zurücksetzen</button>
+        <p class="note">Nachvollziehbarkeit ist hier die Kernanforderung, nicht die Rangliste
+        selbst: Wenn ein Ausschuss fragt, warum Standort A vor Standort B liegt, steht der
+        Rechenweg als Text da — und jede Änderung an den Reglern ist sofort in Karte, Register,
+        Zeitachse und Szenarien sichtbar.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Rangliste — die ersten 20 Standorte <span class="info-i" data-info="score" tabindex="0" role="button" aria-label="Erklärung: Prioritätswert">ⓘ</span></div>
+        <div class="card-sub">Prioritätswert 0 bis 100 · klickbar</div>
+        <div id="chart-rangliste"></div>
+        <p class="note src-note" data-src="msb"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-eigenanteil">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Schulträgerbudget Säule I · Laufzeit 2024 bis 2034</p>
+        <h2>Eigenanteils-Zeitachse</h2>
+        <p>Wie sich der kommunale Eigenanteil über die Haushaltsjahre verteilt, wenn die Maßnahmen in der Reihenfolge des Prioritätsmodells eingeplant werden — begrenzt durch einen einstellbaren Jahresdeckel.</p>
+      </div>
+      <div class="grid g4" id="eigenanteil-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Eigenanteil je Haushaltsjahr <span class="info-i" data-info="zeitachse" tabindex="0" role="button" aria-label="Erklärung: Eigenanteil je Haushaltsjahr">ⓘ</span></div>
+        <div class="card-sub">Einplanung in der Reihenfolge des Prioritätsmodells</div>
+        <div class="slider" style="max-width:520px; margin:var(--sp-4) 0">
+          <div class="head"><span class="nm">Jährlicher Eigenanteils-Deckel <span class="info-i" data-info="deckel" tabindex="0" role="button" aria-label="Erklärung: Eigenanteils-Deckel">ⓘ</span></span>
+            <span class="val" id="deckel-val"></span></div>
+          <input type="range" id="deckel" min="5" max="40" step="1" value="18"
+            aria-label="Jährlicher Eigenanteils-Deckel in Millionen Euro">
+          <span class="hint">5 bis 40 Mio € je Haushaltsjahr</span>
+        </div>
+        <div id="chart-zeitachse"></div>
+        <p class="note src-note" data-src="budget"></p>
+      </div>
+
+      <div id="eigenanteil-warn" class="banner info"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-szenarien">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Genau drei benannte Szenarien</p>
+        <h2>Szenarien</h2>
+        <p>Drei Fragen, die in der Schulentwicklungsplanung regelmäßig gestellt werden — jeweils mit derselben Datengrundlage und der unter „Priorisierung“ eingestellten Gewichtung gerechnet.</p>
+      </div>
+      <div class="seg" id="szenario-seg" style="margin-bottom:var(--sp-4)">
+        <button data-s="deckel" class="active">1 · Eigenanteil-Deckel</button>
+        <button data-s="ganztag">2 · Ganztag zuerst</button>
+        <button data-s="verzoegerung">3 · Verzögerung um ein Jahr</button>
+      </div>
+      <div id="szenario-body"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div style="display:flex; align-items:center; gap:12px">
+      <svg width="30" height="30" style="color:#fff"><use href="#k-mark"/></svg>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:1.2rem; color:#fff">Kanduit</div>
+        <div class="mono">Schulinvestitions-Monitor · Demonstrator</div>
+      </div>
+    </div>
+    <p class="src" id="footer-src">
+      <b style="color:#cbd5e1">Demonstrator der Kanduit UG</b> — alle Daten aus
+      öffentlichen Quellen:
+      <a style="color:var(--petrol-300)" href="https://www.schulministerium.nrw/open-data" target="_blank" rel="noopener">Open Data des Schulministeriums NRW</a>
+      (Schulverzeichnis, Schülerzahlen, Sozialindexstufen, Zeitreihe),
+      <a style="color:var(--petrol-300)" href="https://www.schulministerium.nrw/startchancen" target="_blank" rel="noopener">Startchancen-Programm NRW</a>
+      (bestätigte Teilnehmerliste, Schulträgerbudgets Säule I) und
+      <a style="color:var(--petrol-300)" href="https://opendata-duisburg.de/dataset/stadtbezirke" target="_blank" rel="noopener">Open Data Duisburg</a>
+      (Stadtbezirke).
+      Stand <span id="footer-stand">—</span>, ohne Gewähr; kein Produkt der Stadt Duisburg.
+      Bauzustand, Maßnahmenkosten und Ganztagsquote sind gekennzeichnete Demo-Annahmen (◈)
+      und keine Amtsdaten.
+      Keine personenbezogenen Daten; Schülerzahlen ausschließlich aggregiert je Schule
+      (§ 120 SchulG NRW).
+      Verarbeitung vollständig im Browser · betriebsbereit für Hosting in Deutschland.
+    </p>
+  </div>
+</footer>
+
+<!-- Kennzahlenblatt je Standort (Ansicht 5) -->
+<div class="drawer-back" id="drawer-back"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <div class="dhead">
+    <div>
+      <h3 id="drawer-title">—</h3>
+      <div class="card-sub" id="drawer-sub"></div>
+    </div>
+    <button class="dclose" id="drawer-close" aria-label="Kennzahlenblatt schließen">✕</button>
+  </div>
+  <div class="dbody" id="drawer-body"></div>
+</aside>
+
+<!-- Tooltip -->
+<div class="tt" id="tooltip"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
