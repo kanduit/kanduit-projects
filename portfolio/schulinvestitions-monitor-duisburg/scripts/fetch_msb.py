@@ -158,6 +158,22 @@ def main():
     if not reihe:
         raise SystemExit("Zeitreihe fuer Duisburg leer — Quelle pruefen")
 
+    # Schuelerzahlen je kreisfreier Stadt im Basisjahr — Nenner fuer den
+    # Vergleich der Startchancen-Schultraegerbudgets. Der KREIS_Text
+    # ('Krfr. Stadt Duisburg') ist zugleich der Schluessel im Budget-PDF.
+    basis = max(int(r["JAHR"]) for r in zeitreihe if r.get("JAHR"))
+    staedte = {}
+    for r in zeitreihe:
+        kreis = (r.get("KREIS_Text") or "").strip()
+        if not kreis.startswith("Krfr. Stadt") or int(r["JAHR"]) != basis:
+            continue
+        staedte[kreis] = staedte.get(kreis, 0) + int(num(r["SCHUELER_INNEN"]) or 0)
+    vergleich = [{"kreis": k, "schueler": v} for k, v in sorted(staedte.items())]
+    if len(vergleich) < 15:
+        raise SystemExit("unerwartet wenige kreisfreie Staedte (%d) — Quelle pruefen"
+                         % len(vergleich))
+    print("  Vergleichsfeld: %d kreisfreie Staedte, Basisjahr %d" % (len(vergleich), basis))
+
     dump(os.path.join(OUT, "msb_schulen_du.json"), {
         "meta": {
             "quelle": "Ministerium fuer Schule und Bildung NRW — Open Data "
@@ -184,10 +200,14 @@ def main():
                       "Schuelerzahlen nach Kreis und Schulform",
             "quelle_url": "https://www.schulministerium.nrw/open-data",
             "dateien": [URL_ZEITREIHE],
-            "filter": "Kreis %s (Krfr. Stadt Duisburg), alle Schulformen" % KREIS_DU,
+            "filter": "Kreis %s (Krfr. Stadt Duisburg), alle Schulformen; zusaetzlich "
+                      "Schuelerzahlen aller kreisfreien Staedte im Basisjahr als "
+                      "Nenner fuer den Budgetvergleich" % KREIS_DU,
+            "basisjahr": basis,
             "abruf": stand,
         },
         "reihe": reihe,
+        "kreisfreie_staedte": vergleich,
     })
 
 

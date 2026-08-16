@@ -8,6 +8,10 @@
 # Local Python cache scratch directory
 .pycache_tmp/
 
+# Bytecode — entsteht, sobald ein fetch_*.py importiert statt ausgefuehrt wird
+__pycache__/
+*.py[cod]
+
 # Internal / commercial notes — never publish to the public repo
 *.internal.md
 **/*.internal.md

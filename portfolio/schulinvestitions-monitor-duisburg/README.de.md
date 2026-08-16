@@ -28,7 +28,7 @@ Software für den öffentlichen Sektor in NRW. Eine englische Übersicht steht i
 
 | Ansicht | Kern | Ehrlich benannte Lücke |
 |---|---|---|
-| **Überblick** | 135 Standorte, 71.852 Schülerinnen und Schüler, 48 Startchancen-Schulen, 60,0 Mio € Schulträgerbudget | Register aller fünf Demo-Annahmen direkt auf der Seite |
+| **Überblick** | Leitzahl (Mindest-Eigenanteil je Jahr), Vergleich aller 22 kreisfreien Städte NRW, 135 Standorte, 71.852 Schülerinnen und Schüler, 48 Startchancen-Schulen, 60,0 Mio € Schulträgerbudget | Register aller fünf Demo-Annahmen direkt auf der Seite; der Städtevergleich nennt seine beiden Einschränkungen |
 | **Standortkarte** | alle Standorte auf den amtlichen Stadtbezirksgrenzen, eingefärbt nach Prioritätsrang | Einfärbung folgt dem Modell, nicht einer Amtsbewertung |
 | **Standortregister** | sortier-, filter- und als CSV exportierbare Tabelle, Zeile öffnet das Kennzahlenblatt | Spalten mit ◈ beruhen auf Annahmen, nicht auf Amtsdaten |
 | **Priorisierung** | vier frei gewichtbare Kriterien, Gewichtung jederzeit als Text ablesbar | 28 Standorte ohne Sozialindexstufe gehen neutral ein |
@@ -46,7 +46,7 @@ Verwendungsnachweis.
 |--------|--------|-------|
 | [Open Data MSB NRW](https://www.schulministerium.nrw/open-data) | Schulverzeichnis (Gemeindeschlüssel 05112000), Schülerzahlen, Sozialindexstufen, Zeitreihe nach Kreis und Schulform | 14.08.2026 |
 | [Startchancen-Programm NRW](https://www.schulministerium.nrw/startchancen) | bestätigte Teilnehmerliste (Gesamtliste, Stand 21.05.2025) — 48 Duisburger Schulen | 14.08.2026 |
-| [Startchancen-Programm NRW](https://www.schulministerium.nrw/startchancen) | Schulträgerbudgets Investitionsprogramm Säule I (Stand 02.07.2025) — 60,0 Mio € für Duisburg | 14.08.2026 |
+| [Startchancen-Programm NRW](https://www.schulministerium.nrw/startchancen) | Schulträgerbudgets Investitionsprogramm Säule I (Stand 02.07.2025) — 60,0 Mio € für Duisburg, dazu alle 22 kreisfreien Städte als Vergleichsfeld | 14.08.2026 |
 | [Open Data Duisburg](https://opendata-duisburg.de/dataset/stadtbezirke) | amtliche Stadtbezirksgrenzen, über den ArcGIS-Dienst des städtischen Geoportals | 14.08.2026 |
 
 Beide Startchancen-Dateien sind PDF. Die Textextraktion in
@@ -65,6 +65,20 @@ Oberfläche.
 Bemerkenswert am Rande: das Schulbetriebsdatum des Schulverzeichnisses wäre der
 naheliegende Ersatz für ein Baujahr — es steht aber für 101 der 135 Standorte
 auf 1973, dem Aufbau des Registers. Es wird deshalb bewusst **nicht** verwendet.
+
+## Einordnung im Land
+
+Beide Seiten des Vergleichs stammen aus Quellen, die der Monitor ohnehin lädt: das Budget
+aus dem Schulträgerbudget-PDF, der Nenner aus der MSB-Zeitreihe. Verknüpft wird über den
+Kreisschlüsseltext „Krfr. Stadt …“, der in beiden Quellen zeichengleich ist — es wird
+nicht über Namen geraten. Duisburg liegt auf **Rang 5 von
+22** mit 836 € je Schülerin und Schüler
+(Median 681 €).
+
+Zwei Einschränkungen stehen auch in der Oberfläche: Nenner sind alle Schülerinnen und
+Schüler der Stadt, nicht nur die an Startchancen-Schulen; und die Budgethöhe folgt der
+Landesauswahl über den Sozialindex — sie misst die soziale Ausgangslage, nicht kommunales
+Handeln.
 
 ## Pipeline
 

@@ -12,8 +12,11 @@ Erzeugt zwei kleine Snapshots in data/sources/:
       Foerderschulen den Foerderschwerpunkt weglaesst ('FOE Eschenstr.' gegen
       'FOE LE Eschenstr.').
   startchancen_budget_du.json — das Schultraegerbudget der Stadt Duisburg im
-      Investitionsprogramm Saeule I (2024 bis 2034), plus die Landessumme als
-      Einordnung.
+      Investitionsprogramm Saeule I (2024 bis 2034), die Landessumme als
+      Einordnung und die Budgets aller kreisfreien Staedte in NRW als Vergleich.
+      Die Zeile 'Krfr. Stadt X' des PDF entspricht genau dem KREIS_Text der
+      MSB-Zeitreihe — damit laesst sich das Budget je Schuelerin und Schueler
+      normieren, ohne eine weitere Quelle einzufuehren.
 
 Quellen (beide PDF, Bildungsportal NRW):
   https://www.schulministerium.nrw/startchancen
@@ -192,6 +195,28 @@ def main():
     if budget_du is None:
         raise SystemExit("Schultraegerbudget fuer %s nicht gefunden — Quelle pruefen" % TRAEGER)
     landessumme = max((eur(c) for c in bcells if re.fullmatch(r"[\d.]+,\d{2}", c)), default=None)
+
+    # Alle kreisfreien Staedte als Vergleichsfeld. Die Schreibweise 'Krfr. Stadt X'
+    # ist identisch mit dem KREIS_Text der MSB-Zeitreihe — das ist der Join, ohne
+    # dass eine weitere Quelle noetig waere.
+    staedte = {}
+    for i, c in enumerate(bcells):
+        m = re.fullmatch(r"Krfr\. Stadt (.+)", c)
+        if not m:
+            continue
+        for nxt in bcells[i + 1:i + 4]:
+            if re.fullmatch(r"[\d.]+,\d{2}", nxt):
+                staedte[c] = {"kreis": c, "name": m.group(1).strip(),
+                              "budget_eur": eur(nxt)}
+                break
+    vergleich = [staedte[k] for k in sorted(staedte)]
+    if len(vergleich) < 15:
+        raise SystemExit("unerwartet wenige kreisfreie Staedte (%d) — Quelle pruefen"
+                         % len(vergleich))
+    if not any(v["name"] == "Duisburg" for v in vergleich):
+        raise SystemExit("Duisburg fehlt im Staedtevergleich — Quelle pruefen")
+    print("  %d kreisfreie Staedte im Vergleichsfeld" % len(vergleich))
+
     anzahl_nrw = None
     for c in bcells:
         m = re.search(r"der (\d[\d.]*) Startchancen-Schulen", c)
@@ -233,6 +258,7 @@ def main():
         "landessumme_eur": round(landessumme, 2) if landessumme else None,
         "startchancen_schulen_nrw": anzahl_nrw,
         "laufzeit": {"von": 2024, "bis": 2034},
+        "kreisfreie_staedte": vergleich,
     })
 
 

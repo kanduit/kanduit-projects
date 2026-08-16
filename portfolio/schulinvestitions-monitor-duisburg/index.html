@@ -45,7 +45,7 @@
   <div class="right">
     <span class="stand" id="standLabel">Stand —</span>
     <span class="demo-pill">Demo · öffentliche Daten</span>
-    <button class="kbtn ghost" onclick="window.print()">Drucken / PDF</button>
+    <button class="kbtn ghost" id="print-btn">Drucken / PDF</button>
   </div>
 </header>
 
@@ -65,6 +65,8 @@
         gekennzeichnete Demo-Annahmen und überall mit <span class="assume" style="cursor:default">◈</span>
         markiert. Im Projekt werden sie durch Amtsdaten ersetzt; die Systematik bleibt dieselbe.
       </div>
+
+      <div class="leitzahl" id="leitzahl" style="margin-bottom:var(--sp-4)"></div>
 
       <div class="grid g4" id="overview-kpis" style="margin-bottom:var(--sp-4)"></div>
 
@@ -98,6 +100,14 @@
         um dieselben Standorte und dieselben Haushaltsmittel konkurrieren. Nur der
         Startchancen-Strang ist in einer veröffentlichten Summe verankert; Sanierung und Ganztag
         sind Demo-Annahmen. Förderfähig ist ausschließlich Säule I.</p>
+        <p class="note src-note" data-src="budget"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Startchancen Säule I im Vergleich der kreisfreien Städte <span class="info-i" data-info="benchmark" tabindex="0" role="button" aria-label="Erklärung: Vergleich der kreisfreien Städte">ⓘ</span></div>
+        <div class="card-sub">Schulträgerbudget je Schülerin und Schüler · alle 22 kreisfreien Städte in NRW</div>
+        <div id="chart-benchmark"></div>
+        <p class="note" id="benchmark-note"></p>
         <p class="note src-note" data-src="budget"></p>
       </div>
 

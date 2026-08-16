@@ -13,7 +13,10 @@ const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls)
 const nf = new Intl.NumberFormat('de-DE');
 const nf1 = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
 const fmtInt = v => nf.format(Math.round(v));
-const fmtMio = v => nf1.format(v / 1e6) + ' Mio €';
+/* Geldbeträge immer mit einer Nachkommastelle — sonst steht „60 Mio €“ neben
+   „219,4 Mio €“ und die Reihe liest sich unsauber. */
+const nfMio = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const fmtMio = v => nfMio.format(v / 1e6) + ' Mio €';
 const fmtTsd = v => nf.format(Math.round(v / 1000)) + ' T€';
 const fmtVal = v => v == null ? '—' : (v >= 1e6 ? fmtMio(v) : fmtTsd(v));
 const fmtDate = iso => iso ? iso.slice(8, 10) + '.' + iso.slice(5, 7) + '.' + iso.slice(0, 4) : '—';
@@ -75,7 +78,7 @@ document.addEventListener('focusout', e => { if (e.target.closest && e.target.cl
    METRIC DEFINITIONS — Klartext-Glossar für die ⓘ-Tooltips.
    Jeder Eintrag benennt die Berechnung UND die Datenlücke.
    ==================================================================== */
-const S = DATA.stadt, B = DATA.budget, GZ = DATA.ganztag;
+const S = DATA.stadt, B = DATA.budget, GZ = DATA.ganztag, BM = DATA.benchmark;
 const SCHULEN = DATA.schulen;
 const PRIV = SCHULEN.filter(s => s.priv).length;
 const BEZ_NAME = {}; DATA.bezirke.forEach(b => { BEZ_NAME[b.nr] = b.name; });
@@ -200,6 +203,31 @@ ${fmtPct(1 - B.quote)} laut Förderrichtlinie) plus ${fmtMio(S.vSan + S.vGz)} f�
 und Ganztag, die aus Säule I gar nicht förderfähig sind. Genau diese Unterscheidung
 entscheidet über die Haushaltsplanung — und sie geht in einer gemeinsamen Maßnahmenliste
 regelmäßig verloren.`,
+  },
+  benchmark: {
+    t: 'Vergleich der kreisfreien Städte',
+    d: `Schulträgerbudget Säule I geteilt durch die Gesamtschülerzahl der Stadt, für alle
+${fmtInt(BM.staedte.length)} kreisfreien Städte in NRW. Beide Größen stammen aus den
+Quellen, die dieser Monitor ohnehin lädt: das Budget aus dem Schulträgerbudget-PDF des
+Ministeriums, der Nenner aus der MSB-Zeitreihe. Verknüpft wird über den Kreisschlüsseltext
+„Krfr. Stadt …“, der in beiden Quellen identisch ist — es wird nicht über Namen geraten.
+Duisburg liegt auf Rang ${BM.rangDu} von ${fmtInt(BM.staedte.length)} mit
+${fmtEur(BM.jeSchuelerDu)} je Schülerin und Schüler, gegenüber einem Median von
+${fmtEur(BM.median)}. Zwei Einschränkungen: der Nenner sind alle Schülerinnen und Schüler
+der Stadt, nicht nur die an Startchancen-Schulen; und die Budgethöhe folgt der
+Landesauswahl über den Sozialindex, ist also kein kommunaler Erfolg, sondern ein Maß für
+die soziale Ausgangslage.`,
+  },
+  leitzahl: {
+    t: 'Mindest-Eigenanteil je Haushaltsjahr',
+    d: `Der kleinste jährliche Eigenanteil, bei dem die vollen ${fmtMio(B.foerder)} aus
+Säule I bis zum Programmende ${B.bis} noch abgerufen werden — gerechnet unter der
+<b>bestmöglichen</b> Reihenfolge, also förderfähige Maßnahmen zuerst. Damit ist die Zahl
+eine harte Untergrenze: jede andere Priorisierung braucht mehr, nie weniger. Sie ist die
+Zahl für das Gespräch mit der Kämmerei, weil sie eine Frist hinter sich hat — was bis
+${B.bis} nicht abgerufen ist, ist Fördergeld, das die Stadt nicht bekommt. Der
+Einplanungsalgorithmus ist eine Demo-Annahme; die Programmlaufzeit und der Förderbetrag
+sind es nicht.`,
   },
   score: {
     t: 'Prioritätswert 0–100',
@@ -459,6 +487,21 @@ function planen(liste, deckel, startIndex) {
   return { jahre, belegt, zuteilung, ueberhang, ueberhangN };
 }
 
+/** Kleinster Jahresdeckel, der den vollen Förderbetrag noch abruft.
+ *  Gerechnet unter der bestmöglichen Reihenfolge (förderfähige Maßnahmen
+ *  zuerst) — damit ist das Ergebnis eine Untergrenze, keine Prognose. */
+function leitzahl() {
+  const beste = SCHULEN.map(s => ({ s }))
+    .sort((a, b) => (b.s.sc ? 1 : 0) - (a.s.sc ? 1 : 0) || b.s.foe - a.s.foe ||
+                    (a.s.id < b.s.id ? -1 : 1))
+    .map((r, i) => ({ ...r, rang: i + 1 }));
+  for (let m = 1; m <= 80; m++) {
+    const p = planen(beste, m * 1e6);
+    if (p.zuteilung.every(z => !z.s.sc || z.jahr !== null)) return m * 1e6;
+  }
+  return null;
+}
+
 /* Ampelfarbe nach Prioritätsrang (Quintile). */
 const RANG_FARBE = ['#c24b57', '#d97a2b', '#c9931f', '#1fa2c4', '#2f8f6b'];
 const RANG_LABEL = ['sehr hoch', 'hoch', 'mittel', 'nachrangig', 'gering'];
@@ -561,6 +604,19 @@ function openBlatt(id) {
    VIEWS
    ==================================================================== */
 function renderOverview() {
+  const lz = leitzahl();
+  $('#leitzahl').innerHTML = `
+    <div class="k">Leitzahl${infoIcon('leitzahl')}</div>
+    <div class="v">${lz ? fmtMio(lz) : '—'}</div>
+    <div class="d">${lz
+      ? `<b>So viel Eigenanteil muss Duisburg mindestens je Haushaltsjahr aufbringen,
+         damit die ${fmtMio(B.foerder)} aus Säule I bis ${B.bis} vollständig abgerufen
+         werden</b> — und zwar bei bestmöglicher Reihenfolge, förderfähige Maßnahmen
+         zuerst. Jede andere Priorisierung braucht mehr. Was bis ${B.bis} nicht abgerufen
+         ist, verfällt. Durchgerechnet unter
+         <a href="#" data-goto="szenarien">Szenarien → Eigenanteil-Deckel</a>.`
+      : 'Nicht bestimmbar.'}</div>`;
+
   const k = $('#overview-kpis'); k.innerHTML = '';
   [
     { k: 'Schulstandorte', v: fmtInt(S.schulen), d: fmtInt(S.schueler) + ' Schülerinnen und Schüler', info: 'standorte' },
@@ -602,6 +658,26 @@ function renderOverview() {
     { label: 'Förderung Land', n: S.foe, color: 'var(--dv-green)' },
     { label: 'Kommunaler Eigenanteil', n: S.eig, color: 'var(--dv-coral)' },
   ], fmtMio(S.eig) + ' Eigenanteil');
+
+  /* --- Benchmark: alle kreisfreien Städte, Duisburg hervorgehoben --- */
+  barChart($('#chart-benchmark'), BM.staedte.map(b => ({
+    label: b.name, value: b.jeSchueler, valLabel: fmtEur(b.jeSchueler),
+    color: b.name === 'Duisburg' ? 'var(--dv-petrol)' : 'var(--neutral-300)',
+    tip: `<b>${esc(b.name)}</b>
+      <div class="row"><span>Schulträgerbudget Säule I</span><span>${fmtMio(b.budget)}</span></div>
+      <div class="row"><span>Schülerinnen und Schüler</span><span>${fmtInt(b.schueler)}</span></div>
+      <div class="row"><span>je Kopf</span><span>${fmtEur(b.jeSchueler)}</span></div>
+      <div class="row"><span>Rang</span><span>${b.rang} von ${BM.staedte.length}</span></div>`,
+  })), { padL: 150, rowH: 24 });
+
+  $('#benchmark-note').innerHTML = `Duisburg liegt auf <b>Rang ${BM.rangDu} von
+    ${fmtInt(BM.staedte.length)}</b> mit ${fmtEur(BM.jeSchuelerDu)} je Schülerin und
+    Schüler — ${nf1.format((BM.jeSchuelerDu / BM.median - 1) * 100)} % über dem Median
+    von ${fmtEur(BM.median)}. Das ist die belastbare Fassung der Aussage
+    „überdurchschnittlich stark im Startchancen-Programm vertreten“. Zwei Einschränkungen:
+    Nenner sind alle Schülerinnen und Schüler der Stadt (Basisjahr ${BM.basisJahr}), nicht
+    nur die an Startchancen-Schulen; und die Budgethöhe folgt der Landesauswahl über den
+    Sozialindex — sie misst die soziale Ausgangslage, nicht kommunales Handeln.`;
 }
 
 function renderKarte() {
@@ -1141,6 +1217,19 @@ $('#register-table').addEventListener('keydown', e => {
 });
 
 $('#deckel').addEventListener('input', () => { renderEigenanteil(); renderSzenarien(); });
+
+/* Drucken: geöffnetes Kennzahlenblatt hat Vorrang, sonst die aktive Ansicht. */
+$('#print-btn').addEventListener('click', () => {
+  document.body.classList.toggle('printing-blatt', drawer.classList.contains('show'));
+  window.print();
+});
+window.addEventListener('afterprint', () => document.body.classList.remove('printing-blatt'));
+
+/* Querverweise aus Fließtext auf einen Tab */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[data-goto]'); if (!a) return;
+  e.preventDefault(); showView(a.dataset.goto);
+});
 
 $('#szenario-seg').addEventListener('click', e => {
   const b = e.target.closest('button[data-s]'); if (!b) return;

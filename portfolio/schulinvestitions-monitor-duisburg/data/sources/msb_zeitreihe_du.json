@@ -1,10 +1,101 @@
 {
+ "kreisfreie_staedte": [
+  {
+   "kreis": "Krfr. Stadt Bielefeld",
+   "schueler": 54508
+  },
+  {
+   "kreis": "Krfr. Stadt Bochum",
+   "schueler": 49919
+  },
+  {
+   "kreis": "Krfr. Stadt Bonn",
+   "schueler": 52650
+  },
+  {
+   "kreis": "Krfr. Stadt Bottrop",
+   "schueler": 14329
+  },
+  {
+   "kreis": "Krfr. Stadt Dortmund",
+   "schueler": 88865
+  },
+  {
+   "kreis": "Krfr. Stadt Duisburg",
+   "schueler": 71852
+  },
+  {
+   "kreis": "Krfr. Stadt Düsseldorf",
+   "schueler": 90417
+  },
+  {
+   "kreis": "Krfr. Stadt Essen",
+   "schueler": 84057
+  },
+  {
+   "kreis": "Krfr. Stadt Gelsenkirchen",
+   "schueler": 41313
+  },
+  {
+   "kreis": "Krfr. Stadt Hagen",
+   "schueler": 31499
+  },
+  {
+   "kreis": "Krfr. Stadt Hamm",
+   "schueler": 25998
+  },
+  {
+   "kreis": "Krfr. Stadt Herne",
+   "schueler": 21682
+  },
+  {
+   "kreis": "Krfr. Stadt Krefeld",
+   "schueler": 34585
+  },
+  {
+   "kreis": "Krfr. Stadt Köln",
+   "schueler": 150994
+  },
+  {
+   "kreis": "Krfr. Stadt Leverkusen",
+   "schueler": 25078
+  },
+  {
+   "kreis": "Krfr. Stadt Mönchengladbach",
+   "schueler": 39026
+  },
+  {
+   "kreis": "Krfr. Stadt Mülheim an der Ruhr",
+   "schueler": 22290
+  },
+  {
+   "kreis": "Krfr. Stadt Münster",
+   "schueler": 51589
+  },
+  {
+   "kreis": "Krfr. Stadt Oberhausen",
+   "schueler": 27762
+  },
+  {
+   "kreis": "Krfr. Stadt Remscheid",
+   "schueler": 16552
+  },
+  {
+   "kreis": "Krfr. Stadt Solingen",
+   "schueler": 21352
+  },
+  {
+   "kreis": "Krfr. Stadt Wuppertal",
+   "schueler": 50976
+  }
+ ],
  "meta": {
-  "abruf": "2026-08-14",
+  "abruf": "2026-08-16",
+  "basisjahr": 2025,
   "dateien": [
    "https://www.schulministerium.nrw/system/files/media/document/file/opendata2025-26.csv"
   ],
-  "filter": "Kreis 112 (Krfr. Stadt Duisburg), alle Schulformen",
+  "filter": "Kreis 112 (Krfr. Stadt Duisburg), alle Schulformen; zusaetzlich Schuelerzahlen aller kreisfreien Staedte im Basisjahr als Nenner fuer den Budgetvergleich",
   "quelle": "Ministerium fuer Schule und Bildung NRW — Open Data, Schuelerzahlen nach Kreis und Schulform",
   "quelle_url": "https://www.schulministerium.nrw/open-data"
  },

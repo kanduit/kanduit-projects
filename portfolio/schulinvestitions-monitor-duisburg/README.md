@@ -22,7 +22,7 @@ for the public sector in North Rhine-Westphalia. The full documentation is in Ge
 
 ## Views
 
-1. **Überblick** — 135 sites, 71,852 pupils, 48 Startchancen schools, 60.0 m EUR programme budget, plus a register of every demo assumption.
+1. **Überblick** — headline figure (minimum annual own share), a per-pupil comparison of all 22 NRW city districts, 135 sites, 71,852 pupils, 48 Startchancen schools, 60.0 m EUR programme budget, plus a register of every demo assumption.
 2. **Standortkarte** — all sites on the official district boundaries, coloured by priority rank.
 3. **Standortregister** — sortable, filterable, CSV-exportable table; each row opens the site fact sheet.
 4. **Priorisierung** — four freely weighted criteria; the current weighting is always readable as plain text.

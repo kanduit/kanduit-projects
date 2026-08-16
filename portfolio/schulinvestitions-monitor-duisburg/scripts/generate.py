@@ -350,6 +350,29 @@ def main():
             "lue": sum(s["lue"] for s in drin),
         })
 
+    # ------------------------------------------------ Benchmark kreisfreie Staedte
+    # Beide Seiten kommen aus schon geladenen Quellen: das Budget aus dem
+    # Schultraegerbudget-PDF, der Nenner aus der MSB-Zeitreihe. Der Schluessel
+    # 'Krfr. Stadt X' ist in beiden identisch — keine Zuordnung nach Namen.
+    schueler_je_stadt = {r["kreis"]: r["schueler"]
+                         for r in reihe_src.get("kreisfreie_staedte", [])}
+    bench = []
+    for r in budget_src.get("kreisfreie_staedte", []):
+        n = schueler_je_stadt.get(r["kreis"])
+        if not n:
+            continue
+        bench.append({
+            "name": r["name"],
+            "budget": r["budget_eur"],
+            "schueler": n,
+            "jeSchueler": round(r["budget_eur"] / n, 2),
+        })
+    bench.sort(key=lambda b: -b["jeSchueler"])
+    for i, b in enumerate(bench):
+        b["rang"] = i + 1
+    du_bench = next((b for b in bench if b["name"] == "Duisburg"), None)
+    ohne_nenner = len(budget_src.get("kreisfreie_staedte", [])) - len(bench)
+
     # ------------------------------------------------ Ganztag-Ausbaustufen
     gs = [s for s in schulen if s["f"] == "Grundschule"]
     stufen = [{
@@ -408,6 +431,15 @@ def main():
             "stufen": stufen,
             "gesamt": sum(s["gz"] for s in gs),
             "neu": sum(s["gzNeu"] for s in gs),
+        },
+        "benchmark": {
+            "staedte": bench,
+            "rangDu": du_bench["rang"] if du_bench else None,
+            "jeSchuelerDu": du_bench["jeSchueler"] if du_bench else None,
+            "median": (sorted(b["jeSchueler"] for b in bench)[len(bench) // 2]
+                       if bench else None),
+            "basisJahr": reihe_src["meta"].get("basisjahr", BASIS_JAHR),
+            "ohneNenner": ohne_nenner,
         },
         "formen": formen,
         "zeitreihe": zeitreihe,

@@ -1,12 +1,124 @@
 {
  "investitionsbudget_eur": 60048769.33,
+ "kreisfreie_staedte": [
+  {
+   "budget_eur": 35556834.66,
+   "kreis": "Krfr. Stadt Bielefeld",
+   "name": "Bielefeld"
+  },
+  {
+   "budget_eur": 20479114.22,
+   "kreis": "Krfr. Stadt Bochum",
+   "name": "Bochum"
+  },
+  {
+   "budget_eur": 19109263.35,
+   "kreis": "Krfr. Stadt Bonn",
+   "name": "Bonn"
+  },
+  {
+   "budget_eur": 9822985.14,
+   "kreis": "Krfr. Stadt Bottrop",
+   "name": "Bottrop"
+  },
+  {
+   "budget_eur": 62810313.73,
+   "kreis": "Krfr. Stadt Dortmund",
+   "name": "Dortmund"
+  },
+  {
+   "budget_eur": 60048769.33,
+   "kreis": "Krfr. Stadt Duisburg",
+   "name": "Duisburg"
+  },
+  {
+   "budget_eur": 47117876.64,
+   "kreis": "Krfr. Stadt Düsseldorf",
+   "name": "Düsseldorf"
+  },
+  {
+   "budget_eur": 75176416.07,
+   "kreis": "Krfr. Stadt Essen",
+   "name": "Essen"
+  },
+  {
+   "budget_eur": 53327451.09,
+   "kreis": "Krfr. Stadt Gelsenkirchen",
+   "name": "Gelsenkirchen"
+  },
+  {
+   "budget_eur": 23658790.76,
+   "kreis": "Krfr. Stadt Hagen",
+   "name": "Hagen"
+  },
+  {
+   "budget_eur": 14297623.22,
+   "kreis": "Krfr. Stadt Hamm",
+   "name": "Hamm"
+  },
+  {
+   "budget_eur": 19499311.97,
+   "kreis": "Krfr. Stadt Herne",
+   "name": "Herne"
+  },
+  {
+   "budget_eur": 20734986.09,
+   "kreis": "Krfr. Stadt Krefeld",
+   "name": "Krefeld"
+  },
+  {
+   "budget_eur": 80318817.47,
+   "kreis": "Krfr. Stadt Köln",
+   "name": "Köln"
+  },
+  {
+   "budget_eur": 16222903.36,
+   "kreis": "Krfr. Stadt Leverkusen",
+   "name": "Leverkusen"
+  },
+  {
+   "budget_eur": 29528242.8,
+   "kreis": "Krfr. Stadt Mönchengladbach",
+   "name": "Mönchengladbach"
+  },
+  {
+   "budget_eur": 18257397.09,
+   "kreis": "Krfr. Stadt Mülheim an der Ruhr",
+   "name": "Mülheim an der Ruhr"
+  },
+  {
+   "budget_eur": 6964708.64,
+   "kreis": "Krfr. Stadt Münster",
+   "name": "Münster"
+  },
+  {
+   "budget_eur": 18893956.48,
+   "kreis": "Krfr. Stadt Oberhausen",
+   "name": "Oberhausen"
+  },
+  {
+   "budget_eur": 10200552.23,
+   "kreis": "Krfr. Stadt Remscheid",
+   "name": "Remscheid"
+  },
+  {
+   "budget_eur": 8914951.89,
+   "kreis": "Krfr. Stadt Solingen",
+   "name": "Solingen"
+  },
+  {
+   "budget_eur": 52753299.44,
+   "kreis": "Krfr. Stadt Wuppertal",
+   "name": "Wuppertal"
+  }
+ ],
  "landessumme_eur": 966562390.85,
  "laufzeit": {
   "bis": 2034,
   "von": 2024
  },
  "meta": {
-  "abruf": "2026-08-14",
+  "abruf": "2026-08-16",
   "dateien": [
    "https://www.schulministerium.nrw/system/files/media/document/file/schultraegerbudgets_investitionsprogramm_saeule_i_startchancen_250702.pdf"
   ],
