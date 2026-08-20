@@ -15,3 +15,6 @@ __pycache__/
 # Internal / commercial notes — never publish to the public repo
 *.internal.md
 **/*.internal.md
+
+# Zwischengespeichertes Quell-PDF der Wärmeplanung (19 MB, nicht versionieren)
+portfolio/*/data/sources/_*.pdf

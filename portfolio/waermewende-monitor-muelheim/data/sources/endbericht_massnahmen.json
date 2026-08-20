@@ -1,0 +1,268 @@
+{
+ "_meta": {
+  "abruf": "20.08.2026",
+  "quelle": "Endbericht zur Wärmeplanung für Mülheim an der Ruhr",
+  "ratsbeschluss": "16.07.2026",
+  "redaktionsdatum": "15.05.2026",
+  "seiten_gesamt": 190,
+  "url": "https://cms.muelheim-ruhr.de/sites/default/files/2026-07/Waermeplanung_Muelheim_Endbericht.pdf"
+ },
+ "massnahmen": [
+  {
+   "beteiligte": "Amt 26 „ImmobilienService“, Stab „Stabsstelle Klimaschutz und Klimaanpassung“, Amt 61 „Amt für Stadtplanung und Wirtschaftsförderung“, Amt 62 „Amt für Geodaten, Kataster und Wohnbauförderung“, Amt 66 „Amt für Verkehrswesen und Tiefbau“, Amt 67 „Amt für Grünflächenmanagement und Friedhofswesen“, Amt 70 „Amt für Umweltschutz“, Amt 63 „Amt für Bauaufsicht und Denkmalpflege“, medl GmbH, sem GmbH, Westnetz GmbH, RWW mbH",
+   "einflussbereich": [
+    "Verbrauch und Vorbildfunktion"
+   ],
+   "federfuehrung": "Koordinierungsstelle Wärmeplanung",
+   "finanzierung": "Haushaltsmittel",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "Stadt Mülheim an der Ruhr und medl GmbH",
+   "laufzeit": "dauerhafte Verstetigung",
+   "n_erfolgsindikatoren": 3,
+   "n_schritte": 3,
+   "nr": "6.5.1.1",
+   "seite": 139,
+   "strategiefeld": "Wärmeplanung als Prozess",
+   "titel": "Integration der Wärmeplanung in die städtische Infrastrukturplanung"
+  },
+  {
+   "beteiligte": "Koordinierungsstelle Wärmeplanung, Amt 26 „ImmobilienService“, Stab „Stabsstelle Klimaschutz und Klimaanpassung“, Amt 62 „Amt für Geodaten, Kataster und Wohnbauförderung“, Amt 66 „Amt für Verkehrswesen und Tiefbau“, Amt 67 „Amt für Grünflächenmanagement und Friedhofswesen“, Amt 70 „Amt für Umweltschutz“, Amt 63 „Amt für Bauaufsicht und Denkmalpflege“, medl GmbH",
+   "einflussbereich": [
+    "Planung und Regulierung"
+   ],
+   "federfuehrung": "Amt 61 „Amt für Stadtplanung und Wirtschaftsförderung“",
+   "finanzierung": "Haushaltsmittel",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "Stadt Mülheim an der Ruhr und medl GmbH",
+   "laufzeit": "erstmalig 2026, Abschluss frühestens 2027, dann spätestens alle 3-5 Jahre Aktualisierung",
+   "n_erfolgsindikatoren": 3,
+   "n_schritte": 4,
+   "nr": "6.5.1.2",
+   "seite": 141,
+   "strategiefeld": "Wärmeplanung als Prozess",
+   "titel": "Flächensicherung für erneuerbare Wärmeerzeugung"
+  },
+  {
+   "beteiligte": "Stab „Stabsstelle Klimaschutz und Klimaanpassung“, Amt 61 „Amt für Stadtplanung und Wirtschaftsförderung“, Amt 66 „Amt für Verkehrswesen und Tiefbau“, Amt 67 „Amt für Grünflächenmanagement und Friedhofswesen“, Amt 70 „Amt für Umweltschutz“, Amt 63 „Amt für Bauaufsicht und Denkmalpflege“, Amt 26 „Immobilienservice“",
+   "einflussbereich": [
+    "Planung und Regulierung"
+   ],
+   "federfuehrung": "Koordinierungsstelle Wärmeplanung",
+   "finanzierung": "Haushaltsmittel, ggf. zusätzliche Mittel erforderlich",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": true,
+   "kostentraeger": "Stadt Mülheim an der Ruhr",
+   "laufzeit": "erstmalig 2026, dann spätestens alle 3-5 Jahre Aktualisierung",
+   "n_erfolgsindikatoren": 2,
+   "n_schritte": 5,
+   "nr": "6.5.1.3",
+   "seite": 143,
+   "strategiefeld": "Wärmeplanung als Prozess",
+   "titel": "Analyse und Optimierung städtischer Strukturen mit Bezug zur Wärmewende"
+  },
+  {
+   "beteiligte": "Koordinierungsstelle Wärmeplanung, Amt 61 „Amt für Stadtplanung und Wirtschaftsförderung“",
+   "einflussbereich": [
+    "Versorgung und Angebote",
+    "Planung und Regulierung"
+   ],
+   "federfuehrung": "medl GmbH",
+   "finanzierung": "Haushaltsmittel, Finanzmittel der medl GmbH, ggf. BEW Förderung",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "medl GmbH",
+   "laufzeit": "Bis zur 1. Fortschreibung der kommunalen Wärmeplanung",
+   "n_erfolgsindikatoren": 4,
+   "n_schritte": 6,
+   "nr": "6.5.1.4",
+   "seite": 145,
+   "strategiefeld": "Wärmeplanung als Prozess",
+   "titel": "Vertiefende Analyse der Prüfgebiete"
+  },
+  {
+   "beteiligte": "Stadtverwaltung Mülheim an der Ruhr",
+   "einflussbereich": [
+    "Versorgung und Angebote"
+   ],
+   "federfuehrung": "medl GmbH",
+   "finanzierung": "Finanzmittel der medl GmbH für investive Vorbereitungskosten, BEW Modul 2 für HOAI LP 5-8 (40 % Zuschuss)",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "medl GmbH",
+   "laufzeit": "BEW-Förderung Modul 2: bis zu 4 (+2) Jahre BEW-Förderung Modul 3: je Einzelmaßnahme bis zu 2 (+1) Jahre",
+   "n_erfolgsindikatoren": 3,
+   "n_schritte": 5,
+   "nr": "6.5.2.1",
+   "seite": 148,
+   "strategiefeld": "Wärmenetze und Infrastruktur",
+   "titel": "Umsetzung des Transformationsplans Wärmenetz „Innenstadt“"
+  },
+  {
+   "beteiligte": "Stadtverwaltung Mülheim an der Ruhr",
+   "einflussbereich": [
+    "Versorgung und Angebote"
+   ],
+   "federfuehrung": "medl GmbH",
+   "finanzierung": "Finanzmittel der medl GmbH für investive Vorbereitungskosten, BEW Modul 1 für HOAI LP 1-4 (50 % Zuschuss)",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "medl GmbH",
+   "laufzeit": "bis 2027 BEW-Förderung Modul 1: bis zu 1 (+1) Jahr(e) Die Förderrichtlinie hat eine Geltungsdauer von sechs Jahren ab dem 15.09.2022",
+   "n_erfolgsindikatoren": 2,
+   "n_schritte": 5,
+   "nr": "6.5.2.2",
+   "seite": 150,
+   "strategiefeld": "Wärmenetze und Infrastruktur",
+   "titel": "Aufstellung und Berücksichtigung von Transformationsplänen für Wärmenetze außerhalb des Innenstadtbereichs"
+  },
+  {
+   "beteiligte": "Stadtverwaltung Mülheim an der Ruhr, medl GmbH",
+   "einflussbereich": [
+    "Versorgung und Angebote"
+   ],
+   "federfuehrung": "Westnetz GmbH",
+   "finanzierung": "Westnetz GmbH",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "Westnetz GmbH",
+   "laufzeit": "Die Stromnetze werden kontinuierlich über die Zeit ausgebaut.",
+   "n_erfolgsindikatoren": 3,
+   "n_schritte": 1,
+   "nr": "6.5.2.3",
+   "seite": 152,
+   "strategiefeld": "Wärmenetze und Infrastruktur",
+   "titel": "Bedarfsorientierter Stromnetzausbau"
+  },
+  {
+   "beteiligte": "Koordinierungsstelle Wärmeplanung, Amt 61 „Amt für Stadtplanung und Wirtschaftsförderung“",
+   "einflussbereich": [
+    "Versorgung und Angebote",
+    "Beratung und Motivation"
+   ],
+   "federfuehrung": "medl GmbH",
+   "finanzierung": "Finanzmittel der medl GmbH, Haushaltsmittel, ggf. zusätzliche Mittel erforderlich, ggf. Förder- mittelakquise möglich",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "medl GmbH und Stadt Mülheim an der Ruhr (nur Personal)",
+   "laufzeit": "fortlaufend, nach Bedarf",
+   "n_erfolgsindikatoren": 1,
+   "n_schritte": 6,
+   "nr": "6.5.3.1",
+   "seite": 154,
+   "strategiefeld": "Ausbau erneuerbarer Energien und Abwärme",
+   "titel": "Koordinierung und Unterstützung von Abwärmeprojekten in Industrie und Gewerbe"
+  },
+  {
+   "beteiligte": "Amt 61 „Amt für Stadtplanung und Wirtschaftsförderung“, Amt 70 „Amt für Umweltschutz“, Koordinierungsstelle Wärmeplanung",
+   "einflussbereich": [
+    "Versorgung und Angebote",
+    "Planung und Regulierung"
+   ],
+   "federfuehrung": "medl GmbH",
+   "finanzierung": "Finanzmittel der medl GmbH für investive Vorbereitungskosten, teilw. BEW Modul 1, progres.nrw „Risikoabsicherung hydrothermale Geothermie“",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "medl GmbH",
+   "laufzeit": "Aufsuchungserlaubnis ist auf Februar 2029 begrenzt Phase „Entscheidung und Umsetzungsvorbe-reitung“ wird nicht eher abgeschlossen sein",
+   "n_erfolgsindikatoren": 4,
+   "n_schritte": 2,
+   "nr": "6.5.3.2",
+   "seite": 156,
+   "strategiefeld": "Ausbau erneuerbarer Energien und Abwärme",
+   "titel": "Einleitung erforderlicher Planungsschritte zur Erschließung der tiefen und mitteltiefen Geothermiepotenziale"
+  },
+  {
+   "beteiligte": "Amt 61 „Amt für Stadtplanung und Wirtschaftsförderung“, Amt 70 „Amt für Umweltschutz“, Koordinierungsstelle Wärmeplanung",
+   "einflussbereich": [
+    "Versorgung und Angebote",
+    "Planung und Regulierung"
+   ],
+   "federfuehrung": "medl GmbH",
+   "finanzierung": "Finanzmittel der medl GmbH für investive Vorbereitungskosten, BEW Modul 2 für HOAI LP 5-8",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "medl GmbH",
+   "laufzeit": "BEW-Förderung Modul 2: bis zu 4 (+2) Jahre BEW-Förderung Modul 3: je Einzelmaßnahme bis zu 2 (+1) Jahre",
+   "n_erfolgsindikatoren": 3,
+   "n_schritte": 6,
+   "nr": "6.5.3.3",
+   "seite": 158,
+   "strategiefeld": "Ausbau erneuerbarer Energien und Abwärme",
+   "titel": "Realisierung der Flusswasserpotenziale der Ruhr"
+  },
+  {
+   "beteiligte": "Stab „Stabsstelle Klimaschutz und Klimaanpassung“",
+   "einflussbereich": [
+    "Beratung und Motivation"
+   ],
+   "federfuehrung": "Koordinierungsstelle Wärmeplanung, medl GmbH",
+   "finanzierung": "Haushaltsmittel, Finanzmittel der medl GmbH",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": true,
+   "kostentraeger": "Stadt Mülheim an der Ruhr und medl GmbH",
+   "laufzeit": "fortlaufend, regelmäßig stattfindende Formate",
+   "n_erfolgsindikatoren": 2,
+   "n_schritte": 3,
+   "nr": "6.5.4.1",
+   "seite": 160,
+   "strategiefeld": "Begleitende Prozesse",
+   "titel": "Information der Fachbetriebe, professionell Beratenden und Beratungsstellen zur Wärmeplanung"
+  },
+  {
+   "beteiligte": "Koordinierungsstelle Wärmeplanung, Stab „Stabsstelle Klimaschutz und Klimaanpassung“, medl GmbH",
+   "einflussbereich": [
+    "Beratung und Motivation"
+   ],
+   "federfuehrung": "Amt 63 „Amt für Bauaufsicht und Denkmalpflege\"",
+   "finanzierung": "Haushaltsmittel, ggf. zusätzliche Mittel erforderlich",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "Stadt Mülheim an der Ruhr",
+   "laufzeit": "umgehende Konzeption, Finanzbedarfssicherung im Haushalt 12-monatige Testphase, z. B. 09/2027-09/2028 bedarfsgerechte Verstetigung",
+   "n_erfolgsindikatoren": 4,
+   "n_schritte": 6,
+   "nr": "6.5.4.2",
+   "seite": 162,
+   "strategiefeld": "Begleitende Prozesse",
+   "titel": "Energieberatung für Denkmalbereiche"
+  },
+  {
+   "beteiligte": "Koordinationsstelle Wärmeplanung, Stab „Stabsstelle Klimaschutz und Klimaanpassung“, Innung für Sanitär- und Heizungstechnik Ruhr-West, Schornsteinfeger-Innung Düsseldorf (Kreisgruppe Oberhausen-Mülheim)",
+   "einflussbereich": [
+    "Beratung und Motivation"
+   ],
+   "federfuehrung": "medl GmbH",
+   "finanzierung": "Finanzmittel der medl GmbH, ggf. zusätzliche Mittel erforderlich",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "medl GmbH",
+   "laufzeit": "umgehende Konzeption, Heizperiode als primärer Zeitraum der Kampagne fortlaufend",
+   "n_erfolgsindikatoren": 4,
+   "n_schritte": 5,
+   "nr": "6.5.4.3",
+   "seite": 165,
+   "strategiefeld": "Begleitende Prozesse",
+   "titel": "Bekanntheitssteigerung der Übergangslösungen bei Havariefällen"
+  },
+  {
+   "beteiligte": "",
+   "einflussbereich": [
+    "Versorgung und Angebote"
+   ],
+   "federfuehrung": "medl GmbH",
+   "finanzierung": "Finanzmittel der medl GmbH",
+   "hat_hemmnisse": true,
+   "kosten_quantifiziert": false,
+   "kostentraeger": "medl GmbH",
+   "laufzeit": "Vorprüfung: 6-9 Monate Pilotprojekte: 1-2 Jahre Skalierung ab Jahr 3, dann als fortlaufendes Geschäftsmodell",
+   "n_erfolgsindikatoren": 3,
+   "n_schritte": 6,
+   "nr": "6.5.5.1",
+   "seite": 168,
+   "strategiefeld": "Sonstige",
+   "titel": "Prüfung: Wärmepumpencontracting für Mehrfamilienhäuser"
+  }
+ ]
+}

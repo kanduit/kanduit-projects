@@ -1,0 +1,210 @@
+{
+ "_meta": {
+  "abruf": "20.08.2026",
+  "quelle": "Endbericht zur Wärmeplanung für Mülheim an der Ruhr",
+  "ratsbeschluss": "16.07.2026",
+  "redaktionsdatum": "15.05.2026",
+  "seiten_gesamt": 190,
+  "url": "https://cms.muelheim-ruhr.de/sites/default/files/2026-07/Waermeplanung_Muelheim_Endbericht.pdf"
+ },
+ "indikatoren": [
+  {
+   "indikator": "Anteil Fernwärme",
+   "kategorie": "Anteile der Energieträger am Wärmebedarf",
+   "referenz": "7,5 %",
+   "referenz_num": 7.5,
+   "seite": 130,
+   "ziel": "33,3 %",
+   "ziel_num": 33.3
+  },
+  {
+   "indikator": "Anteil Erdgas",
+   "kategorie": "Anteile der Energieträger am Wärmebedarf",
+   "referenz": "76,3 %",
+   "referenz_num": 76.3,
+   "seite": 130,
+   "ziel": "0 %",
+   "ziel_num": 0.0
+  },
+  {
+   "indikator": "Anteil Heizöl + Flüssiggas",
+   "kategorie": "Anteile der Energieträger am Wärmebedarf",
+   "referenz": "11,6 %",
+   "referenz_num": 11.6,
+   "seite": 130,
+   "ziel": "0 %",
+   "ziel_num": 0.0
+  },
+  {
+   "indikator": "Anteil Strom (inkl. WP)",
+   "kategorie": "Anteile der Energieträger am Wärmebedarf",
+   "referenz": "2,9 %",
+   "referenz_num": 2.9,
+   "seite": 130,
+   "ziel": "56,6 %",
+   "ziel_num": 56.6
+  },
+  {
+   "indikator": "Anteil Biomasse",
+   "kategorie": "Anteile der Energieträger am Wärmebedarf",
+   "referenz": "1,2 %",
+   "referenz_num": 1.2,
+   "seite": 130,
+   "ziel": "1,1 %",
+   "ziel_num": 1.1
+  },
+  {
+   "indikator": "Anteil Fernwärme",
+   "kategorie": "Anteile der Energieträger am Endenergiebedarf",
+   "referenz": "7,0 %",
+   "referenz_num": 7.0,
+   "seite": 130,
+   "ziel": "33,7 %",
+   "ziel_num": 33.7
+  },
+  {
+   "indikator": "Anteil Erdgas",
+   "kategorie": "Anteile der Energieträger am Endenergiebedarf",
+   "referenz": "77,0 %",
+   "referenz_num": 77.0,
+   "seite": 130,
+   "ziel": "0 %",
+   "ziel_num": 0.0
+  },
+  {
+   "indikator": "Anteil Heizöl + Flüssiggas",
+   "kategorie": "Anteile der Energieträger am Endenergiebedarf",
+   "referenz": "12,1 %",
+   "referenz_num": 12.1,
+   "seite": 130,
+   "ziel": "0 %",
+   "ziel_num": 0.0
+  },
+  {
+   "indikator": "Anteil Strom",
+   "kategorie": "Anteile der Energieträger am Endenergiebedarf",
+   "referenz": "2,4 %",
+   "referenz_num": 2.4,
+   "seite": 130,
+   "ziel": "24,1 %",
+   "ziel_num": 24.1
+  },
+  {
+   "indikator": "Anteil Biomasse",
+   "kategorie": "Anteile der Energieträger am Endenergiebedarf",
+   "referenz": "1,5 %",
+   "referenz_num": 1.5,
+   "seite": 130,
+   "ziel": "1,4 %",
+   "ziel_num": 1.4
+  },
+  {
+   "indikator": "Adressen mit FW",
+   "kategorie": "Transformation der Versorgungsstruktur",
+   "referenz": "1.248",
+   "referenz_num": 1248.0,
+   "seite": 130,
+   "ziel": "~ 5.000",
+   "ziel_num": 5000.0
+  },
+  {
+   "indikator": "Adressen mit Erdgas",
+   "kategorie": "Transformation der Versorgungsstruktur",
+   "referenz": "25.887",
+   "referenz_num": 25887.0,
+   "seite": 130,
+   "ziel": "0",
+   "ziel_num": 0.0
+  },
+  {
+   "indikator": "Adressen mit Strom",
+   "kategorie": "Transformation der Versorgungsstruktur",
+   "referenz": "2.471",
+   "referenz_num": 2471.0,
+   "seite": 130,
+   "ziel": "~ 29.800",
+   "ziel_num": 29800.0
+  },
+  {
+   "indikator": "Adressen mit Heizöl + Flüssiggas",
+   "kategorie": "Transformation der Versorgungsstruktur",
+   "referenz": "5.285",
+   "referenz_num": 5285.0,
+   "seite": 130,
+   "ziel": "0",
+   "ziel_num": 0.0
+  },
+  {
+   "indikator": "Adressen mit Holz",
+   "kategorie": "Transformation der Versorgungsstruktur",
+   "referenz": "130",
+   "referenz_num": 130.0,
+   "seite": 130,
+   "ziel": "~ 130",
+   "ziel_num": 130.0
+  },
+  {
+   "indikator": "neue FW-Anschlüsse",
+   "kategorie": "Transformation der Versorgungsstruktur",
+   "referenz": "keine Referenz",
+   "referenz_num": null,
+   "seite": 130,
+   "ziel": "~ 150 Anschlüsse / Jahr",
+   "ziel_num": 150.0
+  },
+  {
+   "indikator": "neue Wärmepumpen",
+   "kategorie": "Transformation der Versorgungsstruktur",
+   "referenz": "~ 150 WP / Jahr",
+   "referenz_num": 150.0,
+   "seite": 130,
+   "ziel": "~ 1.350 WP / Jahr",
+   "ziel_num": 1350.0
+  },
+  {
+   "indikator": "Reduktion des Wärmebedarfs im Vergleich zur Referenz",
+   "kategorie": "Energieeinsparungen",
+   "referenz": "-",
+   "referenz_num": null,
+   "seite": 130,
+   "ziel": "14 %",
+   "ziel_num": 14.0
+  },
+  {
+   "indikator": "Reduktion des Raumwärmebedarfs durch Sanierung im Vergleich zur Referenz",
+   "kategorie": "Energieeinsparungen",
+   "referenz": "-",
+   "referenz_num": null,
+   "seite": 130,
+   "ziel": "8 %",
+   "ziel_num": 8.0
+  },
+  {
+   "indikator": "Zu sanierende Gebäude (Vollsanierungsäquivalente)",
+   "kategorie": "Energieeinsparungen",
+   "referenz": "-",
+   "referenz_num": null,
+   "seite": 130,
+   "ziel": "~ 5.500 Gebäude / Jahr",
+   "ziel_num": 5500.0
+  },
+  {
+   "indikator": "zusätzlicher Wärmebedarf durch Neubauten",
+   "kategorie": "Energieeinsparungen",
+   "referenz": "0 GWh/a",
+   "referenz_num": 0.0,
+   "seite": 130,
+   "ziel": "51 GWh/a",
+   "ziel_num": 51.0
+  },
+  {
+   "indikator": "Treibhausgasausstoß im Wärmesektor",
+   "kategorie": "Emissionen",
+   "referenz": "420.901 t/a",
+   "referenz_num": 420901.0,
+   "seite": 130,
+   "ziel": "23.000 t/a",
+   "ziel_num": 23000.0
+  }
+ ]
+}

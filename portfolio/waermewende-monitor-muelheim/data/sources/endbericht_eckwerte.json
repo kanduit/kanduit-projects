@@ -1,0 +1,164 @@
+{
+ "_meta": {
+  "abruf": "20.08.2026",
+  "quelle": "Endbericht zur Wärmeplanung für Mülheim an der Ruhr",
+  "ratsbeschluss": "16.07.2026",
+  "redaktionsdatum": "15.05.2026",
+  "seiten_gesamt": 190,
+  "url": "https://cms.muelheim-ruhr.de/sites/default/files/2026-07/Waermeplanung_Muelheim_Endbericht.pdf"
+ },
+ "eckwerte": {
+  "anschlussquote_bestand_pct": {
+   "seite": 115,
+   "wert": 90.0
+  },
+  "anschlussquote_neubau_pct": {
+   "seite": 115,
+   "wert": 60.0
+  },
+  "einsparung_fw_reinvest_mio": {
+   "seite": 128,
+   "wert": 40.0
+  },
+  "einsparung_kesseltausch_mio": {
+   "seite": 128,
+   "wert": 488.0
+  },
+  "einwohner": {
+   "seite": 128,
+   "wert": 174000.0
+  },
+  "endenergie_basis_gwh": {
+   "seite": 126,
+   "wert": 1726.0
+  },
+  "endenergie_ziel_gwh": {
+   "seite": 126,
+   "wert": 980.0
+  },
+  "fw_absatz_heute_gwh": {
+   "seite": 115,
+   "wert": 120.0
+  },
+  "fw_absatz_ziel_gwh": {
+   "seite": 115,
+   "wert": 470.0
+  },
+  "fw_anschluesse_pro_jahr": {
+   "seite": 122,
+   "wert": 150.0
+  },
+  "gebaeude_alle_netze": {
+   "seite": 136,
+   "wert": 1200.0
+  },
+  "gebaeude_innenstadtnetz": {
+   "seite": 135,
+   "wert": 550.0
+  },
+  "gebaeude_umstellung_anteil_pct": {
+   "seite": 122,
+   "wert": 95.0
+  },
+  "gebaeude_umstellung_anzahl": {
+   "seite": 122,
+   "wert": 31000.0
+  },
+  "investition_fernwaerme_mio": {
+   "seite": 129,
+   "wert": 720.0
+  },
+  "investition_gesamt_mio": {
+   "seite": 128,
+   "wert": 2491.0
+  },
+  "investition_je_einwohner_monat_eur": {
+   "seite": 128,
+   "wert": 33.0
+  },
+  "investition_sanierung_mio": {
+   "seite": 129,
+   "wert": 530.0
+  },
+  "investition_waermepumpen_mio": {
+   "seite": 129,
+   "wert": 1241.0
+  },
+  "massnahmen_text_anzahl": {
+   "seite": 137,
+   "wert": 12
+  },
+  "netze_gesamt": {
+   "seite": 135,
+   "wert": 12
+  },
+  "netzlaenge_gesamt_km": {
+   "seite": 136,
+   "wert": 45.0
+  },
+  "netzlaenge_heute_km": {
+   "seite": 115,
+   "wert": 45.0
+  },
+  "netzlaenge_innenstadt_km": {
+   "seite": 135,
+   "wert": 26.0
+  },
+  "netzlaenge_ziel_km": {
+   "seite": 115,
+   "wert": 200.0
+  },
+  "sanierung_thg_beitrag_pct": {
+   "seite": 129,
+   "wert": 14.0
+  },
+  "thg_minderung_2030_pct": {
+   "seite": 126,
+   "wert": 23.0
+  },
+  "thg_minderung_2040_pct": {
+   "seite": 126,
+   "wert": 71.0
+  },
+  "thg_minderung_2045_pct": {
+   "seite": 126,
+   "wert": 95.0
+  },
+  "trassenanteil_ziel_pct": {
+   "seite": 115,
+   "wert": 60.0
+  },
+  "trassenbau_km_pro_jahr": {
+   "seite": 115,
+   "wert": 4.0
+  },
+  "umstellungen_dezentral_pro_jahr": {
+   "seite": 122,
+   "wert": 1500.0
+  },
+  "waermenetzgebiet_bedarf_gwh": {
+   "seite": 113,
+   "wert": 810.0
+  },
+  "waermenetzgebiet_bedarfsanteil_pct": {
+   "seite": 113,
+   "wert": 51.0
+  },
+  "waermenetzgebiet_flaechenanteil_pct": {
+   "seite": 113,
+   "wert": 17.0
+  },
+  "wp_netzlast_mw": {
+   "seite": 120,
+   "wert": 230.0
+  },
+  "wp_strombedarf_gwh": {
+   "seite": 120,
+   "wert": 240.0
+  },
+  "zentralheizungen_referenz_pro_jahr": {
+   "seite": 122,
+   "wert": 500.0
+  }
+ }
+}

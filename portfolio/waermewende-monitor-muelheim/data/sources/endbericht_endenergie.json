@@ -1,0 +1,305 @@
+{
+ "_meta": {
+  "abruf": "20.08.2026",
+  "quelle": "Endbericht zur Wärmeplanung für Mülheim an der Ruhr",
+  "ratsbeschluss": "16.07.2026",
+  "redaktionsdatum": "15.05.2026",
+  "seiten_gesamt": 190,
+  "url": "https://cms.muelheim-ruhr.de/sites/default/files/2026-07/Waermeplanung_Muelheim_Endbericht.pdf"
+ },
+ "einheit": "GWh/a",
+ "gegenprobe_fliesstext": {
+  "2045": {
+   "abw_pct": 1.41,
+   "fliesstext": 980.0,
+   "summe_tabellen": 966.2
+  },
+  "Basisjahr": {
+   "abw_pct": 0.41,
+   "fliesstext": 1726.0,
+   "summe_tabellen": 1733.1
+  }
+ },
+ "reihen": {
+  "Erdgas": {
+   "2030": {
+    "ghd": 356.5,
+    "oef": 37.3,
+    "phh": 481.8
+   },
+   "2035": {
+    "ghd": 247.6,
+    "oef": 21.0,
+    "phh": 308.8
+   },
+   "2040": {
+    "ghd": 71.7,
+    "oef": 13.7,
+    "phh": 153.2
+   },
+   "2045": {
+    "ghd": 0.0,
+    "oef": 0.0,
+    "phh": 0.0
+   },
+   "Basisjahr": {
+    "ghd": 550.0,
+    "oef": 51.9,
+    "phh": 726.6
+   }
+  },
+  "Fernwärme": {
+   "2030": {
+    "ghd": 170.4,
+    "oef": 39.1,
+    "phh": 87.2
+   },
+   "2035": {
+    "ghd": 198.7,
+    "oef": 49.4,
+    "phh": 121.2
+   },
+   "2040": {
+    "ghd": 218.2,
+    "oef": 52.2,
+    "phh": 152.6
+   },
+   "2045": {
+    "ghd": 234.3,
+    "oef": 57.8,
+    "phh": 184.2
+   },
+   "Basisjahr": {
+    "ghd": 18.9,
+    "oef": 40.8,
+    "phh": 60.6
+   }
+  },
+  "Feste Biomasse": {
+   "2030": {
+    "ghd": 0.5,
+    "oef": 0.7,
+    "phh": 21.6
+   },
+   "2035": {
+    "ghd": 0.5,
+    "oef": 0.7,
+    "phh": 20.7
+   },
+   "2040": {
+    "ghd": 0.5,
+    "oef": 0.6,
+    "phh": 19.9
+   },
+   "2045": {
+    "ghd": 0.4,
+    "oef": 0.6,
+    "phh": 19.0
+   },
+   "Basisjahr": {
+    "ghd": 0.5,
+    "oef": 0.7,
+    "phh": 24.0
+   }
+  },
+  "Flüssiggas": {
+   "2030": {
+    "ghd": 2.1,
+    "oef": 0.5,
+    "phh": 5.5
+   },
+   "2035": {
+    "ghd": 0.9,
+    "oef": 0.2,
+    "phh": 3.6
+   },
+   "2040": {
+    "ghd": 0.6,
+    "oef": 0.2,
+    "phh": 2.2
+   },
+   "2045": {
+    "ghd": 0.0,
+    "oef": 0.0,
+    "phh": 0.0
+   },
+   "Basisjahr": {
+    "ghd": 3.5,
+    "oef": 0.6,
+    "phh": 9.0
+   }
+  },
+  "Heizöl": {
+   "2030": {
+    "ghd": 19.5,
+    "oef": 6.3,
+    "phh": 99.3
+   },
+   "2035": {
+    "ghd": 11.2,
+    "oef": 4.6,
+    "phh": 61.2
+   },
+   "2040": {
+    "ghd": 6.7,
+    "oef": 2.2,
+    "phh": 30.1
+   },
+   "2045": {
+    "ghd": 0.0,
+    "oef": 0.0,
+    "phh": 0.0
+   },
+   "Basisjahr": {
+    "ghd": 28.5,
+    "oef": 8.2,
+    "phh": 161.5
+   }
+  },
+  "Klimaneutrale Gase": {
+   "2030": {
+    "ghd": 0.0,
+    "oef": 0.0,
+    "phh": 0.0
+   },
+   "2035": {
+    "ghd": 0.0,
+    "oef": 0.0,
+    "phh": 0.0
+   },
+   "2040": {
+    "ghd": 142.9,
+    "oef": 0.0,
+    "phh": 0.0
+   },
+   "2045": {
+    "ghd": 142.9,
+    "oef": 0.0,
+    "phh": 0.0
+   },
+   "Basisjahr": {
+    "ghd": 0.0,
+    "oef": 0.0,
+    "phh": 0.0
+   }
+  },
+  "Oberflächennahe Geothermie": {
+   "2030": {
+    "ghd": 3.6,
+    "oef": 2.3,
+    "phh": 38.6
+   },
+   "2035": {
+    "ghd": 5.1,
+    "oef": 3.3,
+    "phh": 55.1
+   },
+   "2040": {
+    "ghd": 8.0,
+    "oef": 4.4,
+    "phh": 67.5
+   },
+   "2045": {
+    "ghd": 9.4,
+    "oef": 5.0,
+    "phh": 81.3
+   },
+   "Basisjahr": {
+    "ghd": 0.0,
+    "oef": 0.0,
+    "phh": 0.4
+   }
+  },
+  "Solarthermie": {
+   "2030": {
+    "ghd": 0.2,
+    "oef": 0.0,
+    "phh": 5.8
+   },
+   "2035": {
+    "ghd": 0.2,
+    "oef": 0.0,
+    "phh": 5.5
+   },
+   "2040": {
+    "ghd": 0.2,
+    "oef": 0.0,
+    "phh": 5.3
+   },
+   "2045": {
+    "ghd": 0.2,
+    "oef": 0.0,
+    "phh": 5.0
+   },
+   "Basisjahr": {
+    "ghd": 0.2,
+    "oef": 0.0,
+    "phh": 6.3
+   }
+  },
+  "Strom": {
+   "2030": {
+    "ghd": 14.6,
+    "oef": 4.9,
+    "phh": 101.9
+   },
+   "2035": {
+    "ghd": 44.8,
+    "oef": 6.9,
+    "phh": 144.1
+   },
+   "2040": {
+    "ghd": 53.1,
+    "oef": 7.0,
+    "phh": 180.2
+   },
+   "2045": {
+    "ghd": 96.2,
+    "oef": 9.0,
+    "phh": 216.6
+   },
+   "Basisjahr": {
+    "ghd": 0.6,
+    "oef": 2.5,
+    "phh": 38.2
+   }
+  },
+  "Umweltwärme aus Luft": {
+   "2030": {
+    "ghd": 12.3,
+    "oef": 2.6,
+    "phh": 90.1
+   },
+   "2035": {
+    "ghd": 52.0,
+    "oef": 5.0,
+    "phh": 151.9
+   },
+   "2040": {
+    "ghd": 56.9,
+    "oef": 6.6,
+    "phh": 206.8
+   },
+   "2045": {
+    "ghd": 63.2,
+    "oef": 10.0,
+    "phh": 259.4
+   },
+   "Basisjahr": {
+    "ghd": 0.2,
+    "oef": 0.1,
+    "phh": 4.8
+   }
+  }
+ },
+ "seiten": "185–186",
+ "sektoren": {
+  "ghd": "Gewerbe, Handel, Dienstleistung und Industrie",
+  "oef": "Öffentliche Einrichtungen",
+  "phh": "Private Haushalte"
+ },
+ "umweltwaerme_zeilen": [
+  "Umweltwärme aus Luft",
+  "Oberflächennahe Geothermie"
+ ]
+}
