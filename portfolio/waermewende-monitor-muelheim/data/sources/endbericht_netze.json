@@ -1,0 +1,77 @@
+{
+ "_meta": {
+  "abruf": "20.08.2026",
+  "quelle": "Endbericht zur Wärmeplanung für Mülheim an der Ruhr",
+  "ratsbeschluss": "16.07.2026",
+  "redaktionsdatum": "15.05.2026",
+  "seiten_gesamt": 190,
+  "url": "https://cms.muelheim-ruhr.de/sites/default/files/2026-07/Waermeplanung_Muelheim_Endbericht.pdf"
+ },
+ "einheit": "g CO2-Äq je kWh Wärmeabsatz",
+ "hinweis": "Nur der Basisjahr-Wert steht je Netz einzeln. Die Spalten 2030/2040/2045 sind im Bericht für Netzgruppen verbunden und werden deshalb nicht je Netz geführt.",
+ "netze": [
+  {
+   "basisjahr_g_co2_kwh": 132.0,
+   "netz": "Innenstadt"
+  },
+  {
+   "basisjahr_g_co2_kwh": 278.0,
+   "netz": "Dümpten Boverstraße"
+  },
+  {
+   "basisjahr_g_co2_kwh": 311.0,
+   "netz": "Dümpten Haferkamp"
+  },
+  {
+   "basisjahr_g_co2_kwh": 225.0,
+   "netz": "Heißen Mühlenfeld"
+  },
+  {
+   "basisjahr_g_co2_kwh": 139.0,
+   "netz": "Heißen Hinnebecke"
+  },
+  {
+   "basisjahr_g_co2_kwh": 113.0,
+   "netz": "Heißen Kruppstraße"
+  },
+  {
+   "basisjahr_g_co2_kwh": 147.0,
+   "netz": "Heißen Helga-Wex-Weg"
+  },
+  {
+   "basisjahr_g_co2_kwh": 188.0,
+   "netz": "Saarn Auf den Hufen"
+  },
+  {
+   "basisjahr_g_co2_kwh": 185.0,
+   "netz": "Saarn Frombergfeld"
+  },
+  {
+   "basisjahr_g_co2_kwh": null,
+   "netz": "Dümpten Auf dem Bruch"
+  },
+  {
+   "basisjahr_g_co2_kwh": 259.0,
+   "netz": "Holthausen Liverpoolstraße"
+  },
+  {
+   "basisjahr_g_co2_kwh": 173.0,
+   "netz": "Holthausen Theo-Wüllenkemper-Straße"
+  },
+  {
+   "basisjahr_g_co2_kwh": null,
+   "netz": "Lindgens"
+  },
+  {
+   "basisjahr_g_co2_kwh": null,
+   "netz": "Wiehagen"
+  },
+  {
+   "basisjahr_g_co2_kwh": null,
+   "netz": "Styrum"
+  }
+ ],
+ "netze_gesamt": 15,
+ "netze_mit_basiswert": 11,
+ "seite": 184
+}

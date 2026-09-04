@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanduit Wärmewende-Monitor Mülheim</title>
+<meta name="description" content="Umsetzungsverfolgung der am 16.07.2026 beschlossenen kommunalen Wärmeplanung Mülheim an der Ruhr — Indikatoren, Maßnahmen, Prüfgebiete, Investitionspriorisierung.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Reusable Kanduit logo symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <mask id="kmask" maskUnits="userSpaceOnUse" x="-125" y="-125" width="250" height="250">
+      <circle r="110" fill="#fff"/>
+      <rect x="-71" y="-125" width="29" height="250" fill="#000"/>
+      <g stroke="#000" stroke-width="32" stroke-linecap="butt">
+        <line x1="-42" y1="0" x2="66" y2="-122"/>
+        <line x1="-42" y1="0" x2="66" y2="122"/>
+      </g>
+    </mask>
+    <symbol id="k-mark" viewBox="-125 -125 250 250">
+      <circle r="110" fill="currentColor" mask="url(#kmask)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <span class="brand">
+    <svg width="22" height="22" style="color:var(--petrol-600)"><use href="#k-mark"/></svg>
+    Kanduit <span class="sub">Wärmewende-Monitor</span>
+  </span>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-view="overview">Überblick</button>
+    <button class="tab" data-view="indikatoren">Indikatoren</button>
+    <button class="tab" data-view="massnahmen">Maßnahmen</button>
+    <button class="tab" data-view="netze">Netze & Prüfgebiete</button>
+    <button class="tab" data-view="fortschritt">Umsetzungsfortschritt</button>
+    <button class="tab" data-view="euro">Klimawirkung je Euro</button>
+    <button class="tab" data-view="daten">Daten & Methode</button>
+  </nav>
+  <div class="right">
+    <span class="stand" id="standLabel">Stand —</span>
+    <span class="demo-pill">Demo · öffentliche Daten</span>
+    <button class="kbtn ghost" id="print-btn">Drucken / PDF</button>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== ÜBERBLICK ===================== -->
+  <section class="view active" id="view-overview">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Wärmeplanung beschlossen am 16.07.2026 · Endbericht, 190 Seiten</p>
+        <h2>Überblick</h2>
+        <p>Der Rat der Stadt Mülheim an der Ruhr hat die kommunale Wärmeplanung am
+        16. Juli 2026 beschlossen. Damit endet die Planungsphase und die Umsetzung beginnt.
+        Diese Ansicht fasst zusammen, was der Wärmeplan bis 2045 verlangt — und woran sich
+        messen lässt, ob er vorankommt. Alle Zahlen stammen aus dem Endbericht selbst;
+        Ist-Werte nach dem Beschluss sind noch nicht veröffentlicht.</p>
+      </div>
+
+      <div class="leitzahl" id="leitzahl" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g4" id="overview-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Treibhausgaspfad des Wärmesektors <span class="info-i" data-info="thg_pfad" tabindex="0" role="button" aria-label="Erklärung: Treibhausgaspfad des Wärmesektors">ⓘ</span></div>
+        <div class="card-sub">Zielszenario je Stützjahr · Kilotonnen CO₂-Äquivalent pro Jahr</div>
+        <div id="chart-thg"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+
+      <div class="banner info" style="margin-bottom:var(--sp-4)">
+        <b>Warum gerade jetzt.</b> Der Endbericht beschreibt in Kapitel 8 ein eigenes
+        Controlling-Konzept: Jahresbericht, Prüfung der Indikatoren, Fortschreibung der
+        Bilanz, Multiprojektmanagement. Die Stadt hat damit selbst festgelegt, was ein
+        laufendes Umsetzungscontrolling leisten soll — der Bedarf muss nicht begründet
+        werden. Was fehlt, ist die Umsetzung: Für keinen der 22 Indikatoren aus Tabelle 26
+        liegt bislang ein fortgeschriebener Ist-Wert vor.
+      </div>
+
+      <div class="card">
+        <div class="card-title">Die vier Controlling-Bausteine des Endberichts <span class="info-i" data-info="controlling" tabindex="0" role="button" aria-label="Erklärung: Controlling-Bausteine des Endberichts">ⓘ</span></div>
+        <div class="card-sub">Kapitel 8, S. 174 ff. · und was dieser Demonstrator davon zeigt</div>
+        <div id="controlling-liste" style="margin-top:var(--sp-3)"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== INDIKATOREN ===================== -->
+  <section class="view" id="view-indikatoren">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Tabelle 26 des Endberichts · S. 130</p>
+        <h2>Indikatoren</h2>
+        <p>Der Wärmeplan definiert 22 Indikatoren, an denen sich der Fortschritt der
+        Wärmewende messen lässt — je mit Referenzwert und Zielwert für 2045. Sie sind hier
+        unverändert übernommen. Die vierte Spalte bleibt leer: Ein Ist-Wert ist seit dem
+        Ratsbeschluss nicht veröffentlicht. Genau diese Spalte zu füllen und
+        fortzuschreiben, ist die Aufgabe eines Umsetzungsmonitorings.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Energieträger heute und im Zielszenario <span class="info-i" data-info="ind_mix" tabindex="0" role="button" aria-label="Erklärung: Energieträger heute und im Zielszenario">ⓘ</span></div>
+        <div class="card-sub">Anteile an der Deckung des Wärmebedarfs · Referenz gegen Zielwert 2045</div>
+        <div id="chart-ind-mix" style="margin-top:var(--sp-3)"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+
+      <div class="card-title" style="margin-bottom:var(--sp-3)">Alle Indikatoren <span class="info-i" data-info="indikatoren" tabindex="0" role="button" aria-label="Erklärung: Indikatoren der Wärmewende">ⓘ</span></div>
+      <div id="ind-tabelle"></div>
+      <p class="note src-note" data-src="endbericht"></p>
+    </div>
+  </section>
+
+  <!-- ===================== MASSNAHMEN ===================== -->
+  <section class="view" id="view-massnahmen">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Umsetzungsstrategie · Kapitel 6.5, Steckbriefe S. 139–169</p>
+        <h2>Maßnahmen</h2>
+        <p>Der Wärmeplan führt die Umsetzung über Maßnahmensteckbriefe: je Maßnahme ein
+        Ziel, eine Federführung, eine Laufzeit, benannte Umsetzungsschritte und
+        Erfolgsindikatoren. Übernommen sind hier die Sachangaben, nicht der Text der
+        Steckbriefe. Ein Umsetzungsstatus fehlt bewusst — er ist öffentlich noch nicht
+        vorhanden und wird hier nicht erfunden.</p>
+      </div>
+
+      <div class="banner warn" style="margin-bottom:var(--sp-4)">
+        <b>Zwölf oder vierzehn?</b> Der Endbericht kündigt auf S. 137 „alle zwölf
+        Maßnahmen“ an, führt in den Übersichtstabellen und als Steckbrief aber vierzehn
+        aus. Für einen Umsetzungsgrad ist das kein Detail — derselbe Fortschritt ergibt je
+        nach Nenner einen spürbar anderen Prozentwert. Dieser Monitor rechnet mit 14;
+        nachgezählt und begründet unter
+        <a href="#" data-goto="daten">Daten &amp; Methode</a>.
+      </div>
+
+      <div class="grid g4" id="massnahmen-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Maßnahmen je Strategiefeld <span class="info-i" data-info="massnahmen_feld" tabindex="0" role="button" aria-label="Erklärung: Maßnahmen je Strategiefeld">ⓘ</span></div>
+          <div class="card-sub">Strategiefelder nach der Vorgabe des LANUK NRW</div>
+          <div id="chart-massnahmen-feld"></div>
+          <p class="note src-note" data-src="endbericht"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Federführung <span class="info-i" data-info="federfuehrung" tabindex="0" role="button" aria-label="Erklärung: Federführung je Maßnahme">ⓘ</span></div>
+          <div class="card-sub">wer die Maßnahme laut Steckbrief leitet</div>
+          <div id="chart-massnahmen-ff"></div>
+          <p class="note src-note" data-src="endbericht"></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Maßnahmenverzeichnis <span class="info-i" data-info="massnahmen" tabindex="0" role="button" aria-label="Erklärung: Maßnahmen der Umsetzungsstrategie">ⓘ</span></div>
+        <div class="card-sub"><span id="m-anzahl"></span> · „Blatt“ öffnet das druckbare Kennzahlenblatt</div>
+        <div class="filterbar">
+          <label>Strategiefeld <select id="m-feld"></select></label>
+          <label>Federführung <select id="m-ff"></select></label>
+        </div>
+        <div class="table-wrap" id="m-tabelle"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== NETZE & PRÜFGEBIETE ===================== -->
+  <section class="view" id="view-netze">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Wärmeversorgungsgebiete · Kapitel 5.3, S. 109–121</p>
+        <h2>Netze &amp; Prüfgebiete</h2>
+        <p>Die Wärmeplanung teilt das Stadtgebiet in Wärmenetzgebiete, dezentrale
+        Versorgungsgebiete und Prüfgebiete. Diese Ansicht zeigt, was der Endbericht dazu
+        als Zahlen hergibt: die bestehenden Netze mit ihren Emissionsfaktoren und die
+        Kategorien der offenen Prüfgebiete. Was er nicht hergibt, steht ebenso deutlich
+        dabei.</p>
+      </div>
+
+      <div class="grid g4" id="netze-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="banner assume-banner" style="margin-bottom:var(--sp-4)">
+        <b>Keine Karte, und warum nicht.</b> Der Endbericht stellt die Versorgungsgebiete
+        kartografisch dar und nennt Flächen- und Bedarfsanteile (17 % der Fläche,
+        810 GWh/a, über 51 % des Wärmebedarfs), aber an keiner Stelle eine Anzahl von
+        Gebieten. Die interaktive Online-Karte läuft auf der Infrastruktur eines privaten
+        Fachbüros, nicht auf einem städtischen Geoportal — die Nachnutzung der Geometrien
+        ist ungeklärt. Statt einer nachgebauten Karte steht hier deshalb, was belegt ist;
+        eine Gebietsansicht setzt eine Datenlieferung der Stadt voraus.
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Emissionsfaktoren der bestehenden Wärmenetze <span class="info-i" data-info="netz_ef" tabindex="0" role="button" aria-label="Erklärung: Emissionsfaktoren der Wärmenetze im Basisjahr">ⓘ</span></div>
+        <div class="card-sub">Basisjahr · Gramm CO₂-Äquivalent je kWh Wärmeabsatz, Carnotmethode</div>
+        <div id="chart-netze-ef"></div>
+        <p class="note" id="netze-neu"></p>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Prüfgebiete — vier Kategorien <span class="info-i" data-info="pruefgebiete" tabindex="0" role="button" aria-label="Erklärung: Prüfgebiete">ⓘ</span></div>
+        <div class="card-sub">Gebiete ohne abschließende Einteilung nach § 3 WPG · S. 117</div>
+        <div id="pruef-liste" style="margin-top:var(--sp-3)"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== UMSETZUNGSFORTSCHRITT ===================== -->
+  <section class="view" id="view-fortschritt">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Szenario 1 · Zielszenario je Stützjahr</p>
+        <h2>Umsetzungsfortschritt</h2>
+        <p>Der Wärmeplan beschreibt den Weg zu 2045 über vier Stützjahre. Diese Ansicht
+        legt den Zielpfad offen — Endenergie je Energieträger, Gebäude an Wärme- und
+        Gasnetz, Erzeugungsmix der Fernwärme. Es ist der <i>Soll</i>-Pfad: Die Ist-Reihe
+        entsteht erst mit der jährlichen Fortschreibung der Energie- und
+        Treibhausgasbilanz, die der Endbericht in Kapitel 8 vorsieht.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Endenergie Wärme je Energieträger <span class="info-i" data-info="endenergie" tabindex="0" role="button" aria-label="Erklärung: Endenergie Wärme je Energieträger">ⓘ</span></div>
+        <div class="card-sub">GWh pro Jahr · Bilanzgrenze Gebäudekante · Tabellen 36–40</div>
+        <div class="filterbar">
+          <label>Sektor <select id="f-sektor"></select></label>
+        </div>
+        <div id="chart-endenergie"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Gebäude mit Wärmenetz- und Gasnetzanschluss <span class="info-i" data-info="gebaeude_anschluss" tabindex="0" role="button" aria-label="Erklärung: Gebäude mit Wärmenetz- und Gasnetzanschluss">ⓘ</span></div>
+        <div class="card-sub">Anzahl Gebäude je Stützjahr · Tabellen 43 und 45</div>
+        <div id="chart-gebaeude"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Erzeugungsmix der Fernwärme <span class="info-i" data-info="fw_mix" tabindex="0" role="button" aria-label="Erklärung: Erzeugungsmix der Fernwärme">ⓘ</span></div>
+        <div class="card-sub">GWh pro Jahr · Bilanzgrenze Erzeugung · Tabelle 42</div>
+        <div id="chart-fwmix"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== KLIMAWIRKUNG JE EURO ===================== -->
+  <section class="view" id="view-euro">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Szenario 2 · Investitionsrahmen gegen Emissionsminderung</p>
+        <h2>Klimawirkung je Euro</h2>
+        <p>Der Wärmeplan beziffert das Investitionsvolumen bis 2045 auf rund 2.491 Mio €
+        und teilt es auf drei Blöcke auf. Für einen davon — die Gebäudesanierung — nennt er
+        auch den Beitrag zur Zielerreichung: 14 %, bei 21 % der Kosten. Diese Ansicht
+        rechnet das für alle drei Blöcke durch. Sie ist eine Rangfolge für die
+        Priorisierung, keine Wirtschaftlichkeitsrechnung.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Aufteilung der nicht belegten Klimawirkung</div>
+        <div class="card-sub">Der Endbericht beziffert nur den Wirkungsanteil der Sanierung. Wie sich der Rest verteilt, ist eine Annahme — hier veränderbar.</div>
+        <div class="sliderbar">
+          <label for="euro-slider">Anteil Wärmepumpen</label>
+          <input type="range" id="euro-slider" min="40" max="80" step="1">
+          <span id="euro-reglerwert" class="mono"></span>
+        </div>
+      </div>
+
+      <div class="grid g3" id="euro-kpis" style="margin-bottom:var(--sp-4)"></div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Investition je Tonne vermiedener Jahresemission <span class="info-i" data-info="euro" tabindex="0" role="button" aria-label="Erklärung: Investition je Tonne vermiedener Emission">ⓘ</span></div>
+        <div class="card-sub">Euro je Tonne CO₂-Äquivalent, die im Zieljahr jährlich vermieden wird · günstigste zuerst</div>
+        <div id="chart-euro"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+
+      <div class="banner info" style="margin-bottom:var(--sp-4)" id="euro-robust"></div>
+
+      <div class="card">
+        <div class="card-title">Grenzen dieser Rechnung</div>
+        <div class="card-sub">was sie nicht ist</div>
+        <p class="note" style="margin-top:var(--sp-3)">
+          Die Kennzahl setzt eine <b>einmalige Investition bis 2045</b> ins Verhältnis zu
+          einer <b>jährlichen</b> Emissionsminderung im Zieljahr. Sie ordnet die Blöcke
+          nach Wirkung je Euro, sie berechnet keine Wirtschaftlichkeit: Betriebskosten,
+          Energiepreise, Lebensdauern und die Förderquoten von 30–50 % aus BEW und BEG
+          fehlen darin. Der Endbericht hält eine abschließende Wirtschaftlichkeitsbewertung
+          selbst für nicht möglich, „aufgrund der Vielfältigkeit und Heterogenität der
+          Gebäudesituationen und auch wegen der unklaren zukünftigen Fördersituation“
+          (S. 127). Hinzu kommt: Die Sanierung senkt den Wärmebedarf und verbilligt
+          dadurch die beiden anderen Blöcke — ein Effekt, den eine blockweise Rechnung
+          ihr nicht gutschreiben kann. Wer allein nach dieser Rangfolge kürzte, würde
+          diesen Zusammenhang übersehen.</p>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DATEN & METHODE ===================== -->
+  <section class="view" id="view-daten">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Herkunft · Rechenweg · Datenlücken</p>
+        <h2>Daten &amp; Methode</h2>
+        <p>Jede Zahl dieses Monitors lässt sich bis zur Primärquelle zurückverfolgen.
+        Diese Ansicht nennt die Quellen, den Rechenweg und ausdrücklich auch das, was die
+        öffentlichen Daten nicht hergeben.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Registerabgleich — wo die Quelle sich selbst widerspricht</div>
+        <div class="card-sub">drei Stellen, an denen dieselbe Größe im Endbericht zwei Zahlen oder zwei Bezugsgrößen hat</div>
+        <div id="abgleich-liste" style="margin-top:var(--sp-3)"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Gegenprobe: taugt eine gerade Linie als Zielpfad? <span class="info-i" data-info="gegenprobe" tabindex="0" role="button" aria-label="Erklärung: Gegenprobe der linearen Zwischenjahres-Fortschreibung">ⓘ</span></div>
+        <div class="card-sub">angepasst an Basisjahr und 2045 · vorhergesagt 2030, 2035, 2040 · diese drei Jahre hat das Verfahren nicht gesehen</div>
+        <p class="note" style="margin:var(--sp-3) 0">
+          Ein Monitor braucht einen Zielpfad auch zwischen den Stützjahren. Der
+          naheliegende Weg wäre eine Gerade vom Basisjahr zum Zieljahr. Geprüft an den drei
+          veröffentlichten Stützjahren hält sie nicht: Sie liegt in <b>allen drei Jahren
+          zu niedrig</b>, im Mittel um 17,3 %. Ein Monitor mit dieser Geraden würde der
+          Stadt in den frühen Jahren einen Rückstand anzeigen, den der eigene Wärmeplan
+          gar nicht vorsieht — der Pfad ist gekrümmt, weil die Wirkung der Maßnahmen erst
+          spät einsetzt. Dieser Monitor interpoliert deshalb zwischen den
+          veröffentlichten Stützjahren und nicht vom Basisjahr zum Ziel.</p>
+        <div id="chart-daten-backtest"></div>
+        <div class="table-wrap" id="backtest-tabelle" style="margin-top:var(--sp-3)"></div>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Querprobe: zwei Reihen, dieselbe Größe</div>
+        <div class="card-sub">der Zielwert für neue Fernwärmeanschlüsse, aus zwei unabhängigen Tabellen nachgerechnet</div>
+        <p class="note" style="margin-top:var(--sp-3)" id="querprobe-text"></p>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Rechte an den Quellen</div>
+        <div class="card-sub">vor einer Veröffentlichung zu klären</div>
+        <p class="note" style="margin-top:var(--sp-3)">
+          Der Endbericht trägt im Impressum den Hinweis, dass er nur unverkürzt
+          vervielfältigt werden darf und eine Veröffentlichung auch auszugsweise der
+          Genehmigung der Herausgeber bedarf. Dieser Demonstrator gibt deshalb
+          <b>Zahlen, Kennwerte und kurze Sachangaben</b> wieder — Indikatorwerte,
+          Bilanzreihen, Federführung, Laufzeit, Kostenträger —, aber <b>keine
+          Textpassagen</b> aus dem Bericht oder den Maßnahmensteckbriefen. Die
+          Beschreibungen in dieser Oberfläche sind eigene Zusammenfassungen mit
+          Seitenverweis. Zweite offene Frage: Die interaktive Karte der
+          Versorgungsgebiete läuft auf der Infrastruktur eines privaten Fachbüros, nicht
+          auf einem städtischen Geoportal — die Nachnutzung der Geometrien wäre vor jeder
+          Kartenansicht mit der Stadt zu klären. Beides ist vor einer Veröffentlichung
+          über diesen Demonstrator hinaus zu prüfen.</p>
+        <p class="note src-note" data-src="endbericht"></p>
+      </div>
+
+      <!-- Register der Demo-Annahmen: wird aus DATA.annahmen gefüllt, kein
+           handgeschriebener Text. Zugleich die Einkaufsliste für das Projekt. -->
+      <div class="card">
+        <div class="card-title">Was belegt ist — und was eine Datenlieferung des Amtes braucht</div>
+        <div class="card-sub">jede nicht öffentlich belegte Größe, mit Begründung</div>
+        <div id="annahmen-liste" style="margin-top:var(--sp-3)"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Kennzahlenblatt je Maßnahme -->
+<div class="drawer-back" id="drawer-back"></div>
+<aside class="drawer" id="drawer" aria-label="Kennzahlenblatt">
+  <button class="kbtn ghost dclose" aria-label="Kennzahlenblatt schließen">Schließen</button>
+  <div id="drawer-body"></div>
+</aside>
+
+<footer class="footer">
+  <div class="wrap">
+    <div style="display:flex; align-items:center; gap:12px">
+      <svg width="30" height="30" style="color:#fff"><use href="#k-mark"/></svg>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:1.2rem; color:#fff">Kanduit</div>
+        <div class="mono">Wärmewende-Monitor · Demonstrator</div>
+      </div>
+    </div>
+    <p class="src" id="footer-src">
+      <b style="color:#cbd5e1">Demonstrator der Kanduit UG</b> — alle Daten aus
+      öffentlichen Quellen — vor allem dem
+      <a href="https://cms.muelheim-ruhr.de/sites/default/files/2026-07/Waermeplanung_Muelheim_Endbericht.pdf" style="color:var(--petrol-300)">Endbericht zur Wärmeplanung für Mülheim an der Ruhr</a>
+      und der <a href="https://cms.muelheim-ruhr.de/stadtraum/planen-und-bauen/waermeplanung" style="color:var(--petrol-300)">Wärmeplanungs-Seite der Stadt</a>,
+      Stand <span id="footer-stand">—</span>, ohne Gewähr; kein Produkt der Stadt Mülheim an der Ruhr.
+      Keine personenbezogenen Daten.
+      Verarbeitung vollständig im Browser · betriebsbereit für Hosting in Deutschland.
+    </p>
+  </div>
+</footer>
+
+<!-- Tooltip -->
+<div class="tt" id="tooltip"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

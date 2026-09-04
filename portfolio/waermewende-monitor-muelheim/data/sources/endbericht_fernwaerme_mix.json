@@ -1,0 +1,70 @@
+{
+ "_meta": {
+  "abruf": "20.08.2026",
+  "quelle": "Endbericht zur Wärmeplanung für Mülheim an der Ruhr",
+  "ratsbeschluss": "16.07.2026",
+  "redaktionsdatum": "15.05.2026",
+  "seiten_gesamt": 190,
+  "url": "https://cms.muelheim-ruhr.de/sites/default/files/2026-07/Waermeplanung_Muelheim_Endbericht.pdf"
+ },
+ "einheit": "GWh/a",
+ "reihen": {
+  "Abwärme": {
+   "2030": 0.0,
+   "2035": 0.0,
+   "2040": 16.3,
+   "2045": 18.4,
+   "Basisjahr": 0.0
+  },
+  "Biomethan": {
+   "2030": 73.6,
+   "2035": 0.0,
+   "2040": 0.0,
+   "2045": 0.0,
+   "Basisjahr": 102.3
+  },
+  "Erdgas": {
+   "2030": 223.6,
+   "2035": 236.1,
+   "2040": 101.9,
+   "2045": 0.0,
+   "Basisjahr": 143.3
+  },
+  "Geothermie": {
+   "2030": 2.1,
+   "2035": 13.1,
+   "2040": 59.9,
+   "2045": 160.2,
+   "Basisjahr": 0.0
+  },
+  "Klimaneutrale": {
+   "2030": 0.0,
+   "2035": 0.0,
+   "2040": 48.8,
+   "2045": 59.0,
+   "Basisjahr": 0.0
+  },
+  "Strom": {
+   "2030": 37.8,
+   "2035": 86.2,
+   "2040": 147.1,
+   "2045": 170.5,
+   "Basisjahr": 0.0
+  },
+  "Umweltwärme aus": {
+   "2030": 50.0,
+   "2035": 107.9,
+   "2040": 135.4,
+   "2045": 133.5,
+   "Basisjahr": 0.0
+  },
+  "Umweltwärme aus Luft": {
+   "2030": 1.1,
+   "2035": 3.8,
+   "2040": 6.2,
+   "2045": 9.8,
+   "Basisjahr": 0.0
+  }
+ },
+ "seite": 186
+}
