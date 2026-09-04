@@ -216,6 +216,39 @@ reference.md). **Never merge — Julian merges.**
 - Vor `git add -A` prüfen, dass kein `__pycache__` mitläuft (entsteht, sobald
   ein `fetch_*.py` importiert statt ausgeführt wurde).
 
+## Step 9 — Hand the last mile over explicitly
+
+**The build is not the finish line, and this is where the pipeline actually
+broke.** The Wärmewende-Monitor Mülheim was finished, committed, pushed and
+CI-green on 2026-08-20 — and it 404'd for fifteen days. The PR was never merged,
+so GitHub Pages never served it; it was never registered in the outreach repo,
+so the send verifier would have refused to link it even after a merge; and the
+decisions ledger meanwhile recorded its signal as having *no linkable demo*.
+Nothing was broken. The handoff was simply implicit.
+
+So end the run by naming what remains, in the PR body **and** in your closing
+message, as a numbered list Julian can work down:
+
+```
+1. gh pr merge <N> --squash --delete-branch
+2. wait for the `pages build and deployment` run, then confirm
+   https://kanduit.github.io/kanduit-projects/<slug>/ returns 200
+3. in ~/Documents/Kanduit:
+   python3 crm/demo_publish.py register <slug> \
+     --name "<Anzeigename>" --city "<Kommune wie in der CRM>" \
+     --fit "<Tag>,<Tag>,<Tag>" --note "<wofür und für wen>"
+   (refuses while the URL is not 200 — that is the point)
+4. python3 crm/verify_send.py selftest
+5. add the row to the demo table in CLAUDE.md
+6. point contacts at it: crm annotate on the assignments this demo now fits
+```
+
+Steps 3–6 happen in the **Kanduit** repo, not this one — that repo boundary is
+why nothing watched them. `python3 crm/demo_publish.py status` there audits the
+whole chain and exits non-zero while any of it is unfinished; Routine E runs it
+weekly. Do not run steps 1–2 yourself: publishing a demonstrator built on a
+Kommune's data is Julian's call.
+
 ## Quality bar (final gate)
 
 - [ ] German UI, de-DE numbers, mobile 375 px OK, zero console errors
@@ -232,3 +265,5 @@ reference.md). **Never merge — Julian merges.**
 - [ ] generate.py deterministisch; data.js < ~100 KB; publish `--check` grün
 - [ ] Landing card (ASCII) + README bullet + project READMEs/CHANGELOG done
 - [ ] PR open, not merged
+- [ ] Step 9 handoff list written out, with the exact `demo_publish register`
+      command for this slug — a finished demo nobody merges is worth nothing
