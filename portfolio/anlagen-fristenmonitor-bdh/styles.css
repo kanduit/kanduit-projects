@@ -84,10 +84,9 @@ a:hover{ text-decoration:underline; }
 .g2{ grid-template-columns:repeat(2,1fr); }
 .g3{ grid-template-columns:repeat(3,1fr); }
 .g4{ grid-template-columns:repeat(4,1fr); }
-.g6{ grid-template-columns:repeat(6,1fr); }
-@media(max-width:1080px){ .g4,.g6{grid-template-columns:repeat(3,1fr)} .g3{grid-template-columns:repeat(2,1fr)} }
-@media(max-width:760px){ .g2,.g3,.g4,.g6{grid-template-columns:1fr 1fr} }
-@media(max-width:520px){ .g2,.g3,.g4,.g6{grid-template-columns:1fr} }
+@media(max-width:1080px){ .g4{grid-template-columns:repeat(3,1fr)} .g3{grid-template-columns:repeat(2,1fr)} }
+@media(max-width:760px){ .g2,.g3,.g4{grid-template-columns:1fr 1fr} }
+@media(max-width:520px){ .g2,.g3,.g4{grid-template-columns:1fr} }
 
 .card{ background:var(--white); border:1px solid var(--neutral-200); border-radius:var(--r-card);
   padding:var(--sp-5); box-shadow:var(--shadow); min-width:0; }
@@ -115,13 +114,6 @@ a:hover{ text-decoration:underline; }
 .pill.ok{ background:#e6f3ee; color:#1f6b4f; }
 .pill.warn{ background:#fbeede; color:#9a5212; }
 .pill.err{ background:#f8e3e6; color:#9a2f3a; }
-/* Beispiel-Kategorie-Pills — pro Projekt umbenennen/anpassen oder löschen */
-.pill.cat-stadt{ background:var(--petrol-100); color:var(--petrol-700); }
-.pill.cat-tochter{ background:#e6f3ee; color:#1f6b4f; }
-.pill.cat-land{ background:#fbeede; color:#9a5212; }
-.pill.cat-bund{ background:#ece9f4; color:#5b4a86; }
-.pill.cat-kommunal-sonst{ background:#eef6e2; color:#4f7a1e; }
-.pill.cat-sonstige{ background:var(--neutral-100); color:var(--neutral-600); }
 
 .banner{ border-radius:var(--r-card); padding:14px 18px; font-size:.95rem; line-height:1.5; }
 .banner.warn{ background:#fdf6e8; border:1px solid #ecd9a8; color:#6b5210; }
@@ -171,14 +163,6 @@ tbody tr:last-child td{ border-bottom:none; }
 .legend .item{ display:flex; align-items:center; gap:7px; font-size:var(--t-small); color:var(--neutral-600); }
 .legend .sw{ width:18px; height:12px; border-radius:3px; flex:none; }
 
-/* generic ranked-list row (Name links, Wert rechts) */
-.buyer-row{ display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center;
-  padding:8px 0; border-bottom:1px solid var(--neutral-100); font-size:.9rem; }
-.buyer-row:last-child{ border-bottom:none; }
-.buyer-row .nm{ min-width:0; overflow-wrap:anywhere; line-height:1.35; }
-.buyer-row .n{ font-family:var(--font-mono); color:var(--neutral-600); }
-
-/* stacked mix bars */
 .mixbar{ display:flex; height:26px; border-radius:8px; overflow:hidden; }
 .mixbar span{ display:block; height:100%; }
 .mixrow{ margin:14px 0 4px; }
@@ -203,9 +187,6 @@ tbody tr:last-child td{ border-bottom:none; }
   .view-head h2{ font-size:1.45rem; }
 }
 
-/* ---------------- Demo-Annahme-Kennzeichnung ----------------
-   Alles, was nicht aus einer offenen Quelle stammt, trägt sichtbar ein ◈. */
-.pill.annahme{ background:#f3e8ff; color:#6b21a8; }
 .assume{ color:#7c3aed; font-weight:600; cursor:help; margin-left:3px; }
 .assume:focus-visible{ outline:2px solid #a78bfa; outline-offset:2px; border-radius:3px; }
 .banner.assume-banner{ background:#faf5ff; border:1px solid #e9d5ff; color:#5b21b6; }
