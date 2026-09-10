@@ -258,6 +258,7 @@ tbody tr:last-child td{ border-bottom:none; }
 
 .seg{ display:inline-flex; flex-wrap:wrap; gap:4px; background:var(--neutral-100);
   padding:4px; border-radius:var(--r-pill); }
+.seg[hidden], .seg button[hidden]{ display:none !important; }
 .seg button{ font-family:var(--font-mono); font-size:var(--t-micro); text-transform:uppercase;
   letter-spacing:.06em; padding:8px 14px; border:none; background:transparent; cursor:pointer;
   border-radius:var(--r-pill); color:var(--neutral-600); transition:.15s; }
