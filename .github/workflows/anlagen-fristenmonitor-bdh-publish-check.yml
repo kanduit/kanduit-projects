@@ -1,0 +1,21 @@
+name: Anlagen- und Fristenmonitor BDH · docs sync check
+
+on:
+  push:
+    paths:
+      - "portfolio/anlagen-fristenmonitor-bdh/**"
+      - "docs/anlagen-fristenmonitor-bdh/**"
+      - ".github/workflows/anlagen-fristenmonitor-bdh-publish-check.yml"
+  pull_request:
+    paths:
+      - "portfolio/anlagen-fristenmonitor-bdh/**"
+      - "docs/anlagen-fristenmonitor-bdh/**"
+      - ".github/workflows/anlagen-fristenmonitor-bdh-publish-check.yml"
+
+jobs:
+  check-docs-in-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify docs/ matches source
+        run: python3 portfolio/anlagen-fristenmonitor-bdh/scripts/publish.py --check

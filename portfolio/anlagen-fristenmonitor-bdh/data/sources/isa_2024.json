@@ -1,0 +1,110 @@
+{
+  "isa": {
+    "einwohner_quelle": {
+      "hinweis": "Nenner ist der Regierungsbezirk, nicht die UUBn-Zuständigkeit.",
+      "t": "IT.NRW, Bevölkerung der Regierungsbezirke, gerundet",
+      "u": "https://www.it.nrw/statistik/eckzahlen/bevoelkerung"
+    },
+    "inspection_series": [
+      {
+        "n": 1678,
+        "year": 2015
+      },
+      {
+        "n": 1746,
+        "year": 2016
+      },
+      {
+        "n": 1749,
+        "year": 2017
+      },
+      {
+        "n": 2205,
+        "year": 2018
+      },
+      {
+        "n": 2130,
+        "year": 2019
+      },
+      {
+        "n": 1702,
+        "year": 2020
+      },
+      {
+        "n": 1866,
+        "year": 2021
+      },
+      {
+        "n": 2036,
+        "year": 2022
+      },
+      {
+        "n": 2176,
+        "year": 2023
+      },
+      {
+        "n": 1848,
+        "year": 2024
+      }
+    ],
+    "inspections_2024": {
+      "delta_vs_2023_pct": -15,
+      "ied": 770,
+      "maengel": 849,
+      "nicht_genehmigung": 143,
+      "non_ied_genehmigung": 935,
+      "total": 1848,
+      "unangekuendigt": 225
+    },
+    "nrw": {
+      "anlagen": 14301,
+      "avn": 5838,
+      "ied_anlagen": 2107,
+      "ied_avn": 1061
+    },
+    "stichtag": "2024-12-31",
+    "uubn": [
+      {
+        "anlagen": 2030,
+        "avn": 229,
+        "einwohner_rb": 3570000,
+        "k": "arnsberg",
+        "t": "UUBn Arnsberg"
+      },
+      {
+        "anlagen": 2091,
+        "avn": 315,
+        "einwohner_rb": 2054000,
+        "k": "detmold",
+        "t": "UUBn Detmold"
+      },
+      {
+        "anlagen": 1468,
+        "avn": 339,
+        "einwohner_rb": 5203000,
+        "k": "duesseldorf",
+        "t": "UUBn Düsseldorf"
+      },
+      {
+        "anlagen": 1542,
+        "avn": 249,
+        "einwohner_rb": 4472000,
+        "k": "koeln",
+        "t": "UUBn Köln"
+      },
+      {
+        "anlagen": 2657,
+        "avn": 617,
+        "einwohner_rb": 2635000,
+        "k": "muenster",
+        "t": "UUBn Münster"
+      }
+    ]
+  },
+  "meta": {
+    "abruf": "2026-09-10",
+    "landing_url": "https://www.lanuk.nrw.de/themen/industrieanlagen/informationssystem-stoffe-und-anlagen-isa",
+    "quelle_url": "https://www.lanuk.nrw.de/fileadmin/lanuv/anlagen/pdf/ISA-Jahresbericht-2024.pdf",
+    "transcribed": true
+  }
+}
