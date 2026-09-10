@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanduit Anlagen- und Fristenmonitor BDH</title>
+<meta name="description" content="Prueffaehiges Anlagenregister und Fristenkalender der gemeinsamen Unteren Umweltschutzbehoerde Bochum, Dortmund und Hagen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <mask id="kmask" maskUnits="userSpaceOnUse" x="-125" y="-125" width="250" height="250">
+      <circle r="110" fill="#fff"/>
+      <rect x="-71" y="-125" width="29" height="250" fill="#000"/>
+      <g stroke="#000" stroke-width="32" stroke-linecap="butt">
+        <line x1="-42" y1="0" x2="66" y2="-122"/>
+        <line x1="-42" y1="0" x2="66" y2="122"/>
+      </g>
+    </mask>
+    <symbol id="k-mark" viewBox="-125 -125 250 250">
+      <circle r="110" fill="currentColor" mask="url(#kmask)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <span class="brand">
+    <svg width="22" height="22" style="color:var(--petrol-600)"><use href="#k-mark"/></svg>
+    Kanduit <span class="sub">Anlagen- und Fristenmonitor</span>
+  </span>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-view="overview">Überblick</button>
+    <button class="tab" data-view="register">Anlagenregister</button>
+    <button class="tab" data-view="fristen">Fristenkalender</button>
+    <button class="tab" data-view="risiko">Risikoeinstufung</button>
+    <button class="tab" data-view="bericht">Berichtsauszug</button>
+    <button class="tab" data-view="daten">Daten & Methode</button>
+  </nav>
+  <div class="right">
+    <span class="stand" id="standLabel">Stand —</span>
+    <span class="demo-pill">Demo · öffentliche Daten</span>
+    <button class="kbtn ghost" id="print-btn">Drucken / PDF</button>
+  </div>
+</header>
+
+<div class="global-bar">
+  <div class="wrap" style="padding-top:10px; padding-bottom:10px; display:flex; flex-wrap:wrap; gap:14px; align-items:center;">
+    <span class="eyebrow" style="margin:0">Szenario</span>
+    <div class="seg" id="scenario-seg">
+      <button type="button" data-sc="termine" class="active">Messtermine 12 Monate</button>
+      <button type="button" data-sc="intervall">Intervallwechsel</button>
+      <button type="button" data-sc="stelle">Stelle ±1</button>
+    </div>
+    <div class="seg" id="staff-seg" hidden>
+      <button type="button" data-delta="-1">−1 Stelle</button>
+      <button type="button" data-delta="0" class="active">Bestand</button>
+      <button type="button" data-delta="1">+1 Stelle</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <section class="view active" id="view-overview">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Gemeinsame UUB Bochum / Dortmund / Hagen · Gebietsschlüssel 911, 913, 914</p>
+        <h2>Überblick</h2>
+        <p>Zwei Register, bewusst getrennt: der schematische Bestand mittelgroßer Feuerungsanlagen nach der 44. BImSchV — und die öffentliche IED-/PRTR-Kulisse. Die Leitzahl zählt nur die jährlichen MFA-Nachweise der nächsten zwölf Monate, nicht die 40 PRTR-Einrichtungen.</p>
+      </div>
+      <div class="banner assume-banner" style="margin-bottom:var(--sp-4)">
+        <b>Was hier echt ist — und was nicht.</b> PRTR 2024 (40 Einrichtungen) und EU-Registry (68 Betriebe) sind öffentliche IED-Maßstäbe.
+        <b>Der MFA-Bestand nach 44. BImSchV (1–&lt;50&nbsp;MW) liegt nicht offen vor</b> und ist durchgängig als Demo-Annahme mit <span class="assume" style="cursor:default">◈</span> gekennzeichnet.
+        Die Overlay-Punkte sind nicht das 44.-BImSchV-Register.
+      </div>
+      <div class="leitzahl" id="leitzahl" style="margin-bottom:var(--sp-4)"></div>
+      <div class="grid g4" id="overview-kpis" style="margin-bottom:var(--sp-4)"></div>
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Fällige jährliche Nachweise nach Stadt <span class="info-i" data-info="faelligStadt" tabindex="0" role="button" aria-label="Erklärung: Fällige Nachweise nach Stadt">ⓘ</span></div>
+        <div class="card-sub">nur Intervall 12 Monate · Untergrenze des nächsten Jahres</div>
+        <div id="chart-overview-stadt"></div>
+        <p class="note src-note" data-src="bv44"></p>
+      </div>
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">MFA nach 44. BImSchV <span class="pill concept">schematisch</span> <span class="info-i" data-info="tabMfa" tabindex="0" role="button" aria-label="Erklärung: MFA-Tabelle">ⓘ</span></div>
+          <div class="card-sub">144 Anlagen · 48 je Stadt · ◈ Demo-Annahme</div>
+          <div class="table-wrap" id="overview-mfa" style="margin-top:12px; max-height:420px; overflow:auto"></div>
+          <p class="note src-note" data-src="bv44"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Öffentliche IED-/PRTR-Kulisse <span class="info-i" data-info="tabIed" tabindex="0" role="button" aria-label="Erklärung: IED-Tabelle">ⓘ</span></div>
+          <div class="card-sub">68 Betriebe · 40 davon mit PRTR 2024</div>
+          <div class="table-wrap" id="overview-ied" style="margin-top:12px; max-height:420px; overflow:auto"></div>
+          <p class="note src-note" data-src="eu"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-register">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Zwei Register · zwei Glyphen · keine Vermischung</p>
+        <h2>Anlagenregister</h2>
+        <p>Karte und Tabellen zeigen denselben Bestand wie der Überblick. Kreise sind schematische MFA, Quadrate die öffentliche IED-Kulisse. Die beiden Listen werden nicht zu einem Bestand zusammengezogen.</p>
+      </div>
+      <div class="banner warn" style="margin-bottom:var(--sp-4)">
+        Die Overlay-Punkte (Quadrate) sind IED-maßstäbliche Betriebe aus EU-Registry und PRTR — <b>nicht</b> Anlagen der 44. BImSchV. Namen von Betreibern sind entfernt; PLZ und Koordinaten lassen sich ausblenden.
+      </div>
+      <div class="controls">
+        <div class="ctl">
+          <label for="f-city">Stadt</label>
+          <select id="f-city">
+            <option value="">alle drei</option>
+            <option value="911">Bochum</option>
+            <option value="913">Dortmund</option>
+            <option value="914">Hagen</option>
+          </select>
+        </div>
+        <div class="ctl">
+          <label for="f-interval">MFA-Intervall</label>
+          <select id="f-interval">
+            <option value="">alle</option>
+            <option value="12">jährlich</option>
+            <option value="36">dreijährlich</option>
+            <option value="0">kontinuierlich</option>
+          </select>
+        </div>
+        <div class="ctl">
+          <label for="f-suche">Suche</label>
+          <input id="f-suche" type="search" placeholder="Anzeigename oder ID">
+        </div>
+        <label class="chk"><input type="checkbox" id="f-vis" checked> PLZ und Koordinaten zeigen</label>
+        <button class="kbtn ghost" type="button" id="csv-mfa">CSV MFA</button>
+        <button class="kbtn ghost" type="button" id="csv-ied">CSV IED</button>
+      </div>
+      <div class="grid g4" id="register-kpis" style="margin-bottom:var(--sp-4)"></div>
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Standorte in BDH <span class="info-i" data-info="karte" tabindex="0" role="button" aria-label="Erklärung: Karte">ⓘ</span></div>
+        <div class="card-sub">Geobasis NRW · EPSG:4326 · zwei Glyphen</div>
+        <div class="map-wrap" id="map"></div>
+        <div class="map-legend" id="map-legend"></div>
+        <p class="note src-note" data-src="gebiete"></p>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-title">MFA nach 44. BImSchV <span class="pill concept">schematisch</span> <span class="info-i" data-info="tabMfa" tabindex="0" role="button" aria-label="Erklärung: MFA-Tabelle">ⓘ</span></div>
+          <div class="card-sub" id="register-mfa-count"></div>
+          <div class="table-wrap" id="register-mfa" style="margin-top:12px; max-height:520px; overflow:auto"></div>
+          <p class="note src-note" data-src="bv44"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Öffentliche IED-/PRTR-Kulisse <span class="info-i" data-info="tabIed" tabindex="0" role="button" aria-label="Erklärung: IED-Tabelle">ⓘ</span></div>
+          <div class="card-sub" id="register-ied-count"></div>
+          <div class="table-wrap" id="register-ied" style="margin-top:12px; max-height:520px; overflow:auto"></div>
+          <p class="note src-note" data-src="prtr"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-fristen">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Konzeptansicht · Client rechnet Fälligkeiten aus lastMeasuredOn</p>
+        <h2>Fristenkalender</h2>
+        <p>Monat × Stadt für die nächsten zwölf Monate, nur jährliche MFA. Kontinuierlich überwachte Anlagen (Intervall 0) zählen nicht. Ein Klick auf einen Monat filtert das Register.</p>
+      </div>
+      <div class="banner assume-banner" style="margin-bottom:var(--sp-4)">
+        <b>Schematisch.</b> Messdaten und Intervalle sind Demo-Annahmen<span class="assume" data-assume="messung" tabindex="0" role="button">◈</span>.
+        data.js enthält keine Fälligkeitsdaten — der Kalender entsteht erst im Browser.
+      </div>
+      <div class="grid g4" id="fristen-kpis" style="margin-bottom:var(--sp-4)"></div>
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Messtermine der nächsten 12 Monate <span class="info-i" data-info="kalender" tabindex="0" role="button" aria-label="Erklärung: Messtermine">ⓘ</span></div>
+        <div class="card-sub">gestapelt nach Stadt · Peak markiert · Klick filtert das Register</div>
+        <div id="chart-fristen"></div>
+        <p class="note src-note" data-src="bv44"></p>
+      </div>
+      <div class="card">
+        <div class="card-title">Laständerung durch Intervallwechsel <span class="info-i" data-info="flipLast" tabindex="0" role="button" aria-label="Erklärung: Intervallwechsel">ⓘ</span></div>
+        <div class="card-sub">Erdgas 5–20 MW · jährlich ↔ dreijährlich</div>
+        <div id="chart-flip"></div>
+        <p class="note src-note" data-src="bv44"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-risiko">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">§ 52a BImSchG · nur der MFA-Bestand · schematisch</p>
+        <h2>Risikoeinstufung</h2>
+        <p>Ein Gewichtsobjekt, drei Schieber. Überblick, Register, Risiko und Bericht lesen denselben Stand. Die IED-Kulisse wird nicht bewertet — sie hat kein Intervall und keine Demo-Risikofaktoren.</p>
+      </div>
+      <div class="banner warn" style="margin-bottom:var(--sp-4)">
+        Die öffentliche Overlay-Liste ist IED-Maßstab, nicht 44. BImSchV. Schieber wirken nur auf den schematischen MFA-Bestand.
+      </div>
+      <div class="grid g2" style="margin-bottom:var(--sp-4)">
+        <div class="card">
+          <div class="card-title">Gewichtung der drei Kriterien <span class="info-i" data-info="gewichte" tabindex="0" role="button" aria-label="Erklärung: Gewichte">ⓘ</span></div>
+          <div class="card-sub">Umwelt · Einhaltung · Umgebung · ein Objekt</div>
+          <div class="sliders" id="sliders"></div>
+          <p class="weight-readout" id="weight-readout" style="margin-top:var(--sp-3)"></p>
+          <button class="kbtn ghost" type="button" id="w-reset" style="margin-top:var(--sp-3)">Gewichte zurücksetzen</button>
+          <p class="note src-note" data-src="bra"></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Rangfolge MFA (erste 20) <span class="pill concept">schematisch</span> <span class="info-i" data-info="rangfolge" tabindex="0" role="button" aria-label="Erklärung: Rangfolge">ⓘ</span></div>
+          <div class="card-sub">Prioritätswert 0–100 · Klick öffnet das Kennzahlenblatt</div>
+          <div id="chart-rangliste"></div>
+          <p class="note src-note" data-src="bv44"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-bericht">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Konzeptansicht · kein amtlicher Jahresbericht</p>
+        <h2>Berichtsauszug</h2>
+        <p>Ein schematischer Auszug, der die belegten ISA-Zahlen neben die MFA-Last und die Stellenkapazität legt. Er ersetzt keinen Bericht der UUB.</p>
+      </div>
+      <div class="banner assume-banner" style="margin-bottom:var(--sp-4)">
+        <b>Schematisch / Konzeptansicht.</b> Kapazität und MFA-Last sind Demo-Annahmen. Die ISA-Inspektionszahlen gelten für NRW, nicht für BDH.
+      </div>
+      <div class="grid g4" id="bericht-kpis" style="margin-bottom:var(--sp-4)"></div>
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Deckung der fälligen Termine durch Stellen <span class="info-i" data-info="deckung" tabindex="0" role="button" aria-label="Erklärung: Deckung">ⓘ</span></div>
+        <div class="card-sub">Termine je Person × Stellen · Szenario Stelle ±1</div>
+        <div id="chart-deckung"></div>
+        <p class="note src-note" data-src="isa"></p>
+      </div>
+      <div class="card">
+        <div class="card-title">ISA-Inspektionen NRW 2015–2024 <span class="info-i" data-info="isaReihe" tabindex="0" role="button" aria-label="Erklärung: ISA-Inspektionen">ⓘ</span></div>
+        <div class="card-sub">Landesreihe · 1-/3-Jahres-Rhythmus, keine BDH-Kurve</div>
+        <div id="chart-isa-reihe"></div>
+        <p class="note src-note" data-src="isa"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-daten">
+    <div class="wrap">
+      <div class="view-head">
+        <p class="eyebrow">Herkunft · Rechenweg · Datenlücken</p>
+        <h2>Daten &amp; Methode</h2>
+        <p>Jede Zahl dieses Monitors lässt sich bis zur Primärquelle zurückverfolgen.
+        Diese Ansicht nennt die Quellen, den Rechenweg und ausdrücklich auch das, was die
+        öffentlichen Daten nicht hergeben.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Registerabgleich <span class="info-i" data-info="abgleich" tabindex="0" role="button" aria-label="Erklärung: Registerabgleich">ⓘ</span></div>
+        <div class="card-sub">ISA 2.030 UUBn Arnsberg ≠ 68 EU ≠ 40 PRTR ≠ 144 MFA</div>
+        <div id="chart-daten-abgleich"></div>
+        <p class="note" id="abgleich-note"></p>
+        <p class="note src-note" data-src="isa"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Gegenprobe an der Vergangenheit <span class="info-i" data-info="gegenprobe" tabindex="0" role="button" aria-label="Erklärung: Gegenprobe">ⓘ</span></div>
+        <div class="card-sub">PRTR-Einrichtungen BDH, Hold-Forward 2015–19 → 2020–24</div>
+        <div id="chart-daten-backtest"></div>
+        <p class="note" id="gegenprobe-note"></p>
+        <p class="note src-note" data-src="prtr"></p>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--sp-4)">
+        <div class="card-title">Benchmark UUBn der fünf Bezirke <span class="info-i" data-info="benchmark" tabindex="0" role="button" aria-label="Erklärung: Benchmark">ⓘ</span></div>
+        <div class="card-sub">Rang nach Anlagenbestand · je 1.000 Einwohner des Regierungsbezirks daneben</div>
+        <div id="chart-benchmark"></div>
+        <p class="note" id="benchmark-note"></p>
+        <p class="note src-note" data-src="isa"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Was belegt ist — und was eine Datenlieferung des Amtes braucht</div>
+        <div class="card-sub">jede nicht öffentlich belegte Größe, mit Begründung</div>
+        <div id="annahmen-liste" style="margin-top:var(--sp-3)"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div style="display:flex; align-items:center; gap:12px">
+      <svg width="30" height="30" style="color:#fff"><use href="#k-mark"/></svg>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:1.2rem; color:#fff">Kanduit</div>
+        <div class="mono">Anlagen- und Fristenmonitor · Demonstrator</div>
+      </div>
+    </div>
+    <p class="src" id="footer-src">
+      <b style="color:#cbd5e1">Demonstrator der Kanduit UG</b> — alle Daten aus
+      öffentlichen Quellen
+      (<a href="https://thru.de/downloads/" style="color:var(--petrol-300)">PRTR und EU-Registry, thru.de</a>,
+      <a href="https://www.lanuk.nrw.de/fileadmin/lanuv/anlagen/pdf/ISA-Jahresbericht-2024.pdf" style="color:var(--petrol-300)">ISA-Jahresbericht 2024, LANUK</a>,
+      <a href="https://www.wfs.nrw.de/geobasis/wfs_nw_dvg" style="color:var(--petrol-300)">Geobasis NRW</a>),
+      Stand <span id="footer-stand">—</span>, ohne Gewähr; kein Produkt der Städte Bochum, Dortmund und Hagen.
+      Der MFA-Bestand nach 44. BImSchV ist eine gekennzeichnete Demo-Annahme.
+      Keine personenbezogenen Daten.
+      Verarbeitung vollständig im Browser · betriebsbereit für Hosting in Deutschland.
+    </p>
+  </div>
+</footer>
+
+<div class="drawer-back" id="drawer-back"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <div class="dhead">
+    <div>
+      <h3 id="drawer-title">—</h3>
+      <div class="card-sub" id="drawer-sub"></div>
+    </div>
+    <button class="dclose" id="drawer-close" aria-label="Kennzahlenblatt schließen">✕</button>
+  </div>
+  <div class="dbody" id="drawer-body"></div>
+</aside>
+
+<div class="tt" id="tooltip"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

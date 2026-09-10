@@ -1,0 +1,626 @@
+{
+  "facilities": [
+    {
+      "activity_keys": [
+        "3(a)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-800-9968099",
+      "lat": 51.42611,
+      "lon": 7.17794,
+      "nace_code": "05.10",
+      "nace_text": "Steinkohlenbergbau",
+      "plz": "44797",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "3(a)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-800-9968100",
+      "lat": 51.48683,
+      "lon": 7.29956,
+      "nace_code": "05.10",
+      "nace_text": "Steinkohlenbergbau",
+      "plz": "44894",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(f)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-0011392",
+      "lat": 51.51293,
+      "lon": 7.20895,
+      "nace_code": "25.61",
+      "nace_text": "Oberflächenveredlung und Wärmebehandlung",
+      "plz": "44807",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(d)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-0021213",
+      "lat": 51.45977,
+      "lon": 7.22099,
+      "nace_code": "24.51",
+      "nace_text": "Eisengießereien",
+      "plz": "44789",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "3(g)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-0043817",
+      "lat": 51.43265,
+      "lon": 7.13193,
+      "nace_code": "23.20",
+      "nace_text": "Herstellung von feuerfesten keramischen Werkstoffen und Waren",
+      "plz": "44879",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(a)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-0261833",
+      "lat": 51.52006,
+      "lon": 7.29849,
+      "nace_code": "20.59",
+      "nace_text": "Herstellung von sonstigen chemischen Erzeugnissen a. n. g.",
+      "plz": "44805",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(c)(iii)",
+        "2(f)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-0270730",
+      "lat": 51.49221,
+      "lon": 7.1781,
+      "nace_code": "25.61",
+      "nace_text": "Oberflächenveredlung und Wärmebehandlung",
+      "plz": "44793",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(c)(i)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-0274079",
+      "lat": 51.48232,
+      "lon": 7.20426,
+      "nace_code": "25.50",
+      "nace_text": "Herstellung von Schmiede-, Press-, Zieh- und Stanzteilen, gewalzten Ringen und pulvermetallurgischen Erzeugnissen",
+      "plz": "44793",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(d)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-0569261",
+      "lat": 51.48859,
+      "lon": 7.24519,
+      "nace_code": "24.51",
+      "nace_text": "Eisengießereien",
+      "plz": "44791",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(c)(i)",
+        "5(a)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-9000294",
+      "lat": 51.47076,
+      "lon": 7.16596,
+      "nace_code": "24.10",
+      "nace_text": "Erzeugung von Roheisen, Stahl und Ferrolegierungen",
+      "plz": "44793",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(f)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-9002210",
+      "lat": 51.44801,
+      "lon": 7.29062,
+      "nace_code": "37.00",
+      "nace_text": "Abwasserentsorgung",
+      "plz": "44801",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(a)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-9002605",
+      "lat": 51.47091,
+      "lon": 7.19551,
+      "nace_code": "38.21",
+      "nace_text": "Behandlung und Beseitigung nicht gefährlicher Abfälle",
+      "plz": "44793",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(d)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-9069256",
+      "lat": 51.48307,
+      "lon": 7.2662,
+      "nace_code": "38.21",
+      "nace_text": "Behandlung und Beseitigung nicht gefährlicher Abfälle",
+      "plz": "44803",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(a)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-900-9111171",
+      "lat": 51.47408,
+      "lon": 7.20782,
+      "nace_code": "85.32",
+      "nace_text": "Berufsbildende weiterführende Schulen",
+      "plz": "44793",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "8(a)"
+      ],
+      "city": "Bochum",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-911000-911-0265040",
+      "lat": 51.49698,
+      "lon": 7.1974,
+      "nace_code": "10.11",
+      "nace_text": "Schlachten (ohne Schlachten von Geflügel)",
+      "plz": "44809",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "4(b)(i)",
+        "4(b)(v)"
+      ],
+      "city": "Dortmund",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-913000-900-0148555",
+      "lat": 51.54511,
+      "lon": 7.43915,
+      "nace_code": "20.13",
+      "nace_text": "Herstellung von sonstigen anorganischen Grundstoffen und Chemikalien",
+      "plz": "44147",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(c)(iii)",
+        "2(f)"
+      ],
+      "city": "Dortmund",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-913000-900-0231356",
+      "lat": 51.52933,
+      "lon": 7.48431,
+      "nace_code": "24.10",
+      "nace_text": "Erzeugung von Roheisen, Stahl und Ferrolegierungen",
+      "plz": "44145",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(f)"
+      ],
+      "city": "Dortmund",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-913000-900-0632769",
+      "lat": 51.54223,
+      "lon": 7.42556,
+      "nace_code": "37.00",
+      "nace_text": "Abwasserentsorgung",
+      "plz": "44369",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(f)"
+      ],
+      "city": "Dortmund",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-913000-900-9058586",
+      "lat": 51.53608,
+      "lon": 7.5225,
+      "nace_code": "37.00",
+      "nace_text": "Abwasserentsorgung",
+      "plz": "44328",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(c)",
+        "5(d)"
+      ],
+      "city": "Dortmund",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-913000-900-9069399",
+      "lat": 51.57296,
+      "lon": 7.54257,
+      "nace_code": "38.22",
+      "nace_text": "Behandlung und Beseitigung gefährlicher Abfälle",
+      "plz": "44329",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(f)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0071062",
+      "lat": 51.32386,
+      "lon": 7.5706,
+      "nace_code": "24.32",
+      "nace_text": "Herstellung von Kaltband mit einer Breite von weniger als 600 mm",
+      "plz": "58119",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "1(c)",
+        "2(c)(i)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0071172",
+      "lat": 51.3457,
+      "lon": 7.59202,
+      "nace_code": "25.61",
+      "nace_text": "Oberflächenveredlung und Wärmebehandlung",
+      "plz": "58119",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(c)(iii)",
+        "2(f)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0074497",
+      "lat": 51.3406,
+      "lon": 7.42824,
+      "nace_code": "25.61",
+      "nace_text": "Oberflächenveredlung und Wärmebehandlung",
+      "plz": "58135",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "1(c)",
+        "6(b)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0075246",
+      "lat": 51.40607,
+      "lon": 7.48856,
+      "nace_code": "17.12",
+      "nace_text": "Herstellung von Papier, Karton und Pappe",
+      "plz": "58099",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "1(c)",
+        "5(a)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0080266",
+      "lat": 51.41121,
+      "lon": 7.48884,
+      "nace_code": "35.11",
+      "nace_text": "Elektrizitätserzeugung",
+      "plz": "58099",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(c)(i)",
+        "2(f)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0083701",
+      "lat": 51.3591,
+      "lon": 7.45555,
+      "nace_code": "24.10",
+      "nace_text": "Erzeugung von Roheisen, Stahl und Ferrolegierungen",
+      "plz": "58089",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(f)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0092280",
+      "lat": 51.34024,
+      "lon": 7.48317,
+      "nace_code": "25.61",
+      "nace_text": "Oberflächenveredlung und Wärmebehandlung",
+      "plz": "58091",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "4(b)(iv)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0094228",
+      "lat": 51.35196,
+      "lon": 7.43257,
+      "nace_code": "20.13",
+      "nace_text": "Herstellung von sonstigen anorganischen Grundstoffen und Chemikalien",
+      "plz": "58135",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(f)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0095495",
+      "lat": 51.4048,
+      "lon": 7.47875,
+      "nace_code": "25.61",
+      "nace_text": "Oberflächenveredlung und Wärmebehandlung",
+      "plz": "58099",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(c)(iii)",
+        "2(f)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0103566",
+      "lat": 51.34059,
+      "lon": 7.39137,
+      "nace_code": "25.61",
+      "nace_text": "Oberflächenveredlung und Wärmebehandlung",
+      "plz": "58135",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(f)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0107762",
+      "lat": 51.39599,
+      "lon": 7.50104,
+      "nace_code": "24.32",
+      "nace_text": "Herstellung von Kaltband mit einer Breite von weniger als 600 mm",
+      "plz": "58093",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(b)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0189517",
+      "lat": 51.3776,
+      "lon": 7.47067,
+      "nace_code": "38.21",
+      "nace_text": "Behandlung und Beseitigung nicht gefährlicher Abfälle",
+      "plz": "58097",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(f)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0305430",
+      "lat": 51.38318,
+      "lon": 7.51852,
+      "nace_code": "25.61",
+      "nace_text": "Oberflächenveredlung und Wärmebehandlung",
+      "plz": "58099",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "2(c)(iii)",
+        "2(f)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0319195",
+      "lat": 51.38531,
+      "lon": 7.51416,
+      "nace_code": "25.61",
+      "nace_text": "Oberflächenveredlung und Wärmebehandlung",
+      "plz": "58093",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(a)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-0359472",
+      "lat": 51.38615,
+      "lon": 7.51333,
+      "nace_code": "38.22",
+      "nace_text": "Behandlung und Beseitigung gefährlicher Abfälle",
+      "plz": "58093",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "5(f)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-900-9001209",
+      "lat": 51.39911,
+      "lon": 7.41664,
+      "nace_code": "37.00",
+      "nace_text": "Abwasserentsorgung",
+      "plz": "58089",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "9(c)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-914-0070543",
+      "lat": 51.36165,
+      "lon": 7.55166,
+      "nace_code": "25.61",
+      "nace_text": "Oberflächenveredlung und Wärmebehandlung",
+      "plz": "58119",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "3(b)"
+      ],
+      "city": "Hagen",
+      "confidentiality_flag": true,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2017-914000-914-9969976",
+      "lat": 51.37734,
+      "lon": 7.52796,
+      "nace_code": "08.11",
+      "nace_text": "Gewinnung von Naturwerksteinen und Natursteinen, Kalk- und Gipsstein, Kreide und Schiefer",
+      "plz": "58099",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "9(c)"
+      ],
+      "city": "Dortmund",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2018-913000-913-0153388",
+      "lat": 51.50994,
+      "lon": 7.5347,
+      "nace_code": "43.34",
+      "nace_text": "Malerei und Glaserei",
+      "plz": "44143",
+      "year": 2024
+    },
+    {
+      "activity_keys": [
+        "4(a)(viii)"
+      ],
+      "city": "Dortmund",
+      "confidentiality_flag": false,
+      "inspire_id": "https://registry.gdi-de.org/id/de.nw.inspire.pf.bube-eureg/arb-2020-913000-900-0007158",
+      "lat": 51.507,
+      "lon": 7.39846,
+      "nace_code": "20.16",
+      "nace_text": "Herstellung von Kunststoffen in Primärformen",
+      "plz": "44379",
+      "year": 2024
+    }
+  ],
+  "meta": {
+    "abruf": "2026-09-10",
+    "datenstand": "10.12.2025",
+    "filter": "bundesland=nw AND ort IN Bochum,Dortmund,Hagen; names dropped",
+    "landing_url": "https://thru.de/downloads/",
+    "n_2024": 40,
+    "quelle_url": "https://thru.de/wp-content/uploads/2026/03/prtr_2024.zip"
+  },
+  "series": [
+    {
+      "n": 48,
+      "year": 2015
+    },
+    {
+      "n": 45,
+      "year": 2016
+    },
+    {
+      "n": 43,
+      "year": 2017
+    },
+    {
+      "n": 45,
+      "year": 2018
+    },
+    {
+      "n": 42,
+      "year": 2019
+    },
+    {
+      "n": 43,
+      "year": 2020
+    },
+    {
+      "n": 44,
+      "year": 2021
+    },
+    {
+      "n": 42,
+      "year": 2022
+    },
+    {
+      "n": 39,
+      "year": 2023
+    },
+    {
+      "n": 40,
+      "year": 2024
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "gebiete": [
+    {
+      "behoerde": "gemeinsame Untere Umweltschutzbehörde der Städte Bochum, Dortmund und Hagen",
+      "schluessel": "911",
+      "stadt": "Bochum"
+    },
+    {
+      "behoerde": "gemeinsame Untere Umweltschutzbehörde der Städte Bochum, Dortmund und Hagen",
+      "schluessel": "913",
+      "stadt": "Dortmund"
+    },
+    {
+      "behoerde": "gemeinsame Untere Umweltschutzbehörde der Städte Bochum, Dortmund und Hagen",
+      "schluessel": "914",
+      "stadt": "Hagen"
+    }
+  ],
+  "meta": {
+    "abruf": "2026-09-10",
+    "hinweis": "Personennamen und Straßen aus dem Snapshot entfernt.",
+    "landing_url": "https://www.lanuk.nrw.de/themen/luft/emissionen",
+    "quelle_url": "https://www.lanuk.nrw.de/fileadmin/lanuv/luft/emissionen/pdf/44_BV_Ansprechpersonen_NRW.pdf"
+  },
+  "sitz": {
+    "ort": "Hagen",
+    "plz": "58095"
+  }
+}
