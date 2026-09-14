@@ -57,9 +57,10 @@ python3 .claude/skills/build-demo/probe_sources.py \
 ```
 
 1. **Die genannte Datei** (GET). Tot? Paywall? CORS/Auth? Personenbezug?
-2. **Die Landing-Page der Quelle**, von der die Datei verlinkt ist. Das Skript
-   holt sie für Datei-URLs (.pdf, .csv, .zip, …) automatisch. Dort steht fast
-   immer eine neuere Fassung oder eine zweite, bessere Datei.
+2. **Die Katalog-URL** als `--landing`. Das ist die Open-Data-Seite, die die
+   Datei verlinkt, nicht das Parent-Verzeichnis der Datei. Dort steht fast
+   immer eine neuere Fassung oder eine zweite, bessere Datei. Ohne `--landing`
+   fehlt genau der GET, der in Duisburg 21 Schulen durch 48 ersetzt hat.
 
 > Beim Duisburg-Build ergab Schritt 2 die vollständige Teilnehmerliste statt
 > einer veralteten Teilliste (21 → 48 Schulen) **und** ein zweites PDF mit dem
@@ -285,6 +286,9 @@ Kommune's data is Julian's call.
 ## Quality bar (final gate)
 
 Machine bar. `python3 .claude/skills/build-demo/check_demo.py <slug>` exits 0.
+It checks slots and leftovers, not whether the Leitzahl argument is any good.
+HTML-Karten mit ⓘ brauchen eine Quellenzeile. `data-info` muss in METRIC_INFO
+stehen. Die Scaffold-Leitzahl mit `TODO` bleibt ein FAIL.
 
 Research and browser, which the script cannot see:
 

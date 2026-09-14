@@ -106,6 +106,11 @@ def probe(rows, landings=None):
     if not rows and not landings:
         print("probe_sources: keine URLs")
         return False
+    file_rows = [r for r in rows if looks_like_file(r[2])]
+    if file_rows and not landings:
+        print("  WARN keine --landing Katalog-URL. "
+              "Parent-Verzeichnisse sind nicht die Open-Data-Seite.",
+              file=sys.stderr)
     for key, title, url in rows:
         print(f"{key} — {title}")
         if not report_one(key, url, "datei"):

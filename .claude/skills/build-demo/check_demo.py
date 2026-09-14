@@ -117,10 +117,6 @@ def _metric_keys(js):
     return keys
 
 
-def _card_count(html):
-    return len(re.findall(r'class="[^"]*\bcard\b[^"]*"', html))
-
-
 def _src_note_keys(text):
     return re.findall(r'data-src="([^"]+)"', text)
 
@@ -178,21 +174,44 @@ def check_leitzahl(d):
         out.append("Überblick hat kein #leitzahl")
     if "#leitzahl" not in js and "leitzahl" not in js:
         out.append("app.js füllt #leitzahl nicht")
+    if re.search(r"\$\(['\"]#leitzahl['\"]\)[\s\S]{0,800}TODO", js):
+        out.append("Leitzahl ist noch der Scaffold-TODO")
     return out
+
+
+def _leitzahl_copy(js):
+    chunks = []
+    m = re.search(r"\bleitzahl\s*:\s*\{([^}]*)\}", js)
+    if m:
+        chunks.append(m.group(1))
+    m = re.search(
+        r"\$\(['\"]#leitzahl['\"]\)\.innerHTML\s*=\s*[`'\"]([\s\S]*?)[`'\"]",
+        js)
+    if m:
+        chunks.append(m.group(1))
+    return "\n".join(chunks)
 
 
 def check_leitzahl_frist(d):
     js = d.read("app.js", "")
-    html = d.read("index.html", "")
-    blob = js + html
-    if not re.search(r"leitzahl", blob, re.I):
+    copy = _leitzahl_copy(js)
+    if not copy:
         return ["keine Leitzahl, daher keine Frist"]
     if not re.search(
-            r"(Frist|fällig|Fälligkeit|sonst |bis 20\d\d|20\d\d|"
-            r"verfällt|mindestens)",
-            blob):
+            r"(Frist|fällig|Fälligkeit|sonst |verfällt|verfaellt|"
+            r"mindestens)",
+            copy):
         return ["Leitzahl-Text nennt keine Frist oder Konsequenz"]
     return []
+
+
+def _info_keys(html, js):
+    keys = set(re.findall(r'data-info="([^"]+)"', html + js))
+    keys.update(re.findall(r"infoIcon\('([^']+)'\)", js))
+    keys.update(re.findall(r'infoIcon\("([^"]+)"\)', js))
+    keys.update(re.findall(r"""info:\s*['"]([^'"]+)""", js))
+    keys = {k for k in keys if k not in ("metricKey",) and not k.startswith("$")}
+    return keys
 
 
 def check_metric_info(d):
@@ -200,14 +219,37 @@ def check_metric_info(d):
     keys = _metric_keys(js)
     if not keys:
         return ["METRIC_INFO ist leer"]
+    gap = re.compile(
+        r"Datenlücke|Datenluecke|Untergrenze|nicht offen|fehlt|"
+        r"schematisch|Annahme|Einschränkung", re.I)
+    m = re.search(r"const METRIC_INFO\s*=\s*\{", js)
+    body = js
+    if m:
+        start = m.end() - 1
+        depth = 0
+        for i, ch in enumerate(js[start:], start):
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    body = js[start:i + 1]
+                    break
+    if not gap.search(body):
+        return ["METRIC_INFO nennt keine Datenlücke"]
     return []
 
 
 def check_info_icons(d):
     html = d.read("index.html", "")
     js = d.read("app.js", "")
-    if "infoIcon(" not in js and "data-info=" not in html and "data-info=" not in js:
+    used = _info_keys(html, js)
+    if not used:
         return ["kein ⓘ (infoIcon / data-info)"]
+    known = set(_metric_keys(js))
+    missing = sorted(used - known)
+    if missing:
+        return [f"data-info ohne METRIC_INFO: {', '.join(missing)}"]
     return []
 
 
@@ -348,28 +390,40 @@ def check_generate_twice(d):
     js = d.path("data.js")
     if not os.path.isfile(gen):
         return ["scripts/generate.py fehlt"]
+    existed = os.path.isfile(js)
+    backup = None
+    if existed:
+        with open(js, "rb") as fh:
+            backup = fh.read()
     env = os.environ.copy()
     env["PYTHONHASHSEED"] = "0"
     runs = []
-    for _ in range(2):
-        proc = subprocess.run(
-            [sys.executable, gen],
-            cwd=d.proj,
-            capture_output=True,
-            text=True,
-            env=env,
-        )
-        if proc.returncode != 0:
-            err = (proc.stderr or proc.stdout or "").strip().splitlines()
-            tail = err[-1] if err else f"exit {proc.returncode}"
-            return [f"generate.py exit {proc.returncode}: {tail}"]
-        if not os.path.isfile(js):
-            return ["generate.py schrieb keine data.js"]
-        with open(js, "rb") as fh:
-            runs.append(hashlib.sha256(fh.read()).hexdigest())
-    if runs[0] != runs[1]:
-        return [f"generate.py ist nicht deterministisch ({runs[0][:12]} ≠ {runs[1][:12]})"]
-    return []
+    try:
+        for _ in range(2):
+            proc = subprocess.run(
+                [sys.executable, gen],
+                cwd=d.proj,
+                capture_output=True,
+                text=True,
+                env=env,
+            )
+            if proc.returncode != 0:
+                err = (proc.stderr or proc.stdout or "").strip().splitlines()
+                tail = err[-1] if err else f"exit {proc.returncode}"
+                return [f"generate.py exit {proc.returncode}: {tail}"]
+            if not os.path.isfile(js):
+                return ["generate.py schrieb keine data.js"]
+            with open(js, "rb") as fh:
+                runs.append(hashlib.sha256(fh.read()).hexdigest())
+        if runs[0] != runs[1]:
+            return [f"generate.py ist nicht deterministisch ({runs[0][:12]} ≠ {runs[1][:12]})"]
+        return []
+    finally:
+        if existed:
+            with open(js, "wb") as fh:
+                fh.write(backup)
+        elif os.path.isfile(js):
+            os.remove(js)
 
 
 def check_publish(d):
@@ -411,26 +465,49 @@ def check_readme_bullet(d):
     return []
 
 
+def _workflows(d):
+    wdir = os.path.join(d.root, ".github", "workflows")
+    if not os.path.isdir(wdir):
+        return []
+    hits = []
+    for name in sorted(os.listdir(wdir)):
+        if not name.endswith((".yml", ".yaml")):
+            continue
+        path = os.path.join(wdir, name)
+        with open(path, encoding="utf-8") as fh:
+            text = fh.read()
+        if d.slug in text:
+            hits.append((name, text))
+    return hits
+
+
 def check_workflow(d):
-    p = os.path.join(d.root, ".github", "workflows", f"{d.slug}-publish-check.yml")
-    if not os.path.isfile(p):
-        return [f"CI-Workflow fehlt: .github/workflows/{d.slug}-publish-check.yml"]
-    with open(p, encoding="utf-8") as fh:
-        yml = fh.read()
-    if "publish.py --check" not in yml:
+    hits = _workflows(d)
+    if not hits:
+        return [f"kein CI-Workflow erwähnt {d.slug}"]
+    if not any("publish.py --check" in text for _n, text in hits):
         return ["CI ruft publish.py --check nicht auf"]
-    if "check_demo.py" not in yml:
+    return []
+
+
+def check_workflow_bar(d):
+    hits = _workflows(d)
+    if hits and not any("check_demo.py" in text for _n, text in hits):
         return ["CI ruft check_demo.py nicht auf"]
     return []
 
 
 def check_cards_have_notes(d):
     html = d.read("index.html", "")
-    js = d.read("app.js", "")
-    notes = len(_src_note_keys(html)) + len(_src_note_keys(js))
-    cards = _card_count(html)
-    if cards >= 3 and notes == 0:
-        return [f"{cards} .card in index.html, aber keine src-note"]
+    missing = []
+    for i, part in enumerate(re.split(r'<div class="card(?=["\s>])', html)[1:], 1):
+        if "annahmen-liste" in part:
+            continue
+        if "src-note" not in part:
+            title = re.search(r'card-title">([^<]+)', part)
+            missing.append(title.group(1).strip()[:40] if title else f"Karte {i}")
+    if missing:
+        return ["Karte ohne Quellenzeile: " + ", ".join(missing)]
     return []
 
 
@@ -459,7 +536,8 @@ CHECKS = [
     Check("landing", "Landing-Karte", "fail", check_landing),
     Check("readme_bullet", "Root-README-Bullet", "fail", check_readme_bullet),
     Check("workflow", "CI-Workflow", "fail", check_workflow),
-    Check("cards_notes", "Karten ohne Quellenzeile", "warn", check_cards_have_notes),
+    Check("workflow_bar", "CI ruft check_demo.py", "warn", check_workflow_bar),
+    Check("cards_notes", "Karten ohne Quellenzeile", "fail", check_cards_have_notes),
 ]
 
 

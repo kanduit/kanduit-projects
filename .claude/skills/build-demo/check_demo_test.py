@@ -250,14 +250,12 @@ class CheckDemoTests(unittest.TestCase):
             css = fh.read()
         self.assertIn('id="leitzahl"', html)
         self.assertIn(".kv{", css)
-        self.assertIn('id="leitzahl"', html)
         self.assertNotEqual(code, 0)
         for needed in (
-            "todo", "metric_info", "generate_stub",
+            "todo", "leitzahl", "metric_info", "generate_stub",
             "snapshots", "quellen", "landing", "readme_bullet",
         ):
             self.assertIn(needed, ids, msg=findings)
-        self.assertNotIn("leitzahl", ids, msg=findings)
 
     def test_complete_fixture_exits_zero(self):
         tmp = tempfile.mkdtemp(prefix="check-demo-ok-")
@@ -266,6 +264,17 @@ class CheckDemoTests(unittest.TestCase):
         code, findings = run_check(tmp, slug)
         self.assertEqual(code, 0, msg=findings)
         self.assertEqual(fail_ids(findings), set())
+
+    def test_generate_twice_restores_data_js(self):
+        tmp = tempfile.mkdtemp(prefix="check-demo-restore-")
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        slug = build_complete(tmp)
+        path = os.path.join(tmp, "portfolio", slug, "data.js")
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write("NOPE")
+        run_check(tmp, slug)
+        with open(path, encoding="utf-8") as fh:
+            self.assertEqual(fh.read(), "NOPE")
 
     def test_bdh_exits_zero(self):
         slug = "anlagen-fristenmonitor-bdh"
