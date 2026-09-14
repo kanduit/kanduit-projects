@@ -16,8 +16,10 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 
 const views = { overview: 'view-overview', register: 'view-register', fristen: 'view-fristen', risiko: 'view-risiko', bericht: 'view-bericht', daten: 'view-daten' };
 function showView(name) {
+  state.view = name;
   $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === name));
   Object.entries(views).forEach(([k, id]) => $('#' + id).classList.toggle('active', k === name));
+  if (syncChrome()) redraw();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) showView(b.dataset.view); });
@@ -240,12 +242,26 @@ function rangKlasse(rang, n) { return Math.min(4, Math.floor((rang - 1) / (n / 5
 function cityName(k) { return DATA.cities[k].name; }
 
 const state = {
+  view: 'overview',
   scenario: 'termine',
   riskWeights: Object.assign({}, DATA.config.defaultWeights),
   staffDelta: 0,
   visibility: true,
   filter: { city: '', q: '', interval: '', dueMonth: '' },
 };
+
+function syncChrome() {
+  const stelleOk = state.view === 'bericht';
+  $('#scenario-seg [data-sc="stelle"]').hidden = !stelleOk;
+  let snapped = false;
+  if (!stelleOk && state.scenario === 'stelle') {
+    state.scenario = 'termine';
+    $$('#scenario-seg button[data-sc]').forEach(x => x.classList.toggle('active', x.dataset.sc === 'termine'));
+    snapped = true;
+  }
+  $('#staff-seg').hidden = !(stelleOk && state.scenario === 'stelle');
+  return snapped;
+}
 
 function inFlipGruppe(p) {
   const g = DATA.config.flipGruppe;
@@ -796,7 +812,7 @@ function redraw() {
   renderRisiko(vm);
   renderBericht(vm);
   renderDaten(vm);
-  $('#staff-seg').hidden = state.scenario !== 'stelle';
+  syncChrome();
   verdrahteQuellen();
 }
 
