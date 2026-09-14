@@ -1,5 +1,16 @@
 # /build-demo — Snippets & Exemplar-Pointer
 
+The repeatable gates live in two scripts next to this file. Amt research
+does not.
+
+```bash
+python3 .claude/skills/build-demo/probe_sources.py <URL> [<URL>...]
+python3 .claude/skills/build-demo/check_demo.py <slug>
+```
+
+`check_demo.py` is what CI runs. `probe_sources.py` never invents a
+replacement URL. A `DEAD` line is a question for the human.
+
 ## docs/index.html — Landing-Karte (ASCII! "ue/oe/ae", "Projekt oeffnen")
 
 Insert as a new `<article>` inside `<section class="grid">`, before the first

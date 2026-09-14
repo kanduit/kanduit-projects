@@ -1,6 +1,6 @@
 ---
 name: build-demo
-description: Build a new static Kanduit demo dashboard (Monitor/Demonstrator) from a build brief. Given a "Demo-Brief für Claude Code" (the fenced block produced by amt-pitch-scout — product name, public data sources, views/KPIs, scenarios, constraints), this skill scaffolds a complete portfolio project from the Kanduit template (design system, publish flow, CI check), builds a build-time data pipeline from real public data, implements the views, verifies in the browser, and opens a PR. Use whenever the user pastes a demo brief, runs /build-demo, asks to "build the demo" from a pitch dossier, or wants a new <Thema>-Monitor for a German city or Amt turned into a working demo.
+description: Build a new static Kanduit demo dashboard (Monitor/Demonstrator) from a build brief. Given a "Demo-Brief für Claude Code" (the fenced block produced by amt-pitch-scout — product name, public data sources, views/KPIs, scenarios, constraints), this skill scaffolds a complete portfolio project from the Kanduit template (design system, publish flow, CI check), probes source URLs with probe_sources.py, builds a build-time data pipeline from real public data, implements the views, runs check_demo.py as the quality bar, verifies in the browser, and opens a PR. Use whenever the user pastes a demo brief, runs /build-demo, asks to "build the demo" from a pitch dossier, or wants a new <Thema>-Monitor for a German city or Amt turned into a working demo.
 ---
 
 # /build-demo — Kanduit-Demonstrator aus einem Demo-Brief bauen
@@ -9,7 +9,19 @@ Builds run **in this repo** (kanduit-projects). The heavy boilerplate (design
 system, chrome, chart kit, ◈-Annahmen-Maschinerie, Druckbereich, publish flow,
 CI) comes from `template/` via `scaffold.py` — do **not** re-read or re-write
 it, and do not read the exemplar projects wholesale. Per-build work is only:
-data pipeline, views, German copy.
+Amt research, data pipeline, views, German copy.
+
+Two scripts own the repeatable gates. Run them, do not re-do them by hand.
+
+```bash
+python3 .claude/skills/build-demo/probe_sources.py <URL> [<URL>...]
+python3 .claude/skills/build-demo/check_demo.py <slug>
+```
+
+`probe_sources.py` fetches the named file and, for file URLs, the landing page.
+It never invents a replacement URL. `check_demo.py` is the quality bar CI
+runs. Amt business problems, mandates, and which sources to use stay research.
+The scripts do not substitute that.
 
 **Was diese Demos verkauft, ist nicht die Optik.** Es ist der sichtbare Beweis,
 dass jemand die Quellen wirklich gelesen hat: dass die Zahl des Amtes von der
@@ -33,11 +45,22 @@ Code"). Derive:
 ## Step 1 — Quellen prüfen, bevor irgendetwas gebaut wird
 
 Der Brief ist älter als die Quellen. In jedem bisherigen Build war mindestens
-eine Angabe überholt. Deshalb je Quelle **zwei** Abrufe:
+eine Angabe überholt. Deshalb je Quelle **zwei** Abrufe, über das Skript:
 
-1. **Die genannte Datei** (kleiner GET). Tot? Paywall? CORS/Auth? Personenbezug?
-2. **Die Landing-Page der Quelle**, von der die Datei verlinkt ist. Dort steht
-   fast immer eine neuere Fassung oder eine zweite, bessere Datei.
+```bash
+python3 .claude/skills/build-demo/probe_sources.py \
+  --landing https://www.schulministerium.nrw/open-data \
+  https://…/datei.csv
+# nach generate.py auch (prüft die Datei-URLs in QUELLEN):
+python3 .claude/skills/build-demo/probe_sources.py \
+  --from-generate portfolio/<slug>/scripts/generate.py
+```
+
+1. **Die genannte Datei** (GET). Tot? Paywall? CORS/Auth? Personenbezug?
+2. **Die Katalog-URL** als `--landing`. Das ist die Open-Data-Seite, die die
+   Datei verlinkt, nicht das Parent-Verzeichnis der Datei. Dort steht fast
+   immer eine neuere Fassung oder eine zweite, bessere Datei. Ohne `--landing`
+   fehlt genau der GET, der in Duisburg 21 Schulen durch 48 ersetzt hat.
 
 > Beim Duisburg-Build ergab Schritt 2 die vollständige Teilnehmerliste statt
 > einer veralteten Teilliste (21 → 48 Schulen) **und** ein zweites PDF mit dem
@@ -68,7 +91,8 @@ python3 .claude/skills/build-demo/scaffold.py <slug> \
 
 Scaffold creates `portfolio/<slug>/` (chrome, styles, app.js kit, stub data.js,
 serve.py, publish.py, generate.py skeleton, README/CHANGELOG skeletons, die
-vorstrukturierte Ansicht *Daten & Methode*) and the CI workflow. It does **not**
+vorstrukturierte Ansicht *Daten & Methode*, `#leitzahl` auf der ersten Ansicht)
+and the CI workflow (`publish.py --check` plus `check_demo.py`). It does **not**
 touch docs/, the landing page, or git.
 
 ## Step 3 — Data pipeline (fetch → snapshot → generate)
@@ -176,17 +200,27 @@ Dazu, wenn die Daten es hergeben:
 
 ## Step 5 — Verify
 
-1. `python3 scripts/generate.py` twice → `shasum data.js` identical.
-2. `grep -rn '{{\|TODO' portfolio/<slug>` → empty.
-3. Join-Trefferquoten und Eindeutigkeit der Anzeigenamen geprüft (Step 3).
-4. Summen der angenommenen gegen die belegten Größen angesehen.
-5. Serve (`python3 serve.py`; fallback: unsandboxed `nohup python3 -m
+```bash
+python3 .claude/skills/build-demo/check_demo.py <slug>
+```
+
+Exit 0 is the machine bar (TODOs, Leitzahl-Slot, METRIC_INFO, Quellenzeilen,
+Daten & Methode, Registerabgleich, Gegenprobe, QUELLEN/ANNAHMEN, generate
+twice, data.js size, publish --check, Landing-Karte, README-Bullet, CI).
+Fix every `FAIL` before the browser pass. `WARN` is a judgment prompt, not a
+skip.
+
+The script cannot judge research quality. Still do these by hand:
+
+1. Join-Trefferquoten und Eindeutigkeit der Anzeigenamen (Step 3).
+2. Summen der angenommenen gegen die belegten Größen angesehen.
+3. Serve (`python3 serve.py`; fallback: unsandboxed `nohup python3 -m
    http.server <port>` from the project dir) und im Browser prüfen:
    jede Ansicht auf Desktop **und** 375 px, ein ⓘ-Tooltip, ein ◈-Tooltip, ein
    Chart-Tooltip, Filter/Slider wirken über Ansichten hinweg, Footer Stand +
    Disclaimer, **null Konsolenfehler**, keine externen Requests außer Google
    Fonts.
-6. „Drucken / PDF“ gibt nur die aktive Ansicht aus, bei offenem Kennzahlenblatt
+4. „Drucken / PDF“ gibt nur die aktive Ansicht aus, bei offenem Kennzahlenblatt
    nur dieses.
 
 > Die Browser-Pane repaintet bei langen Seiten nicht immer zuverlässig. Wenn
@@ -251,19 +285,21 @@ Kommune's data is Julian's call.
 
 ## Quality bar (final gate)
 
+Machine bar. `python3 .claude/skills/build-demo/check_demo.py <slug>` exits 0.
+It checks slots and leftovers, not whether the Leitzahl argument is any good.
+HTML-Karten mit ⓘ brauchen eine Quellenzeile. `data-info` muss in METRIC_INFO
+stehen. Die Scaffold-Leitzahl mit `TODO` bleibt ein FAIL.
+
+Research and browser, which the script cannot see:
+
 - [ ] German UI, de-DE numbers, mobile 375 px OK, zero console errors
-- [ ] ⓘ on every KPI/chart; METRIC_INFO names gaps; Quellen-Link under every card
-- [ ] Leitzahl vorhanden und mit Frist/Konsequenz begründet
-- [ ] Ansicht „Daten & Methode“ gefüllt: Registerabgleich, Gegenprobe, Annahmen
+- [ ] Leitzahl mit Frist/Konsequenz begründet, nicht nur der Slot
 - [ ] Benchmark gebaut, wo die Quelle das Vergleichsfeld hergibt (normiert)
 - [ ] Joins über IDs, Trefferquote geprüft; Anzeigenamen eindeutig
 - [ ] Honest gaps stated in UI text; simulated views labeled „schematisch“;
       Modellartefakte benannt
 - [ ] No personal data; no company/winner names stored or ranked
-- [ ] Footer: "Demonstrator der Kanduit UG … kein Produkt der <Stadt>", Stand-Datum
 - [ ] Druckbereich auf die aktive Ansicht bzw. das Kennzahlenblatt begrenzt
-- [ ] generate.py deterministisch; data.js < ~100 KB; publish `--check` grün
-- [ ] Landing card (ASCII) + README bullet + project READMEs/CHANGELOG done
 - [ ] PR open, not merged
 - [ ] Step 9 handoff list written out, with the exact `demo_publish register`
       command for this slug — a finished demo nobody merges is worth nothing

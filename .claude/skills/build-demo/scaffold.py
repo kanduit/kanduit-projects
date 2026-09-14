@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 scaffold.py — stamp out a new Kanduit demo project from the template.
 
@@ -52,7 +51,6 @@ def parse_tabs(spec):
 
 
 def free_port(root):
-    """Lowest port >= 8123 not claimed by any existing portfolio/*/serve.py."""
     used = set()
     for path in sorted(os.listdir(os.path.join(root, "portfolio"))):
         serve = os.path.join(root, "portfolio", path, "serve.py")
@@ -70,30 +68,44 @@ def render_func(tid):
     return "render" + tid[0].upper() + tid[1:]
 
 
-VIEW_SECTION = """  <!-- ===================== {LABEL_UPPER} ===================== -->
-  <section class="view{active}" id="view-{tid}">
+def render_stub(i, tid):
+    fn = render_func(tid)
+    if tid == "daten":
+        return (
+            f"function {fn}() {{\n"
+            "  $('#annahmen-liste').innerHTML = (DATA.annahmen || []).map(a =>\n"
+            "    `<div class=\"kv\"><span class=\"kk\"><b>${esc(a.t)}</b></span>"
+            "<span class=\"vv\"></span>\n"
+            "     <span class=\"src\">${esc(a.d)}</span></div>`).join('')\n"
+            "    || '<p class=\"note\">Keine Demo-Annahmen — jede Zahl stammt aus einer offenen Quelle.</p>';\n"
+            "}\n"
+        )
+    if i == 0:
+        return (
+            f"function {fn}() {{\n"
+            "  $('#leitzahl').innerHTML = `\n"
+            "    <div class=\"k\">Leitzahl${infoIcon('leitzahl')}</div>\n"
+            "    <div class=\"v\">TODO</div>\n"
+            "    <div class=\"d\"><b>TODO eine Zahl mit Frist oder Konsequenz</b>"
+            " — TODO Untergrenze.</div>`;\n"
+            "}\n"
+        )
+    return f"function {fn}() {{\n}}\n"
+
+
+VIEW_SECTION = """  <section class="view{active}" id="view-{tid}">
     <div class="wrap">
       <div class="view-head">
         <p class="eyebrow">TODO Eyebrow · Quelle/Kontext</p>
         <h2>{label}</h2>
         <p>TODO Einleitungssatz — was zeigt diese Ansicht, woraus, mit welcher Einschränkung.</p>
       </div>
-      <!-- TODO Inhalt. Muster:
-      <div class="grid g4" id="{tid}-kpis" style="margin-bottom:var(--sp-4)"></div>
-      <div class="card">
-        <div class="card-title">Charttitel <span class="info-i" data-info="metricKey" tabindex="0" role="button" aria-label="Erklärung: Charttitel">ⓘ</span></div>
-        <div class="card-sub">unterzeile · einheit</div>
-        <div id="chart-{tid}-1"></div>
-        <p class="note src-note" data-src="quelleKey"></p>
-      </div>
-      -->
-    </div>
+{leitzahl}    </div>
   </section>
 """
 
 
-DATEN_SECTION = """  <!-- ===================== DATEN & METHODE ===================== -->
-  <section class="view" id="view-daten">
+DATEN_SECTION = """  <section class="view" id="view-daten">
     <div class="wrap">
       <div class="view-head">
         <p class="eyebrow">Herkunft · Rechenweg · Datenlücken</p>
@@ -103,10 +115,6 @@ DATEN_SECTION = """  <!-- ===================== DATEN & METHODE ================
         öffentlichen Daten nicht hergeben.</p>
       </div>
 
-      <!-- TODO Registerabgleich: Wenn mehrere Quellen verschiedene Zahlen für
-           dieselbe Größe nennen (Amtsseite sagt "rund 130", das Landesregister 135),
-           gehört genau das hierher — als Karte, nicht als Fußnote. Es ist der erste
-           Einwand im Termin und die billigste Gelegenheit, Sorgfalt zu zeigen. -->
       <div class="card" style="margin-bottom:var(--sp-4)">
         <div class="card-title">TODO Registerabgleich <span class="info-i" data-info="metricKey" tabindex="0" role="button" aria-label="Erklärung">ⓘ</span></div>
         <div class="card-sub">TODO mehrere Quellen, mehrere Zahlen — und welche hier gilt</div>
@@ -114,10 +122,6 @@ DATEN_SECTION = """  <!-- ===================== DATEN & METHODE ================
         <p class="note src-note" data-src="quelleKey"></p>
       </div>
 
-      <!-- TODO Gegenprobe: das Prognose-/Modellverfahren an der Vergangenheit
-           prüfen (auf altem Fenster anpassen, bekannte Jahre vorhersagen,
-           mittlere Abweichung ausweisen). Ohne diese Karte ist jede
-           Fortschreibung eine Behauptung. -->
       <div class="card" style="margin-bottom:var(--sp-4)">
         <div class="card-title">TODO Gegenprobe an der Vergangenheit <span class="info-i" data-info="metricKey" tabindex="0" role="button" aria-label="Erklärung">ⓘ</span></div>
         <div class="card-sub">TODO Anpassungsfenster, Vorhersagefenster, mittlere Abweichung</div>
@@ -125,8 +129,6 @@ DATEN_SECTION = """  <!-- ===================== DATEN & METHODE ================
         <p class="note src-note" data-src="quelleKey"></p>
       </div>
 
-      <!-- Register der Demo-Annahmen: wird aus DATA.annahmen gefüllt, kein
-           handgeschriebener Text. Zugleich die Einkaufsliste für das Projekt. -->
       <div class="card">
         <div class="card-title">Was belegt ist — und was eine Datenlieferung des Amtes braucht</div>
         <div class="card-sub">jede nicht öffentlich belegte Größe, mit Begründung</div>
@@ -170,9 +172,6 @@ def main():
             die(f"already exists: {path}")
 
     tabs = parse_tabs(a.tabs)
-    # 'Daten & Methode' ist Pflicht: Herkunft, Registerabgleich, Datenlücken.
-    # Ohne diese Ansicht hat der Demonstrator keinen Ort für die Frage, die in
-    # jedem Termin kommt — "woher haben Sie die Zahl, und warum weicht sie ab?"
     if not a.no_daten and not any(tid == "daten" for tid, _ in tabs):
         if len(tabs) >= 7:
             die("7 Tabs vergeben und 'daten' fehlt — einen Tab zusammenlegen")
@@ -193,22 +192,18 @@ def main():
             for i, (tid, label) in enumerate(tabs)),
         "{{VIEW_SECTIONS}}": "\n".join(
             DATEN_SECTION if tid == "daten" else
-            VIEW_SECTION.format(tid=tid, label=label, LABEL_UPPER=label.upper(),
-                                active=" active" if i == 0 else "")
+            VIEW_SECTION.format(
+                tid=tid, label=label,
+                active=" active" if i == 0 else "",
+                leitzahl=(
+                    '      <div class="leitzahl" id="leitzahl"'
+                    ' style="margin-bottom:var(--sp-4)"></div>\n'
+                    if i == 0 else ""),
+            )
             for i, (tid, label) in enumerate(tabs)),
         "{{VIEWS_MAP}}": "{ " + ", ".join(f"{tid}: 'view-{tid}'" for tid, _ in tabs) + " }",
         "{{RENDER_STUBS}}": "\n".join(
-            (f"function {render_func(tid)}() {{\n"
-             "  /* Register der Demo-Annahmen — Wortlaut kommt aus generate.py. */\n"
-             "  $('#annahmen-liste').innerHTML = (DATA.annahmen || []).map(a =>\n"
-             "    `<div class=\"kv\"><span class=\"kk\"><b>${esc(a.t)}</b></span>"
-             "<span class=\"vv\"></span>\n"
-             "     <span class=\"src\">${esc(a.d)}</span></div>`).join('')\n"
-             "    || '<p class=\"note\">Keine Demo-Annahmen — jede Zahl stammt aus einer offenen Quelle.</p>';\n"
-             "  // TODO: Registerabgleich und Gegenprobe rendern.\n}\n"
-             if tid == "daten" else
-             f"function {render_func(tid)}() {{\n  // TODO: Ansicht „{label}“\n}}\n")
-            for tid, label in tabs),
+            render_stub(i, tid) for i, (tid, _) in enumerate(tabs)),
         "{{RENDER_CALLS}}": "\n".join(f"{render_func(tid)}();" for tid, _ in tabs),
     }
 
@@ -247,14 +242,16 @@ def main():
         print("  " + os.path.relpath(p, root))
     print(f"""
 next steps (details: .claude/skills/build-demo/SKILL.md):
-  1. scripts/fetch_<quelle>.py schreiben und ausführen → data/sources/*.json
-  2. scripts/generate.py implementieren und ausführen → data.js
-  3. Views in app.js + METRIC_INFO füllen, index.html-TODOs ersetzen
+  1. python3 .claude/skills/build-demo/probe_sources.py <URL> [<URL>...]
+     (DEAD → menschliche Quelle fragen, keine Ersatz-URL erfinden)
+  2. scripts/fetch_<quelle>.py schreiben und ausführen → data/sources/*.json
+  3. scripts/generate.py implementieren und ausführen → data.js
+  4. Views in app.js + METRIC_INFO füllen, index.html-TODOs ersetzen
      (QUELLEN und ANNAHMEN in generate.py pflegen — app.js zieht beides selbst)
-  4. python3 portfolio/{a.slug}/serve.py → alle Tabs prüfen (Desktop + 375px)
-  5. python3 portfolio/{a.slug}/scripts/publish.py && … --check
-  6. docs/index.html-Karte + README-Bullet ergänzen (Snippets: references/reference.md)
-  7. READMEs/CHANGELOG-TODOs füllen, committen, PR öffnen (nicht mergen)""")
+  5. python3 .claude/skills/build-demo/check_demo.py {a.slug}
+  6. python3 portfolio/{a.slug}/serve.py → Browser Desktop + 375px
+  7. docs/index.html-Karte + README-Bullet (Snippets: references/reference.md)
+  8. READMEs/CHANGELOG-TODOs füllen, committen, PR öffnen (nicht mergen)""")
 
 
 if __name__ == "__main__":
