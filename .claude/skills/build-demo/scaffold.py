@@ -93,30 +93,19 @@ def render_stub(i, tid, label):
     return f"function {fn}() {{\n}}\n"
 
 
-VIEW_SECTION = """  <!-- ===================== {LABEL_UPPER} ===================== -->
-  <section class="view{active}" id="view-{tid}">
+VIEW_SECTION = """  <section class="view{active}" id="view-{tid}">
     <div class="wrap">
       <div class="view-head">
         <p class="eyebrow">TODO Eyebrow · Quelle/Kontext</p>
         <h2>{label}</h2>
         <p>TODO Einleitungssatz — was zeigt diese Ansicht, woraus, mit welcher Einschränkung.</p>
       </div>
-{leitzahl}      <!-- TODO Inhalt. Muster:
-      <div class="grid g4" id="{tid}-kpis" style="margin-bottom:var(--sp-4)"></div>
-      <div class="card">
-        <div class="card-title">Charttitel <span class="info-i" data-info="metricKey" tabindex="0" role="button" aria-label="Erklärung: Charttitel">ⓘ</span></div>
-        <div class="card-sub">unterzeile · einheit</div>
-        <div id="chart-{tid}-1"></div>
-        <p class="note src-note" data-src="quelleKey"></p>
-      </div>
-      -->
-    </div>
+{leitzahl}    </div>
   </section>
 """
 
 
-DATEN_SECTION = """  <!-- ===================== DATEN & METHODE ===================== -->
-  <section class="view" id="view-daten">
+DATEN_SECTION = """  <section class="view" id="view-daten">
     <div class="wrap">
       <div class="view-head">
         <p class="eyebrow">Herkunft · Rechenweg · Datenlücken</p>
@@ -126,10 +115,6 @@ DATEN_SECTION = """  <!-- ===================== DATEN & METHODE ================
         öffentlichen Daten nicht hergeben.</p>
       </div>
 
-      <!-- TODO Registerabgleich: Wenn mehrere Quellen verschiedene Zahlen für
-           dieselbe Größe nennen (Amtsseite sagt "rund 130", das Landesregister 135),
-           gehört genau das hierher — als Karte, nicht als Fußnote. Es ist der erste
-           Einwand im Termin und die billigste Gelegenheit, Sorgfalt zu zeigen. -->
       <div class="card" style="margin-bottom:var(--sp-4)">
         <div class="card-title">TODO Registerabgleich <span class="info-i" data-info="metricKey" tabindex="0" role="button" aria-label="Erklärung">ⓘ</span></div>
         <div class="card-sub">TODO mehrere Quellen, mehrere Zahlen — und welche hier gilt</div>
@@ -137,10 +122,6 @@ DATEN_SECTION = """  <!-- ===================== DATEN & METHODE ================
         <p class="note src-note" data-src="quelleKey"></p>
       </div>
 
-      <!-- TODO Gegenprobe: das Prognose-/Modellverfahren an der Vergangenheit
-           prüfen (auf altem Fenster anpassen, bekannte Jahre vorhersagen,
-           mittlere Abweichung ausweisen). Ohne diese Karte ist jede
-           Fortschreibung eine Behauptung. -->
       <div class="card" style="margin-bottom:var(--sp-4)">
         <div class="card-title">TODO Gegenprobe an der Vergangenheit <span class="info-i" data-info="metricKey" tabindex="0" role="button" aria-label="Erklärung">ⓘ</span></div>
         <div class="card-sub">TODO Anpassungsfenster, Vorhersagefenster, mittlere Abweichung</div>
@@ -148,8 +129,6 @@ DATEN_SECTION = """  <!-- ===================== DATEN & METHODE ================
         <p class="note src-note" data-src="quelleKey"></p>
       </div>
 
-      <!-- Register der Demo-Annahmen: wird aus DATA.annahmen gefüllt, kein
-           handgeschriebener Text. Zugleich die Einkaufsliste für das Projekt. -->
       <div class="card">
         <div class="card-title">Was belegt ist — und was eine Datenlieferung des Amtes braucht</div>
         <div class="card-sub">jede nicht öffentlich belegte Größe, mit Begründung</div>
@@ -193,9 +172,6 @@ def main():
             die(f"already exists: {path}")
 
     tabs = parse_tabs(a.tabs)
-    # 'Daten & Methode' ist Pflicht: Herkunft, Registerabgleich, Datenlücken.
-    # Ohne diese Ansicht hat der Demonstrator keinen Ort für die Frage, die in
-    # jedem Termin kommt — "woher haben Sie die Zahl, und warum weicht sie ab?"
     if not a.no_daten and not any(tid == "daten" for tid, _ in tabs):
         if len(tabs) >= 7:
             die("7 Tabs vergeben und 'daten' fehlt — einen Tab zusammenlegen")
