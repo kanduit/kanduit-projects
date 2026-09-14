@@ -1,4 +1,4 @@
-name: Anlagen- und Fristenmonitor BDH · docs sync check
+name: Anlagen- und Fristenmonitor BDH · docs sync + quality bar
 
 on:
   push:
@@ -6,11 +6,13 @@ on:
       - "portfolio/anlagen-fristenmonitor-bdh/**"
       - "docs/anlagen-fristenmonitor-bdh/**"
       - ".github/workflows/anlagen-fristenmonitor-bdh-publish-check.yml"
+      - ".claude/skills/build-demo/check_demo.py"
   pull_request:
     paths:
       - "portfolio/anlagen-fristenmonitor-bdh/**"
       - "docs/anlagen-fristenmonitor-bdh/**"
       - ".github/workflows/anlagen-fristenmonitor-bdh-publish-check.yml"
+      - ".claude/skills/build-demo/check_demo.py"
 
 jobs:
   check-docs-in-sync:
@@ -19,3 +21,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify docs/ matches source
         run: python3 portfolio/anlagen-fristenmonitor-bdh/scripts/publish.py --check
+      - name: Quality bar
+        run: python3 .claude/skills/build-demo/check_demo.py anlagen-fristenmonitor-bdh

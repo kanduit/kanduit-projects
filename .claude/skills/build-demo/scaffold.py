@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 scaffold.py — stamp out a new Kanduit demo project from the template.
 
@@ -52,7 +51,6 @@ def parse_tabs(spec):
 
 
 def free_port(root):
-    """Lowest port >= 8123 not claimed by any existing portfolio/*/serve.py."""
     used = set()
     for path in sorted(os.listdir(os.path.join(root, "portfolio"))):
         serve = os.path.join(root, "portfolio", path, "serve.py")
@@ -70,6 +68,31 @@ def render_func(tid):
     return "render" + tid[0].upper() + tid[1:]
 
 
+def render_stub(i, tid, label):
+    fn = render_func(tid)
+    if tid == "daten":
+        return (
+            f"function {fn}() {{\n"
+            "  $('#annahmen-liste').innerHTML = (DATA.annahmen || []).map(a =>\n"
+            "    `<div class=\"kv\"><span class=\"kk\"><b>${esc(a.t)}</b></span>"
+            "<span class=\"vv\"></span>\n"
+            "     <span class=\"src\">${esc(a.d)}</span></div>`).join('')\n"
+            "    || '<p class=\"note\">Keine Demo-Annahmen — jede Zahl stammt aus einer offenen Quelle.</p>';\n"
+            "}\n"
+        )
+    if i == 0:
+        return (
+            f"function {fn}() {{\n"
+            "  $('#leitzahl').innerHTML = `\n"
+            "    <div class=\"k\">Leitzahl${infoIcon('leitzahl')}</div>\n"
+            "    <div class=\"v\">TODO</div>\n"
+            "    <div class=\"d\"><b>TODO eine Zahl mit Frist oder Konsequenz</b>"
+            " — TODO Untergrenze.</div>`;\n"
+            "}\n"
+        )
+    return f"function {fn}() {{\n}}\n"
+
+
 VIEW_SECTION = """  <!-- ===================== {LABEL_UPPER} ===================== -->
   <section class="view{active}" id="view-{tid}">
     <div class="wrap">
@@ -78,7 +101,7 @@ VIEW_SECTION = """  <!-- ===================== {LABEL_UPPER} ===================
         <h2>{label}</h2>
         <p>TODO Einleitungssatz — was zeigt diese Ansicht, woraus, mit welcher Einschränkung.</p>
       </div>
-      <!-- TODO Inhalt. Muster:
+{leitzahl}      <!-- TODO Inhalt. Muster:
       <div class="grid g4" id="{tid}-kpis" style="margin-bottom:var(--sp-4)"></div>
       <div class="card">
         <div class="card-title">Charttitel <span class="info-i" data-info="metricKey" tabindex="0" role="button" aria-label="Erklärung: Charttitel">ⓘ</span></div>
@@ -193,22 +216,18 @@ def main():
             for i, (tid, label) in enumerate(tabs)),
         "{{VIEW_SECTIONS}}": "\n".join(
             DATEN_SECTION if tid == "daten" else
-            VIEW_SECTION.format(tid=tid, label=label, LABEL_UPPER=label.upper(),
-                                active=" active" if i == 0 else "")
+            VIEW_SECTION.format(
+                tid=tid, label=label, LABEL_UPPER=label.upper(),
+                active=" active" if i == 0 else "",
+                leitzahl=(
+                    '      <div class="leitzahl" id="leitzahl"'
+                    ' style="margin-bottom:var(--sp-4)"></div>\n'
+                    if i == 0 else ""),
+            )
             for i, (tid, label) in enumerate(tabs)),
         "{{VIEWS_MAP}}": "{ " + ", ".join(f"{tid}: 'view-{tid}'" for tid, _ in tabs) + " }",
         "{{RENDER_STUBS}}": "\n".join(
-            (f"function {render_func(tid)}() {{\n"
-             "  /* Register der Demo-Annahmen — Wortlaut kommt aus generate.py. */\n"
-             "  $('#annahmen-liste').innerHTML = (DATA.annahmen || []).map(a =>\n"
-             "    `<div class=\"kv\"><span class=\"kk\"><b>${esc(a.t)}</b></span>"
-             "<span class=\"vv\"></span>\n"
-             "     <span class=\"src\">${esc(a.d)}</span></div>`).join('')\n"
-             "    || '<p class=\"note\">Keine Demo-Annahmen — jede Zahl stammt aus einer offenen Quelle.</p>';\n"
-             "  // TODO: Registerabgleich und Gegenprobe rendern.\n}\n"
-             if tid == "daten" else
-             f"function {render_func(tid)}() {{\n  // TODO: Ansicht „{label}“\n}}\n")
-            for tid, label in tabs),
+            render_stub(i, tid, label) for i, (tid, label) in enumerate(tabs)),
         "{{RENDER_CALLS}}": "\n".join(f"{render_func(tid)}();" for tid, _ in tabs),
     }
 
@@ -247,14 +266,16 @@ def main():
         print("  " + os.path.relpath(p, root))
     print(f"""
 next steps (details: .claude/skills/build-demo/SKILL.md):
-  1. scripts/fetch_<quelle>.py schreiben und ausführen → data/sources/*.json
-  2. scripts/generate.py implementieren und ausführen → data.js
-  3. Views in app.js + METRIC_INFO füllen, index.html-TODOs ersetzen
+  1. python3 .claude/skills/build-demo/probe_sources.py <URL> [<URL>...]
+     (DEAD → menschliche Quelle fragen, keine Ersatz-URL erfinden)
+  2. scripts/fetch_<quelle>.py schreiben und ausführen → data/sources/*.json
+  3. scripts/generate.py implementieren und ausführen → data.js
+  4. Views in app.js + METRIC_INFO füllen, index.html-TODOs ersetzen
      (QUELLEN und ANNAHMEN in generate.py pflegen — app.js zieht beides selbst)
-  4. python3 portfolio/{a.slug}/serve.py → alle Tabs prüfen (Desktop + 375px)
-  5. python3 portfolio/{a.slug}/scripts/publish.py && … --check
-  6. docs/index.html-Karte + README-Bullet ergänzen (Snippets: references/reference.md)
-  7. READMEs/CHANGELOG-TODOs füllen, committen, PR öffnen (nicht mergen)""")
+  5. python3 .claude/skills/build-demo/check_demo.py {a.slug}
+  6. python3 portfolio/{a.slug}/serve.py → Browser Desktop + 375px
+  7. docs/index.html-Karte + README-Bullet (Snippets: references/reference.md)
+  8. READMEs/CHANGELOG-TODOs füllen, committen, PR öffnen (nicht mergen)""")
 
 
 if __name__ == "__main__":

@@ -1,10 +1,4 @@
-name: {{TITLE}} · docs sync check
-
-# Fails if the published copy under docs/ is out of sync with the source under
-# portfolio/. This makes the "edited source but forgot to publish" mistake
-# impossible to merge — same guard as the Schulbau-Monitor.
-#
-# Scoped to the {{TITLE}} demo only; other demos are unaffected.
+name: {{TITLE}} · docs sync + quality bar
 
 on:
   push:
@@ -12,11 +6,13 @@ on:
       - "portfolio/{{SLUG}}/**"
       - "docs/{{SLUG}}/**"
       - ".github/workflows/{{SLUG}}-publish-check.yml"
+      - ".claude/skills/build-demo/check_demo.py"
   pull_request:
     paths:
       - "portfolio/{{SLUG}}/**"
       - "docs/{{SLUG}}/**"
       - ".github/workflows/{{SLUG}}-publish-check.yml"
+      - ".claude/skills/build-demo/check_demo.py"
 
 jobs:
   check-docs-in-sync:
@@ -25,3 +21,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify docs/ matches source
         run: python3 portfolio/{{SLUG}}/scripts/publish.py --check
+      - name: Quality bar
+        run: python3 .claude/skills/build-demo/check_demo.py {{SLUG}}

@@ -1,0 +1,19 @@
+name: build-demo skill check
+
+on:
+  push:
+    paths:
+      - ".claude/skills/build-demo/**"
+      - ".github/workflows/build-demo-check.yml"
+  pull_request:
+    paths:
+      - ".claude/skills/build-demo/**"
+      - ".github/workflows/build-demo-check.yml"
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: check_demo.py behavioral tests
+        run: python3 .claude/skills/build-demo/check_demo_test.py
