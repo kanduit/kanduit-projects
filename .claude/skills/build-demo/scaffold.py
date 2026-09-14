@@ -68,7 +68,7 @@ def render_func(tid):
     return "render" + tid[0].upper() + tid[1:]
 
 
-def render_stub(i, tid, label):
+def render_stub(i, tid):
     fn = render_func(tid)
     if tid == "daten":
         return (
@@ -193,7 +193,7 @@ def main():
         "{{VIEW_SECTIONS}}": "\n".join(
             DATEN_SECTION if tid == "daten" else
             VIEW_SECTION.format(
-                tid=tid, label=label, LABEL_UPPER=label.upper(),
+                tid=tid, label=label,
                 active=" active" if i == 0 else "",
                 leitzahl=(
                     '      <div class="leitzahl" id="leitzahl"'
@@ -203,7 +203,7 @@ def main():
             for i, (tid, label) in enumerate(tabs)),
         "{{VIEWS_MAP}}": "{ " + ", ".join(f"{tid}: 'view-{tid}'" for tid, _ in tabs) + " }",
         "{{RENDER_STUBS}}": "\n".join(
-            render_stub(i, tid, label) for i, (tid, label) in enumerate(tabs)),
+            render_stub(i, tid) for i, (tid, _) in enumerate(tabs)),
         "{{RENDER_CALLS}}": "\n".join(f"{render_func(tid)}();" for tid, _ in tabs),
     }
 

@@ -242,8 +242,14 @@ class CheckDemoTests(unittest.TestCase):
         ids = fail_ids(findings)
         html_path = os.path.join(tmp, "portfolio", "kita-monitor-teststadt",
                                  "index.html")
+        css_path = os.path.join(tmp, "portfolio", "kita-monitor-teststadt",
+                                "styles.css")
         with open(html_path, encoding="utf-8") as fh:
             html = fh.read()
+        with open(css_path, encoding="utf-8") as fh:
+            css = fh.read()
+        self.assertIn('id="leitzahl"', html)
+        self.assertIn(".kv{", css)
         self.assertIn('id="leitzahl"', html)
         self.assertNotEqual(code, 0)
         for needed in (
